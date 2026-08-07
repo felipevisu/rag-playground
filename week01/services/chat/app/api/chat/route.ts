@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
 
 const DOCUMENT_API_URL = process.env.DOCUMENT_API_URL ?? 'http://document-api:8000'
-const CLAUDE_MODEL = process.env.CLAUDE_MODEL ?? 'claude-sonnet-4-6'
+const CLAUDE_MODEL = process.env.CLAUDE_MODEL ?? 'claude-sonnet-5'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 

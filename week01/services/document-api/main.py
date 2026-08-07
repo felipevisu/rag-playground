@@ -136,7 +136,8 @@ def get_chunks(doc_id: int):
         for r in rows:
             emb = r.get("embedding")
             if emb is not None:
-                r["embedding"] = [float(x) for x in emb]
+                # pgvector returns a Vector object, not a list — unwrap it.
+                r["embedding"] = emb.to_list()
         return rows
 
 
