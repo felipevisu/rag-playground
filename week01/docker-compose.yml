@@ -51,6 +51,9 @@ services:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
       HF_HOME: /root/.cache/huggingface
+      # docling's layout model calls torch.compile; inductor needs a C++
+      # compiler the slim image doesn't ship. Run eager instead of adding g++.
+      TORCH_COMPILE_DISABLE: "1"
     volumes:
       - ~/.cache/huggingface:/root/.cache/huggingface
       - ~/.cache/docling:/root/.cache/docling
@@ -74,7 +77,7 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     volumes:
-      - ./documents/pdf:/source-pdfs:ro
+      - ./documents/pls/pdfs:/source-pdfs:ro
       - ./infra/minio-setup.sh:/setup.sh:ro
     entrypoint: ["/bin/sh", "/setup.sh"]
     restart: "no"
@@ -110,7 +113,7 @@ services:
       - ./.env
     environment:
       DOCUMENT_API_URL: http://document-api:8000
-      CLAUDE_MODEL: claude-sonnet-4-6
+      CLAUDE_MODEL: claude-sonnet-5
     ports:
       - "3001:3001"
 
