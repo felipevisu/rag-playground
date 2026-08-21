@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Avaliação de Retrieval — week02</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #f6f7fa; --surface: #ffffff; --surface-2: #f1f3f8; --surface-hover: #eef1f7;
+  --border: #e3e7ef; --border-strong: #ccd3e0;
+  --text: #171b24; --text-2: #475062; --muted: #78829a; --faint: #a8b0c0;
+  --accent: #b3450a; --accent-2: #ea6a1f; --accent-soft: #fdf1e7; --accent-line: #f5cba7;
+  --ok: #0f7a4f; --ok-soft: #e4f4ec; --warn: #9a5b00; --warn-soft: #fbf1df;
+  --err: #b3261e; --err-soft: #fdeceb;
+  --shadow: 0 1px 2px rgba(23,27,36,.05), 0 1px 3px rgba(23,27,36,.04);
+  --ui: 'Inter', system-ui, sans-serif;
+  --read: 'Source Serif 4', Georgia, serif;
+  --mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+}
+[data-theme="dark"] {
+  --bg: #0d0f14; --surface: #111420; --surface-2: #0a0c12; --surface-hover: #161a27;
+  --border: #1e2235; --border-strong: #2d3148;
+  --text: #e6ebf3; --text-2: #b8c4d6; --muted: #8892a4; --faint: #5a6478;
+  --accent: #fdba74; --accent-2: #fb923c; --accent-soft: #331e0d; --accent-line: #7a3f16;
+  --ok: #6ee7b7; --ok-soft: #10321f; --warn: #fbbf24; --warn-soft: #33260a;
+  --err: #fca5a5; --err-soft: #331416;
+  --shadow: none;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--ui); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* ── Topo ─────────────────────────────────────────────── */
+header {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 16px 28px;
+}
+.head-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; max-width: 1180px; margin: 0 auto; }
+.title { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-right: auto; }
+.title-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-2); }
+.title small { font-weight: 400; color: var(--muted); font-size: 12.5px; }
+
+label.field { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); }
+select, input[type="text"] {
+  font-family: inherit; font-size: 13px; color: var(--text);
+  background: var(--surface); border: 1px solid var(--border-strong);
+  border-radius: 7px; padding: 6px 9px;
+}
+input[type="text"] { width: 190px; font-family: var(--mono); font-size: 12px; }
+
+button { font-family: inherit; cursor: pointer; border: 1px solid transparent; border-radius: 8px; transition: all .15s; }
+.btn-run {
+  background: var(--accent); color: #fff; font-size: 13.5px; font-weight: 600;
+  padding: 9px 18px; display: flex; align-items: center; gap: 8px;
+}
+[data-theme="dark"] .btn-run { color: #1a0f06; }
+.btn-run:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-run:disabled { opacity: .6; cursor: not-allowed; }
+.btn-ghost {
+  background: var(--surface); border-color: var(--border); color: var(--muted);
+  width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+}
+.btn-ghost:hover { color: var(--accent); border-color: var(--accent-line); }
+
+/* ── Progresso ────────────────────────────────────────── */
+.progress { max-width: 1180px; margin: 12px auto 0; height: 3px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+.progress span { display: block; height: 100%; width: 0; background: var(--accent-2); transition: width .2s; }
+
+/* ── Conteúdo ─────────────────────────────────────────── */
+main { max-width: 1180px; margin: 0 auto; padding: 22px 28px 64px; }
+
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; box-shadow: var(--shadow); }
+.stat-label { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.stat-value { font-size: 25px; font-weight: 600; margin-top: 6px; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.stat-sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.stat.good .stat-value { color: var(--ok); }
+.stat.bad .stat-value { color: var(--err); }
+
+.filters { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+.chip {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text-2);
+  font-size: 12.5px; font-weight: 500; padding: 5px 12px; border-radius: 999px;
+}
+.chip:hover { border-color: var(--accent-line); }
+.chip.on { background: var(--accent-soft); border-color: var(--accent-line); color: var(--accent); font-weight: 600; }
+.chip-count { color: var(--muted); font-variant-numeric: tabular-nums; }
+.chip.on .chip-count { color: inherit; opacity: .7; }
+
+/* ── Resultado por pergunta ───────────────────────────── */
+.q { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--border-strong);
+     border-radius: 10px; margin-bottom: 10px; box-shadow: var(--shadow); overflow: hidden; }
+.q.pass { border-left-color: var(--ok); }
+.q.fail { border-left-color: var(--err); }
+.q.partial { border-left-color: var(--warn); }
+.q.running { border-left-color: var(--accent-2); }
+
+.q-head { display: flex; align-items: flex-start; gap: 12px; padding: 13px 16px; cursor: pointer; text-align: left; width: 100%; background: none; }
+.q-head:hover { background: var(--surface-hover); }
+.q-verdict { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center;
+             justify-content: center; font-size: 12px; font-weight: 700; margin-top: 1px; }
+.pass .q-verdict { background: var(--ok-soft); color: var(--ok); }
+.fail .q-verdict { background: var(--err-soft); color: var(--err); }
+.partial .q-verdict { background: var(--warn-soft); color: var(--warn); }
+.running .q-verdict { background: var(--accent-soft); color: var(--accent); }
+
+.q-body { flex: 1; min-width: 0; }
+.q-text { font-family: var(--read); font-size: 15.5px; line-height: 1.5; color: var(--text); }
+.q-meta { display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; font-size: 11.5px; color: var(--muted); }
+.tag { border-radius: 6px; padding: 1px 7px; font-size: 11px; font-weight: 600; }
+.tag-file { font-family: var(--mono); background: var(--surface-2); color: var(--text-2); }
+.tag-type { background: var(--accent-soft); color: var(--accent); }
+.tag-recall { font-family: var(--mono); background: var(--surface-2); color: var(--muted); }
+.q-caret { color: var(--faint); font-size: 11px; margin-top: 4px; }
+
+.q-metrics { display: flex; gap: 6px; margin-top: 7px; flex-wrap: wrap; }
+.m { display: flex; align-items: baseline; gap: 5px; font-size: 11px; padding: 2px 8px;
+     border-radius: 6px; background: var(--surface-2); border: 1px solid var(--border); }
+.m-name { color: var(--muted); font-weight: 600; letter-spacing: .02em; }
+.m-val { font-family: var(--mono); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.m.good .m-val { color: var(--ok); }
+.m.mid .m-val { color: var(--warn); }
+.m.bad .m-val { color: var(--err); }
+
+.calc { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.calc-row { display: grid; grid-template-columns: 108px 68px 1fr; gap: 10px; align-items: baseline;
+            padding: 8px 11px; font-size: 12px; border-top: 1px solid var(--border); }
+.calc-row:first-child { border-top: 0; }
+.calc-name { font-weight: 600; color: var(--text-2); }
+.calc-val { font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; }
+.calc-how { color: var(--muted); font-family: var(--mono); font-size: 11.5px; }
+
+.q-detail { border-top: 1px solid var(--border); padding: 14px 16px 16px; background: var(--surface-2); }
+.detail-label { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+                color: var(--muted); margin-bottom: 8px; }
+.detail-label + .detail-label { margin-top: 18px; }
+
+.exp { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 7px;
+       background: var(--surface); border: 1px solid var(--border); margin-bottom: 5px; font-size: 12.5px; }
+.exp.hit { border-color: var(--ok); background: var(--ok-soft); }
+.exp.miss { border-color: var(--err); background: var(--err-soft); }
+.exp-rank { font-family: var(--mono); font-weight: 700; font-size: 11.5px; flex-shrink: 0;
+            padding: 1px 7px; border-radius: 5px; background: var(--surface); border: 1px solid var(--border); }
+.exp.hit .exp-rank { color: var(--ok); }
+.exp.miss .exp-rank { color: var(--err); }
+.exp-id { font-family: var(--mono); font-size: 11.5px; color: var(--muted); flex-shrink: 0; }
+.exp-preview { flex: 1; min-width: 0; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.exp-score { font-family: var(--mono); font-size: 11.5px; color: var(--muted); flex-shrink: 0; }
+
+.hit-row { display: flex; gap: 10px; padding: 8px 10px; border-radius: 7px; background: var(--surface);
+           border: 1px solid var(--border); margin-bottom: 5px; }
+.hit-row.expected { border-color: var(--ok); }
+.hit-rank { font-family: var(--mono); font-size: 11.5px; font-weight: 700; color: var(--muted); flex-shrink: 0; width: 22px; }
+.hit-body { flex: 1; min-width: 0; }
+.hit-meta { display: flex; gap: 8px; align-items: center; font-size: 11.5px; color: var(--muted); margin-bottom: 4px; flex-wrap: wrap; }
+.hit-file { font-family: var(--mono); color: var(--text-2); font-weight: 600; }
+.hit-score { margin-left: auto; font-family: var(--mono); font-weight: 600; color: var(--accent); }
+.hit-text { font-family: var(--read); font-size: 13.5px; line-height: 1.6; color: var(--text-2);
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+.q-error { padding: 12px 16px; background: var(--err-soft); color: var(--err); font-size: 12.5px; font-family: var(--mono); }
+
+.empty { text-align: center; padding: 70px 20px; color: var(--muted); }
+.empty-title { font-family: var(--read); font-size: 19px; font-weight: 600; color: var(--text-2); margin-bottom: 6px; }
+.empty p { font-size: 13.5px; }
+
+.spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,.35);
+           border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 700px) {
+  header { padding: 14px 16px; } main { padding: 16px 16px 48px; }
+  .title { width: 100%; margin-right: 0; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-row">
+    <div class="title">
+      <span class="title-dot"></span>
+      Avaliação de Retrieval
+      <small id="corpus-info">carregando questions.json…</small>
+    </div>
+
+    <label class="field">top-k
+      <select id="k">
+        <option>3</option><option selected>5</option><option>10</option><option>20</option>
+      </select>
+    </label>
+
+    <label class="field">API
+      <input type="text" id="api" value="http://localhost:8000" />
+    </label>
+
+    <button class="btn-run" id="run" disabled>Executar avaliação</button>
+    <button class="btn-ghost" id="theme" title="Alternar tema">◐</button>
+  </div>
+  <div class="progress"><span id="bar"></span></div>
+</header>
+
+<main>
+  <div class="summary" id="summary" hidden></div>
+  <div class="filters" id="filters" hidden></div>
+  <div id="results">
+    <div class="empty">
+      <div class="empty-title">Nenhuma avaliação executada</div>
+      <p>Clique em <strong>Executar avaliação</strong> para rodar as perguntas de questions.json contra a API de busca.</p>
+    </div>
+  </div>
+</main>
+
+<script>
+// ── Estado ──────────────────────────────────────────────
+let QUESTIONS = []   // pergunta achatada + doc de origem
+let RESULTS = []     // um resultado por pergunta, mesmo índice
+let FILTER = 'all'
+let RUNNING = false
+
+const $ = id => document.getElementById(id)
+const pct = n => (n * 100).toFixed(0) + '%'
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]))
+
+// ── Tema ────────────────────────────────────────────────
+document.documentElement.dataset.theme = localStorage.getItem('theme') || 'light'
+$('theme').onclick = () => {
+  const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'
+  document.documentElement.dataset.theme = next
+  localStorage.setItem('theme', next)
+}
+
+// ── Carga do dataset ────────────────────────────────────
+fetch('questions.json').then(r => r.json()).then(data => {
+  QUESTIONS = data.documents.flatMap(doc =>
+    doc.questions.map(q => ({ ...q, filename: doc.filename, docTitle: doc.title })))
+  $('corpus-info').textContent =
+    `${QUESTIONS.length} perguntas · ${data.documents.length} documentos · ${data.corpus.total_chunks} chunks`
+  $('run').disabled = false
+}).catch(e => {
+  $('corpus-info').textContent = 'falha ao ler questions.json — sirva esta página por HTTP'
+  console.error(e)
+})
+
+// ── Avaliação de uma pergunta ───────────────────────────
+// Casamos por (filename, chunk_index): chunk_index é estável entre re-ingests,
+// o id do Postgres não é.
+async function evaluate(q, k, api) {
+  const url = `${api}/api/search?q=${encodeURIComponent(q.question)}&k=${k}`
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`HTTP ${res.status} — ${(await res.text()).slice(0, 200)}`)
+  const { results } = await res.json()
+
+  const retrieved = results.map((r, i) => ({
+    rank: i + 1,
+    id: r.id,
+    filename: r.filename,
+    chunk_index: r.chunk_index,
+    pages: r.page_numbers || [],
+    text: r.text,
+    score: r.similarity,
+  }))
+
+  const expected = q.expected_chunks.map(e => {
+    const hit = retrieved.find(r => r.filename === q.filename && r.chunk_index === e.chunk_index)
+    return { ...e, rank: hit ? hit.rank : null, score: hit ? hit.score : null }
+  })
+
+  const found = expected.filter(e => e.rank !== null)
+  const ranks = found.map(e => e.rank)
+  const kEff = retrieved.length || k
+
+  // DCG binario: cada chunk esperado achado vale 1/log2(rank+1).
+  // Quanto mais fundo o rank, menos vale. IDCG = o mesmo com todos
+  // os esperados empilhados nas primeiras posicoes (cenario perfeito).
+  const gain = rank => 1 / Math.log2(rank + 1)
+  const dcg = ranks.reduce((a, rank) => a + gain(rank), 0)
+  const idcg = Array.from({ length: Math.min(expected.length, kEff) },
+                          (_, i) => gain(i + 1)).reduce((a, g) => a + g, 0)
+
+  return {
+    q,
+    retrieved,
+    expected,
+    k: kEff,
+    hits: found.length,
+    total: expected.length,
+    // Hit Rate: achou pelo menos um esperado no top-k? (0 ou 1)
+    hit: found.length > 0 ? 1 : 0,
+    // Recall@k: quantos % dos esperados vieram
+    recall: found.length / expected.length,
+    // Precision@k: quantos % do que veio prestava
+    precision: kEff ? found.length / kEff : 0,
+    // RR: 1/rank do primeiro esperado que apareceu. Media dos RR = MRR
+    rr: ranks.length ? 1 / Math.min(...ranks) : 0,
+    bestRank: ranks.length ? Math.min(...ranks) : null,
+    // nDCG@k: DCG normalizado pelo melhor arranjo possivel
+    dcg, idcg,
+    ndcg: idcg ? dcg / idcg : 0,
+    top1: retrieved[0] && expected.some(e => e.rank === 1),
+    verdict: found.length === expected.length ? 'pass' : found.length ? 'partial' : 'fail',
+  }
+}
+
+// ── Execução com pool de concorrência ───────────────────
+async function runAll() {
+  if (RUNNING) return
+  RUNNING = true
+  $('run').disabled = true
+  $('run').innerHTML = '<span class="spinner"></span> Executando…'
+
+  const k = +$('k').value
+  const api = $('api').value.replace(/\/$/, '')
+  RESULTS = QUESTIONS.map(q => ({ q, pending: true }))
+  FILTER = 'all'
+  render()
+
+  let done = 0
+  const started = performance.now()
+  const queue = QUESTIONS.map((q, i) => [q, i])
+
+  async function worker() {
+    while (queue.length) {
+      const [q, i] = queue.shift()
+      try {
+        RESULTS[i] = await evaluate(q, k, api)
+      } catch (e) {
+        RESULTS[i] = { q, error: e.message, verdict: 'fail', hits: 0, k,
+                       total: q.expected_chunks.length, recall: 0, rr: 0,
+                       hit: 0, precision: 0, ndcg: 0, dcg: 0, idcg: 0, bestRank: null,
+                       expected: [], retrieved: [] }
+      }
+      done++
+      $('bar').style.width = pct(done / QUESTIONS.length)
+      render(performance.now() - started)
+    }
+  }
+
+  await Promise.all(Array.from({ length: 4 }, worker))
+
+  $('run').disabled = false
+  $('run').textContent = 'Executar novamente'
+  RUNNING = false
+  setTimeout(() => { $('bar').style.width = '0' }, 800)
+}
+$('run').onclick = runAll
+
+// ── Render ──────────────────────────────────────────────
+function render(elapsed) {
+  const done = RESULTS.filter(r => !r.pending)
+  if (!done.length) { $('summary').hidden = true; $('filters').hidden = true }
+
+  if (done.length) {
+    const pass = done.filter(r => r.verdict === 'pass').length
+    const partial = done.filter(r => r.verdict === 'partial').length
+    const fail = done.filter(r => r.verdict === 'fail').length
+    const avg = f => done.reduce((a, r) => a + f(r), 0) / done.length
+    const recall = avg(r => r.recall)
+    const mrr = avg(r => r.rr)
+    const precision = avg(r => r.precision)
+    const ndcg = avg(r => r.ndcg)
+    const hitRate = avg(r => r.hit)
+    const singles = done.filter(r => r.q.type === 'single_chunk')
+    const top1 = singles.filter(r => r.top1).length
+
+    $('summary').hidden = false
+    $('summary').innerHTML = `
+      ${stat('Perguntas', done.length, `de ${RESULTS.length}${elapsed ? ` · ${(elapsed / 1000).toFixed(1)}s` : ''}`)}
+      ${stat('Recall completo', pct(pass / done.length), `${pass} com todos os chunks`, pass / done.length >= .8 ? 'good' : pass / done.length < .5 ? 'bad' : '')}
+      ${stat('Recall médio', pct(recall), `${done.reduce((a, r) => a + r.hits, 0)}/${done.reduce((a, r) => a + r.total, 0)} chunks`)}
+      ${stat('Precision@k', pct(precision), 'do retornado, quanto prestava')}
+      ${stat('Hit Rate@k', pct(hitRate), `${done.filter(r => r.hit).length} com ≥1 chunk certo`)}
+      ${stat('MRR', mrr.toFixed(3), 'primeiro chunk esperado')}
+      ${stat('nDCG@k', ndcg.toFixed(3), 'acerto + posição')}
+      ${stat('Top-1 (single)', singles.length ? pct(top1 / singles.length) : '—', `${top1}/${singles.length} perguntas`)}
+    `
+
+    $('filters').hidden = false
+    $('filters').innerHTML = [
+      ['all', 'Todas', done.length],
+      ['pass', 'Completas', pass],
+      ['partial', 'Parciais', partial],
+      ['fail', 'Falhas', fail],
+      ['single_chunk', 'single_chunk', done.filter(r => r.q.type === 'single_chunk').length],
+      ['multi_chunk', 'multi_chunk', done.filter(r => r.q.type === 'multi_chunk').length],
+    ].map(([id, label, n]) =>
+      `<button class="chip ${FILTER === id ? 'on' : ''}" data-filter="${id}">${label} <span class="chip-count">${n}</span></button>`
+    ).join('')
+
+    $('filters').querySelectorAll('.chip').forEach(c => {
+      c.onclick = () => { FILTER = c.dataset.filter; render(elapsed) }
+    })
+  }
+
+  const visible = RESULTS.filter(r => {
+    if (r.pending) return FILTER === 'all'
+    if (FILTER === 'all') return true
+    if (['pass', 'partial', 'fail'].includes(FILTER)) return r.verdict === FILTER
+    return r.q.type === FILTER
+  })
+
+  $('results').innerHTML = visible.length
+    ? visible.map(card).join('')
+    : `<div class="empty"><div class="empty-title">Nada neste filtro</div></div>`
+
+  $('results').querySelectorAll('.q-head').forEach(h => {
+    h.onclick = () => {
+      const d = h.nextElementSibling
+      if (!d) return
+      const open = d.hasAttribute('hidden')
+      open ? d.removeAttribute('hidden') : d.setAttribute('hidden', '')
+      h.querySelector('.q-caret').textContent = open ? '▾' : '▸'
+    }
+  })
+}
+
+function stat(label, value, sub, cls = '') {
+  return `<div class="stat ${cls}">
+    <div class="stat-label">${label}</div>
+    <div class="stat-value">${value}</div>
+    <div class="stat-sub">${sub}</div>
+  </div>`
+}
+
+const VERDICT_ICON = { pass: '✓', partial: '~', fail: '✕', running: '·' }
+
+function card(r) {
+  const state = r.pending ? 'running' : r.verdict
+  return `<div class="q ${state}">
+    <button class="q-head">
+      <span class="q-verdict">${VERDICT_ICON[state]}</span>
+      <span class="q-body">
+        <span class="q-text">${esc(r.q.question)}</span>
+        <span class="q-meta">
+          <span class="tag tag-file">${esc(r.q.filename)}</span>
+          <span class="tag tag-type">${r.q.type}</span>
+          ${r.pending ? '<span>aguardando…</span>'
+            : `<span class="tag tag-recall">${r.hits}/${r.total} chunks</span>`}
+        </span>
+        ${r.pending || r.error ? '' : metrics(r)}
+      </span>
+      <span class="q-caret">▸</span>
+    </button>
+    ${r.pending ? '' : detail(r)}
+  </div>`
+}
+
+// Cor do chip por faixa: verde >= .7, amarelo >= .4, vermelho abaixo.
+const band = v => v >= .7 ? 'good' : v >= .4 ? 'mid' : 'bad'
+
+function metrics(r) {
+  const chips = [
+    ['Hit', r.hit.toFixed(0), r.hit],
+    [`R@${r.k}`, r.recall.toFixed(2), r.recall],
+    [`P@${r.k}`, r.precision.toFixed(2), r.precision],
+    ['RR', r.rr.toFixed(2), r.rr],
+    [`nDCG@${r.k}`, r.ndcg.toFixed(2), r.ndcg],
+  ]
+  return `<span class="q-metrics">${chips.map(([n, v, raw]) =>
+    `<span class="m ${band(raw)}"><span class="m-name">${n}</span><span class="m-val">${v}</span></span>`
+  ).join('')}</span>`
+}
+
+// Mostra a conta de cada metrica com os numeros desta pergunta.
+function calc(r) {
+  const ranks = r.expected.filter(e => e.rank).map(e => e.rank).sort((a, b) => a - b)
+  const ideal = Math.min(r.total, r.k)
+  const rows = [
+    ['Hit Rate', r.hit.toFixed(0), r.hit ? `achou ≥1 esperado no top-${r.k}` : `nenhum esperado no top-${r.k}`],
+    [`Recall@${r.k}`, r.recall.toFixed(3), `${r.hits} achados / ${r.total} esperados`],
+    [`Precision@${r.k}`, r.precision.toFixed(3), `${r.hits} relevantes / ${r.k} retornados`],
+    ['RR', r.rr.toFixed(3), r.bestRank ? `1 / ${r.bestRank}  (melhor rank esperado)` : 'nenhum esperado → 0'],
+    [`nDCG@${r.k}`, r.ndcg.toFixed(3),
+     `DCG ${r.dcg.toFixed(3)} = ${ranks.length ? ranks.map(x => `1/log₂(${x}+1)`).join(' + ') : '0'}` +
+     `\n IDCG ${r.idcg.toFixed(3)} = ideal com ${ideal} esperado(s) nos ranks 1..${ideal}`],
+  ]
+  return `<div class="calc">${rows.map(([n, v, how]) =>
+    `<div class="calc-row"><span class="calc-name">${n}</span>` +
+    `<span class="calc-val ${band(+v)}">${v}</span>` +
+    `<span class="calc-how">${esc(how).replace(/\n/g, '<br>')}</span></div>`
+  ).join('')}</div>`
+}
+
+function detail(r) {
+  if (r.error) return `<div class="q-detail" hidden><div class="q-error">${esc(r.error)}</div></div>`
+
+  const expectedKeys = new Set(r.expected.map(e => `${r.q.filename}#${e.chunk_index}`))
+
+  return `<div class="q-detail" hidden>
+    <div class="detail-label">Métricas desta pergunta</div>
+    ${calc(r)}
+
+    <div class="detail-label">Chunks esperados</div>
+    ${r.expected.map(e => `
+      <div class="exp ${e.rank ? 'hit' : 'miss'}">
+        <span class="exp-rank">${e.rank ? '#' + e.rank : 'fora'}</span>
+        <span class="exp-id">id ${e.chunk_id} · idx ${e.chunk_index} · p.${(e.pages || []).join(', ') || '-'}</span>
+        <span class="exp-preview">${esc(e.text_preview || '')}</span>
+        <span class="exp-score">${e.score != null ? e.score.toFixed(4) : ''}</span>
+      </div>`).join('')}
+
+    <div class="detail-label">Retornado pela API (top ${r.retrieved.length})</div>
+    ${r.retrieved.map(h => `
+      <div class="hit-row ${expectedKeys.has(`${h.filename}#${h.chunk_index}`) ? 'expected' : ''}">
+        <span class="hit-rank">#${h.rank}</span>
+        <span class="hit-body">
+          <span class="hit-meta">
+            <span class="hit-file">${esc(h.filename)}</span>
+            <span>id ${h.id} · idx ${h.chunk_index} · p.${h.pages.join(', ') || '-'}</span>
+            <span class="hit-score">${h.score.toFixed(4)}</span>
+          </span>
+          <span class="hit-text">${esc(h.text)}</span>
+        </span>
+      </div>`).join('')}
+
+    <div class="detail-label">Resposta esperada</div>
+    <div class="hit-text" style="-webkit-line-clamp:none">${esc(r.q.expected_answer || '—')}</div>
+  </div>`
+}
+</script>
+</body>
+</html>

@@ -31,6 +31,35 @@ const IN_PROGRESS_STATUSES = new Set(['pending', 'chunking', 'embedding'])
 
 // ── Sub-components ───────────────────────────────────────────────
 
+function ThemeToggle() {
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light')
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
+  return (
+    <button
+      className="theme-btn"
+      title={theme === 'light' ? 'Switch to dark' : 'Switch to light'}
+      onClick={() => setTheme(t => (t === 'light' ? 'dark' : 'light'))}
+    >
+      {theme === 'light' ? (
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+          <path d="M11.5 8.6A5 5 0 015.4 2.5a5 5 0 106.1 6.1z" fill="currentColor"/>
+        </svg>
+      ) : (
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <circle cx="7" cy="7" r="3" fill="currentColor"/>
+          <path d="M7 .5v1.8M7 11.7v1.8M.5 7h1.8M11.7 7h1.8M2.4 2.4l1.3 1.3M10.3 10.3l1.3 1.3M11.6 2.4l-1.3 1.3M3.7 10.3l-1.3 1.3"
+                stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+        </svg>
+      )}
+    </button>
+  )
+}
+
 function Spinner({ size = 14 }) {
   return <span className="spinner" style={{ width: size, height: size }} />
 }
@@ -172,9 +201,9 @@ function DocItem({ doc, selected, onSelect, onDelete }) {
           ? <Spinner size={14} />
           : (
           <svg width="14" height="16" viewBox="0 0 14 16" fill="none">
-            <path d="M2 0h7l5 5v11H2V0z" fill="#1e2235" stroke={isError ? '#5c1d23' : '#3d4168'} strokeWidth="1.2"/>
-            <path d="M9 0v5h5" fill="none" stroke={isError ? '#5c1d23' : '#3d4168'} strokeWidth="1.2"/>
-            <path d="M4 8h6M4 11h4" stroke={isError ? '#f87171' : '#4f52e0'} strokeWidth="1" strokeLinecap="round"/>
+            <path d="M2 0h7l5 5v11H2V0z" fill="none" stroke="currentColor" strokeWidth="1.2"/>
+            <path d="M9 0v5h5" fill="none" stroke="currentColor" strokeWidth="1.2"/>
+            <path d="M4 8h6M4 11h4" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.6"/>
           </svg>
           )}
       </div>
@@ -244,7 +273,7 @@ function EmbeddingPanel({ embedding }) {
               <span
                 className="embed-val"
                 style={{
-                  color: v >= 0 ? '#a5b4fc' : '#f87171',
+                  color: v >= 0 ? 'var(--accent)' : 'var(--err)',
                   opacity: 0.35 + Math.min(Math.abs(v), 1) * 0.65,
                 }}
               >
@@ -258,6 +287,27 @@ function EmbeddingPanel({ embedding }) {
   )
 }
 
+function ChunkId({ id }) {
+  const [copied, setCopied] = useState(false)
+
+  function copy() {
+    navigator.clipboard?.writeText(String(id))
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1200)
+  }
+
+  return (
+    <button
+      className={`chunk-id ${copied ? 'copied' : ''}`}
+      onClick={copy}
+      title="Copy chunk id"
+    >
+      <span className="chunk-id-key">id</span>
+      {copied ? 'copied' : id}
+    </button>
+  )
+}
+
 function ChunkCard({ chunk }) {
   const headings = Array.isArray(chunk.headings) ? chunk.headings : []
   const pages = Array.isArray(chunk.page_numbers) ? chunk.page_numbers : []
@@ -266,6 +316,7 @@ function ChunkCard({ chunk }) {
     <div className="chunk-card">
       <div className="chunk-meta">
         <span className="chunk-num">#{chunk.chunk_index + 1}</span>
+        <ChunkId id={chunk.id} />
         {headings.length > 0 && (
           <span className="chunk-path">
             {headings.map((h, i) => (
@@ -383,6 +434,7 @@ export default function App() {
             <span>RAG Manager</span>
           </div>
           <span className="doc-tally">{docs.length}</span>
+          <ThemeToggle />
         </div>
 
         <UploadArea onUpload={handleUpload} />
@@ -413,9 +465,9 @@ export default function App() {
           <div className="empty-state">
             <div className="empty-icon">
               <svg width="48" height="56" viewBox="0 0 48 56" fill="none">
-                <path d="M4 0h28l16 16v40H4V0z" fill="#141824" stroke="#2d3148" strokeWidth="1.5"/>
-                <path d="M32 0v16h16" fill="none" stroke="#2d3148" strokeWidth="1.5"/>
-                <path d="M12 24h24M12 32h18M12 40h20" stroke="#3d4168" strokeWidth="1.5" strokeLinecap="round"/>
+                <path d="M4 0h28l16 16v40H4V0z" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M32 0v16h16" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M12 24h24M12 32h18M12 40h20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
             </div>
             <p className="empty-title">Select a document</p>
