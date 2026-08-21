@@ -125,6 +125,9 @@ services:
       - document-api
     ports:
       - "3000:3000"
+    volumes:
+      - ./services/documents-ui/src:/app/src
+      - ./services/documents-ui/index.html:/app/index.html
 
 volumes:
   pgdata:

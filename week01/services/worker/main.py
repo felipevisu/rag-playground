@@ -178,6 +178,37 @@ def backfill_embeddings() -> None:
     print("Backfill complete.")
 
 
+def reconcile_bucket(bucket: str = "documents") -> None:
+    """Ingest bucket objects that aren't 'ready' in the DB.
+
+    Webhooks only fire on PUT. A persisted MinIO volume plus a fresh Postgres
+    volume means the seed uploads nothing and nothing ever gets parsed. The DB,
+    not the bucket, is the source of truth for what's been ingested.
+    """
+    try:
+        keys = [
+            o.object_name
+            for o in minio_client.list_objects(bucket, recursive=True)
+            if o.object_name.lower().endswith(".pdf")
+        ]
+    except Exception as e:
+        print(f"[reconcile] cannot list {bucket}: {e}")
+        return
+
+    with db() as conn, conn.cursor() as cur:
+        cur.execute("SELECT filename FROM documents WHERE status = 'ready'")
+        ready = {r[0] for r in cur.fetchall()}
+
+    missing = [k for k in keys if k not in ready]
+    print(f"[reconcile] {len(keys)} object(s) in {bucket}, {len(missing)} to ingest")
+    for key in missing:
+        try:
+            process_pdf(bucket, key)
+        except Exception as e:
+            print(f"[reconcile] {key} failed: {e}")
+    print("[reconcile] complete.")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_schema_with_retry()
@@ -189,6 +220,7 @@ async def lifespan(app: FastAPI):
     await loop.run_in_executor(None, get_embedder)
     await loop.run_in_executor(None, backfill_embeddings)
     print("Worker ready.")
+    loop.run_in_executor(None, reconcile_bucket)
     yield
 
 
