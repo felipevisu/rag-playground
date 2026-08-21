@@ -37,7 +37,7 @@ Todas rodam sobre a mesma busca. São 5 leituras do mesmo resultado.
 
 ## Ferramenta
 
-<img src="/screenshot3.png" alt="" />
+<img src="screenshot3.png" alt="" />
 
 ## Exemplo 1 - Resposta que precisa de apenas um chunk
 
@@ -66,7 +66,7 @@ Documento: `PL_1502_2026`
 }
 ```
 
-<img src="/screenshot1.png" alt="results" />
+<img src="screenshot1.png" alt="results" />
 
 ### Analizando os resultados
 
@@ -137,7 +137,7 @@ Documento: `PL_1502_2026`
 }
 ```
 
-<img src="/screenshot2.png" alt="results" />
+<img src="screenshot2.png" alt="results" />
 
 ### Analizando os resultados
 
