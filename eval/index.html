@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Histórico de avaliação — RAG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #f6f7fa; --surface: #ffffff; --surface-2: #f1f3f8; --surface-hover: #eef1f7;
+  --border: #e3e7ef; --border-strong: #ccd3e0;
+  --text: #171b24; --text-2: #475062; --muted: #78829a; --faint: #a8b0c0;
+  --accent: #b3450a; --accent-2: #ea6a1f; --accent-soft: #fdf1e7;
+  --ok: #0f7a4f; --ok-soft: #e4f4ec; --warn: #9a5b00; --warn-soft: #fbf1df;
+  --err: #b3261e; --err-soft: #fdeceb;
+  --series: #2a78d6;
+  --grid: #e8ecf3;
+  --shadow: 0 1px 2px rgba(23,27,36,.05), 0 1px 3px rgba(23,27,36,.04);
+  --ui: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+}
+[data-theme="dark"] {
+  --bg: #0d0f14; --surface: #111420; --surface-2: #0a0c12; --surface-hover: #161a27;
+  --border: #1e2235; --border-strong: #2d3148;
+  --text: #e6ebf3; --text-2: #b8c4d6; --muted: #8892a4; --faint: #5a6478;
+  --accent: #fdba74; --accent-2: #fb923c; --accent-soft: #331e0d;
+  --ok: #6ee7b7; --ok-soft: #10321f; --warn: #fbbf24; --warn-soft: #33260a;
+  --err: #fca5a5; --err-soft: #331416;
+  --series: #3987e5;
+  --grid: #1c2133;
+  --shadow: none;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--ui); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
+
+header {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 28px;
+}
+.head-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 14px; max-width: 1180px; margin: 0 auto; }
+.title { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-right: auto; }
+.title-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-2); }
+.title small { font-weight: 400; color: var(--muted); font-size: 12.5px; }
+button { font-family: inherit; cursor: pointer; border: 1px solid var(--border-strong);
+         background: var(--surface); color: var(--text); border-radius: 8px;
+         padding: 7px 12px; font-size: 13px; transition: background .15s; }
+button:hover:not(:disabled) { background: var(--surface-hover); }
+button:disabled { opacity: .55; cursor: progress; }
+
+/* ── Barra de execução ────────────────────────────────── */
+.runbar { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.runbar input { font-family: inherit; font-size: 13px; padding: 7px 10px; color: var(--text);
+                background: var(--surface-2); border: 1px solid var(--border-strong);
+                border-radius: 8px; min-width: 0; }
+.runbar input::placeholder { color: var(--faint); }
+#label { width: 148px; } #note { width: 168px; } #k { width: 64px; font-family: var(--mono); }
+#go { border-color: var(--accent-2); color: var(--accent); font-weight: 600; }
+#runmsg { font-size: 12px; color: var(--muted); }
+#runmsg.err { color: var(--err); }
+
+main { max-width: 1180px; margin: 0 auto; padding: 24px 28px 80px; }
+section { margin-bottom: 34px; }
+h2 { font-size: 13px; font-weight: 600; color: var(--text-2); text-transform: uppercase;
+     letter-spacing: .06em; margin-bottom: 14px; }
+
+/* ── Small multiples ─────────────────────────────────── */
+.sparks { display: grid; grid-template-columns: repeat(auto-fit, minmax(196px, 1fr)); gap: 14px; }
+.spark {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 11px;
+  padding: 13px 14px 8px; box-shadow: var(--shadow);
+}
+.spark-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.spark-name { font-size: 12px; font-weight: 600; color: var(--text-2); }
+.spark-val { margin-left: auto; font-family: var(--mono); font-size: 17px; font-weight: 600; }
+.spark-delta { font-family: var(--mono); font-size: 11.5px; }
+.up { color: var(--ok); } .down { color: var(--err); } .flat { color: var(--muted); }
+.spark svg { display: block; width: 100%; height: 62px; overflow: visible; }
+.spark-foot { font-size: 10.5px; color: var(--faint); display: flex; justify-content: space-between; padding-top: 2px; }
+
+/* ── Tabela ──────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--border);
+              border-radius: 11px; box-shadow: var(--shadow); }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th { text-align: left; font-weight: 600; font-size: 11px; color: var(--muted);
+     text-transform: uppercase; letter-spacing: .05em; padding: 11px 13px;
+     border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 11px 13px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr.run-row { cursor: pointer; }
+tr.run-row:hover td { background: var(--surface-hover); }
+tr.run-row.sel td { background: var(--accent-soft); }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+.rid { font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.note { color: var(--text-2); font-size: 12px; max-width: 320px; }
+.note:empty::before { content: '—'; color: var(--faint); }
+
+.pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px;
+        border-radius: 5px; font-family: var(--mono); }
+.pass { background: var(--ok-soft); color: var(--ok); }
+.partial { background: var(--warn-soft); color: var(--warn); }
+.fail { background: var(--err-soft); color: var(--err); }
+
+.cfg { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.chip { font-family: var(--mono); font-size: 11.5px; background: var(--surface-2);
+        border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; color: var(--text-2); }
+.chip b { color: var(--text); font-weight: 600; }
+
+.qtext { font-size: 12.5px; line-height: 1.45; max-width: 460px; }
+.chunks { font-family: var(--mono); font-size: 11px; color: var(--muted); line-height: 1.7; }
+.chunks .hit { color: var(--ok); font-weight: 600; }
+.chunks .miss { color: var(--faint); }
+.state-msg { color: var(--muted); font-size: 13px; padding: 26px; text-align: center; }
+code { font-family: var(--mono); font-size: 12px; background: var(--surface-2);
+       padding: 2px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-row">
+    <div class="title">
+      <span class="title-dot"></span>
+      Histórico de avaliação
+      <small id="sub">carregando…</small>
+    </div>
+    <form class="runbar" id="runf">
+      <input id="label" placeholder="rótulo" />
+      <input id="note" placeholder="nota (opcional)" />
+      <input id="k" type="number" min="1" max="50" value="5" title="top-K" />
+      <button id="go" type="submit">▶ Rodar</button>
+    </form>
+    <span id="runmsg"></span>
+    <button id="theme" type="button">◐ Tema</button>
+  </div>
+</header>
+
+<main>
+  <section id="trend-sec" hidden>
+    <h2>Progresso</h2>
+    <div class="sparks" id="sparks"></div>
+  </section>
+
+  <section id="runs-sec" hidden>
+    <h2>Execuções</h2>
+    <div class="table-wrap"><table id="runs"></table></div>
+  </section>
+
+  <section id="detail-sec" hidden>
+    <h2 id="detail-title">Detalhe</h2>
+    <div class="cfg" id="detail-cfg"></div>
+    <div class="table-wrap"><table id="detail"></table></div>
+  </section>
+
+  <div class="state-msg" id="empty" hidden></div>
+</main>
+
+<script>
+const METRICS = ['hit_rate', 'recall', 'precision', 'mrr', 'ndcg']
+const LABELS = {
+  hit_rate: 'Hit Rate', recall: 'Recall', precision: 'Precision',
+  mrr: 'MRR', ndcg: 'nDCG',
+}
+// One question each metric answers — the panel title alone is jargon.
+const BLURB = {
+  hit_rate: 'trouxe ao menos 1 certo?',
+  recall: '% dos certos que vieram',
+  precision: '% do que veio que prestava',
+  mrr: 'o certo veio no topo?',
+  ndcg: 'achou + posição, nota única',
+}
+const $ = id => document.getElementById(id)
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+const fmt = n => (n ?? 0).toFixed(3)
+
+// ── Tema ───────────────────────────────────────────────
+const stored = (() => { try { return localStorage.getItem('theme') } catch { return null } })()
+if (stored) document.documentElement.dataset.theme = stored
+else if (matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.dataset.theme = 'dark'
+$('theme').onclick = () => {
+  const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'
+  document.documentElement.dataset.theme = next
+  try { localStorage.setItem('theme', next) } catch {}
+}
+
+// ── Small multiples ────────────────────────────────────
+// Five panels rather than five lines on one axis: the metrics move together,
+// so overlaid they read as noise. One hue, faceted, y pinned to 0..1 so the
+// panels are comparable to each other and a flat run looks flat.
+function sparkline(values) {
+  const W = 100, H = 40, n = values.length
+  if (n === 0) return ''
+  const x = i => n === 1 ? W / 2 : (i / (n - 1)) * W
+  const y = v => H - v * H
+  const pts = values.map((v, i) => [x(i), y(v)])
+
+  const grid = [0, 0.5, 1].map(v =>
+    `<line x1="0" y1="${y(v)}" x2="${W}" y2="${y(v)}" stroke="var(--grid)" stroke-width="1"
+           vector-effect="non-scaling-stroke" />`).join('')
+
+  const path = n === 1 ? '' :
+    `<path d="M${pts.map(p => p.join(',')).join('L')}" fill="none" stroke="var(--series)"
+           stroke-width="2" stroke-linejoin="round" stroke-linecap="round"
+           vector-effect="non-scaling-stroke" />`
+
+  const dots = pts.map(([px, py], i) =>
+    `<circle cx="${px}" cy="${py}" r="${i === n - 1 ? 3.6 : 2.2}"
+             fill="var(--series)" stroke="var(--surface)" stroke-width="2"
+             vector-effect="non-scaling-stroke">
+       <title>run ${i + 1}: ${fmt(values[i])}</title>
+     </circle>`).join('')
+
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img"
+               aria-label="tendência, ${n} execuções, último ${fmt(values[n - 1])}">
+            ${grid}${path}${dots}
+          </svg>`
+}
+
+function renderSparks(runs) {
+  // index.json is newest-first; a trend reads left to right, oldest to newest.
+  const chrono = [...runs].reverse()
+  $('sparks').innerHTML = METRICS.map(m => {
+    const vals = chrono.map(r => r.metrics[m])
+    const last = vals[vals.length - 1]
+    const prev = vals.length > 1 ? vals[vals.length - 2] : null
+    const d = prev === null ? null : last - prev
+    const cls = d === null ? 'flat' : Math.abs(d) < 5e-4 ? 'flat' : d > 0 ? 'up' : 'down'
+    const arrow = d === null ? '' : Math.abs(d) < 5e-4 ? '→' : d > 0 ? '↑' : '↓'
+    return `
+      <div class="spark">
+        <div class="spark-head">
+          <span class="spark-name">${LABELS[m]}</span>
+          <span class="spark-val">${fmt(last)}</span>
+        </div>
+        <div class="spark-head">
+          <span class="spark-delta ${cls}">${d === null ? 'primeira execução' : `${arrow} ${d >= 0 ? '+' : ''}${d.toFixed(3)}`}</span>
+        </div>
+        ${sparkline(vals)}
+        <div class="spark-foot"><span>${BLURB[m]}</span><span>0–1</span></div>
+      </div>`
+  }).join('')
+}
+
+// ── Tabela de execuções ────────────────────────────────
+function renderRuns(runs) {
+  $('runs').innerHTML = `
+    <thead><tr>
+      <th>Execução</th><th>Rótulo</th>
+      ${METRICS.map(m => `<th class="num">${LABELS[m]}</th>`).join('')}
+      <th>Notas</th>
+    </tr></thead>
+    <tbody>${runs.map(r => `
+      <tr class="run-row" data-run="${esc(r.run_id)}">
+        <td class="rid">${esc(r.run_id)}</td>
+        <td>${esc(r.label)}${r.failures ? ` <span class="pill fail">${r.failures} erro(s)</span>` : ''}</td>
+        ${METRICS.map(m => `<td class="num">${fmt(r.metrics[m])}</td>`).join('')}
+        <td class="note">${esc(r.notes)}</td>
+      </tr>`).join('')}
+    </tbody>`
+  $('runs').querySelectorAll('.run-row').forEach(tr => {
+    // sem scroll: a tabela é a navegação, pular pro detalhe tira ela da vista
+    tr.onclick = () => showDetail(tr.dataset.run, false)
+  })
+}
+
+// ── Detalhe de uma execução ────────────────────────────
+async function showDetail(runId, scroll = true) {
+  $('runs').querySelectorAll('.run-row').forEach(tr =>
+    tr.classList.toggle('sel', tr.dataset.run === runId))
+
+  const run = await (await fetch(`runs/${runId}.json`)).json()
+  const c = run.config
+  $('detail-title').textContent = `Detalhe — ${run.label}`
+  $('detail-cfg').innerHTML = [
+    ['k', c.k],
+    ['modelo', c.embedding_model],
+    ['chunks', c.n_chunks ?? '?'],
+    ['perguntas', c.n_queries],
+    ['corpus', (c.corpus_sha256 || '').slice(0, 12)],
+    ['max_tokens', c.chunker?.max_tokens ?? '?'],
+  ].map(([k, v]) => `<span class="chip">${esc(k)} <b>${esc(v)}</b></span>`).join('')
+    + METRICS.map(m => `<span class="chip">${LABELS[m]} single <b>${fmt(run.metrics_by_type.single_chunk[m])}</b> · multi <b>${fmt(run.metrics_by_type.multi_chunk[m])}</b></span>`).join('')
+
+  $('detail').innerHTML = `
+    <thead><tr>
+      <th>#</th><th>Pergunta</th><th>Tipo</th>
+      <th class="num">Recall</th><th class="num">nDCG</th><th class="num">Rank</th>
+      <th>Esperado vs recuperado</th>
+    </tr></thead>
+    <tbody>${run.per_query.map(q => `
+      <tr>
+        <td class="rid">${esc(q.query_id)}</td>
+        <td class="qtext">${esc(q.question)}
+            <span class="pill ${q.verdict}">${q.verdict}</span></td>
+        <td class="rid">${q.type === 'multi_chunk' ? 'multi' : 'single'}</td>
+        <td class="num">${fmt(q.recall)}</td>
+        <td class="num">${fmt(q.ndcg)}</td>
+        <td class="num">${q.best_rank ?? '—'}</td>
+        <td class="chunks">
+          ${q.expected.map(e => {
+            const got = q.retrieved.find(r => r.chunk_id === e)
+            return got
+              ? `<div class="hit">✓ ${esc(e)} · rank ${got.rank} · ${got.similarity}</div>`
+              : `<div class="miss">✗ ${esc(e)} · não veio</div>`
+          }).join('')}
+          <div class="miss">top-${q.k}: ${q.retrieved.map(r =>
+            r.expected ? `<b class="hit">${esc(r.chunk_id)}</b>` : esc(r.chunk_id)).join(' · ') || '—'}</div>
+        </td>
+      </tr>`).join('')}
+    </tbody>`
+  $('detail-sec').hidden = false
+  if (scroll) $('detail-sec').scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+// ── Carga ──────────────────────────────────────────────
+// Rechamada depois de cada run: o index.json acabou de mudar no disco.
+async function load(select) {
+  const r = await fetch('runs/index.json', { cache: 'no-store' })
+  if (!r.ok) throw new Error(`HTTP ${r.status}`)
+  const { runs } = await r.json()
+  if (!runs.length) {
+    $('sub').textContent = ''
+    $('empty').hidden = false
+    $('empty').innerHTML = 'Nenhuma execução ainda. Use o botão <b>Rodar</b> aí em cima.'
+    return
+  }
+  $('empty').hidden = true
+  $('sub').textContent = `${runs.length} execução(ões) · ${runs[0].config.n_queries} perguntas`
+  renderSparks(runs)
+  renderRuns(runs)
+  $('trend-sec').hidden = false
+  $('runs-sec').hidden = false
+  // pré-seleciona sem roubar o scroll, exceto quando é o run recém-criado
+  showDetail(select || runs[0].run_id, Boolean(select))
+}
+
+load().catch(e => {
+  $('sub').textContent = ''
+  $('empty').hidden = false
+  $('empty').innerHTML = `Falha ao ler <code>runs/index.json</code> (${esc(e.message)}). Sirva esta página por HTTP: <code>cd eval &amp;&amp; docker compose up -d ui</code>`
+  console.error(e)
+})
+
+// ── Rodar ──────────────────────────────────────────────
+// Sem streaming de progresso: a resposta só volta no fim. As perguntas levam
+// ~1 min, e o log ao vivo está no `docker compose logs -f ui`.
+$('runf').onsubmit = async e => {
+  e.preventDefault()
+  const msg = $('runmsg')
+  $('go').disabled = true
+  $('go').textContent = '⏳ rodando…'
+  msg.className = ''
+  msg.textContent = 'avaliando… leva ~1 min'
+  try {
+    const r = await fetch('api/run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ label: $('label').value, note: $('note').value, k: Number($('k').value) }),
+    })
+    const d = await r.json()
+    if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`)
+    msg.textContent = `ok · ${d.run_id}`
+    $('label').value = $('note').value = ''
+    await load(d.run_id)
+  } catch (err) {
+    msg.className = 'err'
+    msg.textContent = `falhou: ${err.message}`
+  } finally {
+    $('go').disabled = false
+    $('go').textContent = '▶ Rodar'
+  }
+}
+</script>
+</body>
+</html>

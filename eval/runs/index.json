@@ -1,0 +1,90 @@
+{
+  "runs": [
+    {
+      "run_id": "2026-08-28T12-43-27",
+      "label": "week03 · multilingual-e5-base 768d",
+      "notes": "",
+      "config": {
+        "k": 5,
+        "api": "http://document-api:8000",
+        "embedding_model": "intfloat/multilingual-e5-base",
+        "corpus_sha256": "1e05e97f4479ae9a5f2f329fc543485d66db8517fe077c9fe7305c3bfa68c06b",
+        "chunker": {
+          "class": "HybridChunker",
+          "max_tokens": 512,
+          "merge_peers": true,
+          "tokenizer": "sentence-transformers/all-MiniLM-L6-v2"
+        },
+        "n_queries": 38,
+        "n_chunks": 183
+      },
+      "metrics": {
+        "hit_rate": 0.9211,
+        "recall": 0.7741,
+        "precision": 0.2842,
+        "mrr": 0.6895,
+        "ndcg": 0.6643
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 0.8947,
+          "recall": 0.8947,
+          "precision": 0.1789,
+          "mrr": 0.686,
+          "ndcg": 0.7378
+        },
+        "multi_chunk": {
+          "hit_rate": 0.9474,
+          "recall": 0.6535,
+          "precision": 0.3895,
+          "mrr": 0.693,
+          "ndcg": 0.5909
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-08-28T12-43-21",
+      "label": "week01 · MiniLM-L6-v2 384d",
+      "notes": "",
+      "config": {
+        "k": 5,
+        "api": "http://document-api:8000",
+        "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+        "corpus_sha256": "1e05e97f4479ae9a5f2f329fc543485d66db8517fe077c9fe7305c3bfa68c06b",
+        "chunker": {
+          "class": "HybridChunker",
+          "max_tokens": 512,
+          "merge_peers": true,
+          "tokenizer": "sentence-transformers/all-MiniLM-L6-v2"
+        },
+        "n_queries": 38,
+        "n_chunks": 183
+      },
+      "metrics": {
+        "hit_rate": 0.6842,
+        "recall": 0.4759,
+        "precision": 0.1579,
+        "mrr": 0.3934,
+        "ndcg": 0.3585
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 0.6316,
+          "recall": 0.6316,
+          "precision": 0.1263,
+          "mrr": 0.3465,
+          "ndcg": 0.4182
+        },
+        "multi_chunk": {
+          "hit_rate": 0.7368,
+          "recall": 0.3202,
+          "precision": 0.1895,
+          "mrr": 0.4404,
+          "ndcg": 0.2988
+        }
+      },
+      "failures": 0
+    }
+  ]
+}
