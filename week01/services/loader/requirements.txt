@@ -1,0 +1,7 @@
+# Pinned. The embedding model's tokenizer and weights come from these versions;
+# an unannounced bump silently changes every vector in the index.
+sentence-transformers==6.0.0
+psycopg2-binary==2.9.12
+pgvector==0.5.0
+pandas==3.0.5
+pyarrow==25.0.1

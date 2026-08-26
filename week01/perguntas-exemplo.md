@@ -1,7 +1,7 @@
 # Perguntas de exemplo para o RAG
 
 Corpus indexado: 19 PDFs de Projetos de Lei de 2026 (tema meio ambiente),
-baixados da API de Dados Abertos da Câmara. 180 chunks, embeddings
+baixados da API de Dados Abertos da Câmara. 183 chunks, embeddings
 `all-MiniLM-L6-v2` (384 dim).
 
 ## Justiça climática e responsabilidade
