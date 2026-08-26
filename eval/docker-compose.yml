@@ -1,0 +1,53 @@
+# Runs the eval against week01's document-api, which must already be up.
+#
+#   docker compose up -d ui                        # painel em :8080, roda pelo botão
+#   docker compose run --rm eval --label "baseline"
+#   STACK=week03 docker compose run --rm eval --label "multilingual-e5"
+#   docker compose run --rm eval --list
+#
+services:
+
+  # `profiles` mantém este serviço fora do `docker compose up`: sem ele, subir o
+  # painel dispararia uma avaliação inteira sem querer. `run` ignora profiles.
+  eval:
+    profiles: ["cli"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      API_URL: http://document-api:8000
+      DATASET_DIR: /dataset
+    volumes:
+      - .:/eval
+      - ../dataset/out:/dataset:ro
+    networks:
+      - week01
+
+  # Serve index.html e atende POST /api/run — o mesmo run.py, importado no
+  # processo. Por isso precisa da rede do week01 e do dataset, ao contrário do
+  # servidor estático que havia aqui antes, e do volume sem `:ro`: o run grava
+  # em runs/.
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["python", "server.py"]
+    environment:
+      API_URL: http://document-api:8000
+      DATASET_DIR: /dataset
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/eval
+      - ../dataset/out:/dataset:ro
+    networks:
+      - week01
+
+# Which stack to score. Default week01 (MiniLM); week03 (multilingual-e5) is
+#   STACK=week03 docker compose run --rm eval --label "e5"
+# Same service name inside both networks, so API_URL never changes.
+networks:
+  week01:
+    external: true
+    name: ${STACK:-week01}_default

@@ -1,0 +1,20 @@
+# One-shot dataset build. Not part of week01's stack — run it by hand when the
+# corpus or the ground truth changes:
+#
+#   docker compose run --rm build                  # full, ~35 min on CPU
+#   docker compose run --rm build --reuse-corpus   # re-resolve only, seconds
+#
+services:
+  build:
+    build:
+      context: ./build
+      dockerfile: Dockerfile
+    environment:
+      HF_HOME: /root/.cache/huggingface
+      # docling's layout model calls torch.compile; inductor needs a C++
+      # compiler the slim image doesn't ship. Run eager instead of adding g++.
+      TORCH_COMPILE_DISABLE: "1"
+    volumes:
+      - .:/dataset
+      - ~/.cache/huggingface:/root/.cache/huggingface
+      - ~/.cache/docling:/root/.cache/docling

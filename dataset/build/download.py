@@ -80,7 +80,8 @@ def main():
     ap.add_argument("--year", type=int, required=True, help="Bill year (e.g. 2024)")
     ap.add_argument("--topic", default="", help='Keyword, e.g. "meio ambiente"')
     ap.add_argument("--limit", type=int, default=20, help="How many bills to download")
-    ap.add_argument("--out", default="pls", help="Output folder")
+    ap.add_argument("--out", default=str(Path(__file__).resolve().parent.parent / "source"),
+                    help="Output folder (PDFs land in <out>/pdfs)")
     args = ap.parse_args()
 
     folder = Path(args.out)

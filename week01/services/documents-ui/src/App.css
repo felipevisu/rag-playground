@@ -66,155 +66,10 @@
 
 .theme-btn:hover { color: var(--accent); border-color: var(--accent-line); }
 
-/* ── Upload Area ─────────────────────────────────────────────── */
-.upload-area { padding: 12px 12px 4px; }
-
-.upload-btn {
-  width: 100%;
-  background: var(--surface);
-  border: 1px dashed var(--border-strong);
-  border-radius: 8px;
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 500;
-  padding: 10px 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  transition: all 0.15s;
-  font-family: inherit;
-}
-
-.upload-btn:hover:not(:disabled),
-.upload-btn.drag-over {
-  background: var(--accent-soft);
-  border-color: var(--accent-2);
-  border-style: solid;
-}
-
-.upload-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-/* ── Storage Panel ───────────────────────────────────────────── */
-.minio-panel {
-  margin: 12px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
-}
-
-.minio-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.minio-title {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.minio-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent-2);
-}
-
-.live-indicator {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  color: var(--ok);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 600;
-}
-
-.live-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--ok);
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.3; }
 }
-
-.minio-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  padding: 9px 12px;
-  color: var(--text);
-  text-decoration: none;
-  font-size: 13.5px;
-  font-weight: 500;
-  transition: all 0.15s;
-}
-
-.minio-link:hover {
-  background: var(--accent-soft);
-  border-color: var(--accent-line);
-  color: var(--accent);
-}
-
-.minio-arrow { font-size: 12px; color: var(--accent-2); }
-
-/* ── Status Steps ────────────────────────────────────────────── */
-.status-steps {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  margin-top: 6px;
-  flex-wrap: wrap;
-}
-
-.step-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10.5px;
-  font-weight: 600;
-  padding: 2px 7px;
-  border-radius: 999px;
-  border: 1px solid;
-  white-space: nowrap;
-}
-
-.step-pill.done    { color: var(--ok);   border-color: var(--ok);   background: var(--ok-soft); }
-.step-pill.active  { color: var(--warn); border-color: var(--warn); background: var(--warn-soft); animation: pulse-step 1.2s ease-in-out infinite; }
-.step-pill.pending { color: var(--faint); border-color: var(--border); background: transparent; }
-.step-pill.error   { color: var(--err);  border-color: var(--err);  background: var(--err-soft); }
-
-.step-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: currentColor;
-  flex-shrink: 0;
-}
-
-.step-sep { color: var(--faint); font-size: 9px; }
-
-.step-error-msg { font-size: 10.5px; color: var(--err); font-weight: 600; }
 
 @keyframes pulse-step {
   0%, 100% { opacity: 1; }
@@ -258,7 +113,6 @@
 
 .doc-icon { flex-shrink: 0; color: var(--muted); display: flex; }
 .doc-item.active .doc-icon { color: var(--accent); }
-.doc-error .doc-icon { color: var(--err); }
 
 .doc-body { flex: 1; min-width: 0; }
 
@@ -273,7 +127,6 @@
 }
 
 .doc-item.active .doc-name { color: var(--accent); font-weight: 600; }
-.doc-error .doc-name { color: var(--err); }
 
 .doc-sub {
   display: flex;
@@ -292,23 +145,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.badge-processing { background: var(--surface-2); color: var(--muted); }
-
 .doc-date { font-size: 11.5px; color: var(--muted); }
-
-.del-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--faint);
-  padding: 4px;
-  border-radius: 5px;
-  transition: all 0.1s;
-  display: flex;
-  align-items: center;
-}
-
-.del-btn:hover { background: var(--err-soft); color: var(--err); }
 
 /* ── Main ────────────────────────────────────────────────────── */
 .main {

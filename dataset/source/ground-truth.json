@@ -1,0 +1,500 @@
+{
+  "description": "Ground truth for the RAG eval. Hand-editable source of truth. Chunk ids are NOT stored here on purpose - they are resolved at build time by matching each anchor (verbatim text lifted from the PDF) against the chunks produced by build.py.",
+  "documents": [
+    {
+      "filename": "PL_1502_2026.pdf",
+      "title": "Institui a Política Nacional de Justiça Climática e de Combate ao Racismo Ambiental e cria o Fundo Nacional de Adaptação e Reparação Climática (FNARC)",
+      "questions": [
+        {
+          "query_id": "q001",
+          "type": "single_chunk",
+          "question": "O que o PL 1502/2026 define como racismo ambiental?",
+          "expected_answer": "Práticas, políticas ou omissões que expõem de forma diferencial e desproporcional grupos raciais, étnicos ou territoriais a riscos e danos ambientais e climáticos, bem como a negação ou restrição de acesso a mecanismos de proteção, reparação e participação (art. 2º, II).",
+          "anchors": [
+            "Parágrafo único. A Política prevista neste artigo reger-se-á pelos princípios da precaução, prevenção, equidade intergeracional, reconhecimento e proteção de direitos territoriais, participação e controle social, reparaç"
+          ]
+        },
+        {
+          "query_id": "q002",
+          "type": "multi_chunk",
+          "question": "Quais são as fontes de recursos do Fundo Nacional de Adaptação e Reparação Climática (FNARC) e como é composto o seu Comitê Gestor?",
+          "expected_answer": "O FNARC é criado no art. 3º como fundo especial. As fontes estão no § 1º: dotações da LOA e créditos adicionais, transferências voluntárias e de fundos/agências multilaterais, receitas vinculadas por lei específica, contribuições de agentes responsáveis por emissões e degradação, doações/legados/convênios e recursos de instrumentos de precificação de carbono. O Comitê Gestor (§ 3º) inclui representantes de Ministérios da área ambiental e econômica, do órgão federal de políticas indigenistas e étnico-raciais, do Ministério da Cidadania, de estados e municípios, de povos indígenas, quilombolas, comunidades tradicionais e movimentos sociais, e da sociedade civil e especialistas independentes.",
+          "anchors": [
+            "V - reassentamento assistido: conjunto de medidas de relocação, proteção social, reparação e reconstrução de meios de vida, com garantia de moradia digna, direitos territoriais e recuperação de renda, decorrentes de impa",
+            "- § 1º São fontes de recursos do FNARC, sem prejuízo de outras previstas em lei: - a) dotações consignadas na Lei Orçamentária Anual (LOA) e créditos adicionais; - b) transferências voluntárias e transferências de fundos",
+            "- § 3º O FNARC será gerido por Comitê Gestor, órgão colegiado deliberativo, cuja composição, atribuições, quórum, mandato e regras de funcionamento serão definidos em regulamento, assegurada, no mínimo, a participação: -"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_182_2026.pdf",
+      "title": "Susta os efeitos da Portaria GM/MMA nº 1.643/2026, que institui Comitê Gestor do Plano de Letramento em Gênero, Raça e Diversidade no Trabalho",
+      "questions": [
+        {
+          "query_id": "q003",
+          "type": "single_chunk",
+          "question": "Qual ato do Poder Executivo o PL 182/2026 pretende sustar e o que esse ato institui?",
+          "expected_answer": "A Portaria GM/MMA nº 1.643, de 30 de março de 2026, do Ministério do Meio Ambiente e Mudança do Clima, que institui Comitê Gestor vinculado ao Plano de Letramento em Gênero, Raça e Diversidade no Trabalho. A sustação é feita com base no art. 49, V, da Constituição Federal.",
+          "anchors": [
+            "Susta os efeitos da Portaria GM/MMA nº 1.643, de 30 de março de 2026, que institui Comitê Gestor vinculado ao Plano de Letramento em Gênero, Raça e Diversidade no Trabalho. O Congresso Nacional decreta: Art. 1º Ficam sus"
+          ]
+        },
+        {
+          "query_id": "q004",
+          "type": "multi_chunk",
+          "question": "Quais dispositivos constitucionais e quais princípios da Administração Pública o PL 182/2026 alega terem sido violados pela portaria que pretende sustar?",
+          "expected_answer": "Dispositivos: art. 49, V (competência do Congresso para sustar atos que exorbitem o poder regulamentar) e art. 84, VI (inovação indevida na ordem jurídica por ato administrativo). Princípios: reserva legal e legalidade estrita, hierarquia normativa, separação dos Poderes, eficiência, economicidade e segurança jurídica; alega também risco de desvio de finalidade administrativa.",
+          "anchors": [
+            "O presente Projeto de Decreto Legislativo tem por objetivo sustar os efeitos da Portaria GM/MMA nº 1.643, de 30 de março de 2026, editada pelo Ministério do Meio Ambiente e Mudança do Clima, por afrontar a reserva legal,",
+            "O ato administrativo impugnado não se limita a disciplinar procedimento ou fluxo interno. Ele cria uma instância de governança com efeitos concretos sobre a gestão pública, sem amparo legal suficiente para tanto. Ao fazê",
+            "comitê favorece interpretações amplas e cria incerteza quanto à extensão das suas atribuições. Há, ainda, risco de desvio de finalidade administrativa, na medida em que o comitê pode se converter em fórum permanente de f",
+            "normativas e operacionais de caráter permanente, sobretudo quando isso implica inovação no ordenamento jurídico. Diante disso, a sustação do ato é medida necessária para restabelecer a legalidade, conter a expansão indev"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_1928_2026.pdf",
+      "title": "Dispõe sobre apreensão, processo administrativo de perdimento e destinação de bens usados em infrações à defesa agropecuária federal",
+      "questions": [
+        {
+          "query_id": "q005",
+          "type": "single_chunk",
+          "question": "Em que hipóteses NÃO se aplica o perdimento do meio de transporte segundo o PL 1928/2026?",
+          "expected_answer": "Pelo art. 8º, quando o proprietário ou possuidor comprovar cumulativamente: I - a propriedade ou posse legítima do bem; II - a ausência de participação na infração; III - a ausência de benefício direto ou indireto com a prática ilícita; e IV - a adoção de cautelas para impedir o uso indevido do bem, quando exigíveis.",
+          "anchors": [
+            "Art. 6º O perdimento de mercadoria irregular poderá ser aplicado quando ficar comprovada, no processo administrativo, a infração à defesa agropecuária federal. Art. 7º O perdimento do meio de transporte dependerá da comp"
+          ]
+        },
+        {
+          "query_id": "q006",
+          "type": "multi_chunk",
+          "question": "Quais situações autorizam a apreensão de bens e, uma vez declarado o perdimento em favor da União, quais destinações esses bens podem receber?",
+          "expected_answer": "Apreensão (art. 3º): ausência ou irregularidade de documentação fiscal/sanitária/fitossanitária/zoossanitária; suspeita de falsificação, adulteração, contaminação, fraude, clandestinidade ou origem ilícita; circulação de mercadoria proibida ou não autorizada; risco à saúde pública, sanidade animal ou vegetal, biossegurança, meio ambiente ou rastreabilidade; uso do meio de transporte para ocultar ou facilitar a infração. Destinações após o perdimento (art. 12): incorporação ao patrimônio de órgão federal, prioritariamente para fiscalização e defesa agropecuária; cessão ou doação a entes federativos; alienação em leilão; destruição, inutilização, reciclagem ou descaracterização; outra forma prevista em lei — observados os critérios do art. 13 (utilidade pública, custo de guarda, aptidão institucional, ausência de risco sanitário, rastreabilidade).",
+          "anchors": [
+            "- IV - terceiro de boa-fé: a pessoa física ou jurídica que comprove não ter concorrido para a infração nem dela ter se beneficiado, direta ou indiretamente. Art. 3º A autoridade competente poderá apreender bens, mercador",
+            "I - os prazos de defesa e recurso; II - as autoridades competentes para instaurar, instruir e julgar o processo; III - os critérios de guarda, remoção, depósito, apreensão, avaliação e alienação; - IV - as hipóteses de d",
+            "V - outra forma de destinação prevista em lei. Art. 13. A destinação dos bens observará, sempre que aplicável: I - a utilidade pública do bem; II - o custo de guarda e manutenção; III - a aptidão para uso institucional; "
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_21_2026.pdf",
+      "title": "Institui o Prêmio Câmara Ambiental e Desenvolvimento Sustentável",
+      "questions": [
+        {
+          "query_id": "q007",
+          "type": "single_chunk",
+          "question": "Quantos nomes cada parlamentar membro da Comissão pode indicar ao Prêmio Câmara Ambiental e Desenvolvimento Sustentável, e até quando as indicações devem ser apresentadas?",
+          "expected_answer": "Cada parlamentar membro da Comissão pode indicar até três entidades/pessoas jurídicas e até três personalidades, todos vinculados a uma das áreas do art. 3º. As indicações são apresentadas em forma de relato sintetizado e fundamentado até o último dia útil do mês de junho de cada ano.",
+          "anchors": [
+            "- Art. 1º Fica instituído o Prêmio Câmara Ambiental e Desenvolvimento Sustentável, a ser concedido, anualmente, pela Câmara dos Deputados a pessoas físicas e jurídicas que se destaquem pela implementação de iniciativas e"
+          ]
+        },
+        {
+          "query_id": "q008",
+          "type": "multi_chunk",
+          "question": "Quais são todas as vedações à indicação de candidatos ao Prêmio e quando e onde ocorre a cerimônia de premiação?",
+          "expected_answer": "Vedações: parlamentares em pleno exercício do mandato (art. 2º, § 3º, III); pessoa jurídica inscrita no CNEP, CEIS ou impedida no SICONV, e pessoa física enquadrada na Lei de Inelegibilidades, na Lei de Responsabilidade Fiscal ou na Lei de Improbidade Administrativa (art. 3º, § 3º); pessoas físicas ou jurídicas com condenação transitada em julgado por crimes ambientais ou maus-tratos a animais (art. 3º, § 4º). A cerimônia ocorre preferencialmente no Salão Nobre da Câmara dos Deputados, na última semana de novembro, em referência ao Dia do Rio (24/11) e ao Dia do Estatuto da Terra (30/11).",
+          "anchors": [
+            "- III - É vedada a indicação de nomes de Parlamentares que estejam em pleno exercício de seu mandato. - § 4º A indicação dos membros será realizada por formulário de inscrição após a publicação do regulamento do concurso",
+            "- II - recursos naturais renováveis; flora, fauna e solo; edafologia e desertificação; - III - desenvolvimento sustentável. - § 1º Poderão ser premiados até cinco agraciados por área. - § 2º Além dos agraciados previstos"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_253_2026.pdf",
+      "title": "Susta o Decreto nº 12.888/2026, que cria a Reserva de Desenvolvimento Sustentável Córregos dos Vales do Norte de Minas",
+      "questions": [
+        {
+          "query_id": "q009",
+          "type": "single_chunk",
+          "question": "Qual decreto o PL 253/2026 susta e em quais municípios fica a unidade de conservação criada por ele?",
+          "expected_answer": "O Decreto nº 12.888, de 23 de março de 2026, que cria a Reserva de Desenvolvimento Sustentável Córregos dos Vales do Norte de Minas, localizada nos municípios de Riacho dos Machados e Serranópolis de Minas, no Estado de Minas Gerais.",
+          "anchors": [
+            "Susta os efeitos do Decreto nº 12.888, de 23 de março de 2026, que Cria a Reserva de Desenvolvimento Sustentável Córregos dos Vales do Norte de Minas, localizada nos Municípios de Riacho dos Machados e de Serranópolis de"
+          ]
+        },
+        {
+          "query_id": "q010",
+          "type": "multi_chunk",
+          "question": "Quais vícios o PL 253/2026 aponta no Decreto nº 12.888/2026 e em quais normas se apoia para pedir sua sustação?",
+          "expected_answer": "Vícios: insuficiência ou fragilidade dos estudos técnicos, em desacordo com o art. 22, § 2º, da Lei nº 9.985/2000 (SNUC), que exige estudos prévios e consulta pública; falha na consulta às populações locais, violando a efetiva participação social, a publicidade e a participação democrática; restrições ao uso da terra e ao desenvolvimento econômico regional sem mecanismos claros de compensação ou indenização, ameaçando o direito de propriedade do art. 5º, XXII, da Constituição; e ausência de debate no Poder Legislativo. Fundamento da sustação: art. 49, V, da Constituição Federal.",
+          "anchors": [
+            "O presente Projeto de Decreto Legislativo tem por objetivo sustar os efeitos do Decreto nº 12.888, de 2026, que institui a Reserva de Desenvolvimento Sustentável Córregos dos Vales do Norte de Minas, localizada nos Munic",
+            "segurança jurídica, não podendo resultar em restrições desproporcionais a direitos fundamentais, notadamente o direito de propriedade e o livre exercício de atividades econômicas lícitas. O Decreto nº 12.888/2026 apresen",
+            "pública, como a publicidade e a participação democrática. Comunidades diretamente afetadas, incluindo produtores rurais e pequenos proprietários, podem não ter sido devidamente ouvidos ou considerados. Ademais, a institu"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_255_2026.pdf",
+      "title": "Dispõe sobre o reconhecimento e a proteção jurídica dos animais comunitários",
+      "questions": [
+        {
+          "query_id": "q011",
+          "type": "single_chunk",
+          "question": "Qual é a definição de animal comunitário adotada pelo PL 255/2026 e que proteção lhe é conferida?",
+          "expected_answer": "Animal comunitário é aquele que, embora não possua tutor individual identificado, mantém vínculo de convivência e dependência com comunidade local, sendo por ela cuidado, alimentado e protegido (art. 1º). Ele goza de proteção integral do Estado, vedada qualquer forma de violência, remoção arbitrária ou eliminação injustificada (art. 2º).",
+          "anchors": [
+            "Art. 1º Considera-se animal comunitário aquele que, embora não possua tutor individual identificado, mantém vínculo de convivência e dependência com comunidade local, sendo por ela cuidado, alimentado e protegido. Art. 2"
+          ]
+        },
+        {
+          "query_id": "q012",
+          "type": "multi_chunk",
+          "question": "Que alteração o PL 255/2026 promove na Lei nº 9.605/1998 e qual a justificativa apresentada para essa mudança?",
+          "expected_answer": "O art. 3º acrescenta um § 3º ao art. 32 da Lei nº 9.605/1998, estabelecendo que a inexistência de tutor individual não afasta a caracterização do crime nem reduz a gravidade da conduta praticada contra animal comunitário. A justificativa é que crimes contra animais de rua frequentemente deixam de ser apurados sob o argumento falacioso de que não há 'vítima secundária' (o tutor) ou de que a conduta teria menor relevância social; a mudança afirma que a dignidade do animal é um valor em si, independente da titularidade de propriedade.",
+          "anchors": [
+            "Art. 1º Considera-se animal comunitário aquele que, embora não possua tutor individual identificado, mantém vínculo de convivência e dependência com comunidade local, sendo por ela cuidado, alimentado e protegido. Art. 2",
+            "A presente iniciativa tem por objetivo formalizar o reconhecimento jurídico dos animais comunitários e assegurar que a ausência de um tutor individualizado não sirva de pretexto para a impunidade em casos de violência ou",
+            "dignidade do animal é um valor em si, independente da titularidade de propriedade, e que a agressão ao animal comunitário fere não apenas o ser senciente, mas o sentimento de compaixão e os esforços de cuidado de toda um"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_2586_2026.pdf",
+      "title": "Dispõe sobre integridade da informação sobre clima e meio ambiente e enfrentamento da desinformação climática e ambiental",
+      "questions": [
+        {
+          "query_id": "q013",
+          "type": "single_chunk",
+          "question": "Qual a diferença entre desinformação climática e desinformação socioambiental no PL 2586/2026?",
+          "expected_answer": "Desinformação climática é a difusão, com dolo ou culpa grave, de conteúdos falsos ou distorcidos que negam a existência das mudanças climáticas, sua causa humana ou a gravidade de seus impactos, fomentando dúvidas infundadas sobre o consenso científico para atrasar a ação climática. Desinformação socioambiental é a disseminação de conteúdos enganosos, descontextualizados ou fabricados, com dolo ou culpa grave, sobre ecossistemas locais, uso da terra, comunidades atingidas, políticas ambientais ou desastres agudos, com potencial de induzir condutas de risco coletivo, obstruir ações de defesa civil ou violar o direito à informação.",
+          "anchors": [
+            "- I - integridade da informação sobre clima e meio ambiente: o ecossistema de comunicação no qual as informações de interesse público sobre o meio ambiente e clima, a emergência climática e os desastres são precisas, con"
+          ]
+        },
+        {
+          "query_id": "q014",
+          "type": "multi_chunk",
+          "question": "Quais são as modalidades de transparência pública ambiental e climática definidas no PL 2586/2026 e como elas se relacionam com o entendimento do STJ sobre o dever estatal de transparência ambiental?",
+          "expected_answer": "São quatro: ativa (divulgação proativa, contínua e tempestiva, independentemente de solicitação), passiva (atendimento a pedidos de acesso a informações não publicadas), reativa (produção e publicação de informação inexistente mas necessária à tutela ambiental, mediante requerimento) e corretiva (retificação, contraposição ou complementação de informações falsas, desatualizadas ou incompletas). O STJ, no Incidente de Assunção de Competência nº 13 (Tema 13), fixou a 'tripla dimensão' do dever de transparência ambiental — ativa, passiva e reativa. O projeto positiva esse entendimento e acrescenta a quarta dimensão, a corretiva, estendendo o dever também a quem desenvolva atividade potencialmente poluidora.",
+          "anchors": [
+            "III - erro individual: afirmação inexata, sem intenção de causar dano ambiental ou coletivo, passível de correção por mecanismos de informação e educação; o mesmo que informação incorreta (do inglês misinformation ); IV-",
+            "VIII - transparência pública ambiental e/ou climática passiva: atendimento, pelo Poder Público e por quem desenvolva atividade potencialmente poluidora, a pedidos formulados por qualquer interessado para acesso a informa",
+            "A jurisprudência do Superior Tribunal de Justiça, ao julgar o Incidente de Assunção de Competência n.º 13 (Tema 13), fixou teses que consolidam a 'tripla dimensão' do dever estatal de transparência ambiental: ativa, pass",
+            "Na região da América Latina e do Caribe, o Acordo de Escazú 5 estabelece padrões para acesso à informação, participação e justiça em matéria ambiental, além de prever a proteção de defensores ambientais. Nesse contexto, "
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_261_2026.pdf",
+      "title": "Susta o Decreto nº 12.888/2026 (RDS Córregos dos Vales do Norte de Minas) — proposição do Dep. Mauricio do Vôlei",
+      "questions": [
+        {
+          "query_id": "q015",
+          "type": "single_chunk",
+          "question": "Qual é a área da RDS Córregos dos Vales do Norte de Minas e qual objetivo o ICMBio atribui a ela?",
+          "expected_answer": "A RDS tem área de 40.834 hectares e, segundo o ICMBio, visa proteger os ecossistemas do Cerrado e garantir o modo de vida das populações geraizeiras no norte de Minas Gerais.",
+          "anchors": [
+            "O Decreto nº 12.888, de 23 de março de 2026, cria a Reserva de Desenvolvimento Sustentável (RDS) Córregos dos Vales do Norte de Minas', localizada nos municípios de Riacho dos Machados e de Serranópolis de Minas, estado "
+          ]
+        },
+        {
+          "query_id": "q016",
+          "type": "multi_chunk",
+          "question": "Com quais argumentos e dados o PL 261/2026 sustenta que houve desvio de finalidade na criação da RDS Córregos dos Vales do Norte de Minas?",
+          "expected_answer": "A síntese dos estudos técnicos justifica a RDS pela necessidade de 'desconcentrar a terra', citando que 93% das unidades produtivas de Riacho dos Machados são minifúndios ou pequenas propriedades — 821 propriedades que ocupam área equivalente à de apenas sete propriedades improdutivas (cerca de 37.000 ha). O projeto argumenta que esse fundamento não se sustenta justamente pelo elevado número de pequenas propriedades afetadas, caracterizando desvio de finalidade; soma a isso a concentração da RDS em um único município (cerca de 31% do perímetro de Riacho dos Machados), a ausência de avaliação de impactos socioeconômicos e a falta de clareza sobre regularização fundiária, compensações e alternativas produtivas.",
+          "anchors": [
+            "O Decreto nº 12.888, de 23 de março de 2026, cria a Reserva de Desenvolvimento Sustentável (RDS) Córregos dos Vales do Norte de Minas', localizada nos municípios de Riacho dos Machados e de Serranópolis de Minas, estado ",
+            "Desta forma, resta caracterizado evidente o desvio de finalidade por parte do governo federal ao criar a RDS, tendo em vista que o argumento de se promover a 'desconcentração de terras' não se sustenta, considerando o el"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_263_2026.pdf",
+      "title": "Susta a Portaria GM/MMA nº 1.424/2025, que reconhece o Corredor Ecológico Carajás-Bacajá, no Pará",
+      "questions": [
+        {
+          "query_id": "q017",
+          "type": "single_chunk",
+          "question": "Como a Lei nº 9.985/2000 (SNUC) define corredor ecológico, segundo o PL 263/2026?",
+          "expected_answer": "Pelo art. 2º, XIX, da Lei nº 9.985/2000, corredores ecológicos são porções de ecossistemas naturais ou seminaturais destinadas à conexão entre unidades de conservação, com a finalidade de viabilizar o fluxo gênico, a dispersão de espécies e a manutenção da integridade da biota.",
+          "anchors": [
+            "A presente proposição tem por finalidade sustar ato administrativo do Poder Executivo que, a pretexto de reconhecer o denominado Corredor Ecológico Carajás-Bacajá, exorbita do poder regulamentar e incorre em vícios relev"
+          ]
+        },
+        {
+          "query_id": "q018",
+          "type": "multi_chunk",
+          "question": "Quais vícios o PL 263/2026 identifica na Portaria que reconheceu o Corredor Ecológico Carajás-Bacajá?",
+          "expected_answer": "Cinco vícios: (1) ilegalidade material — a área fica no 'arco do desmatamento', com fragmentação florestal e ocupação consolidada, não se enquadrando no conceito legal de ecossistemas naturais ou seminaturais do SNUC; (2) incompatibilidade fática — sobreposição a imóveis rurais registrados no CAR nos municípios de Marabá e São Félix do Xingu, com atividade agropecuária consolidada; (3) violação ao devido processo legal ambiental e à participação social, sem audiências públicas ou consulta prévia; (4) deficiência de motivação técnico-científica, sem estudos individualizados; (5) vício formal — uso de portaria ministerial para disciplinar área superior a 58 mil hectares, extrapolando o poder regulamentar. A conclusão sintetiza os cinco pontos.",
+          "anchors": [
+            "Ocorre que os próprios elementos técnicos que fundamentaram o ato administrativo indicam que a área objeto do denominado corredor se insere no chamado 'arco do desmatamento', sendo caracterizada por fragmentação floresta",
+            "A análise da realidade fundiária da área abrangida pelo ato impugnado reforça, de maneira inequívoca, a inadequação jurídica da medida. Levantamentos técnicos demonstram que o traçado do denominado corredor ecológico inc",
+            "A instituição de instrumento de ordenamento territorial com repercussões diretas sobre o uso da terra, a atividade econômica e a dinâmica social local exige a observância rigorosa do devido processo legal ambiental. Aind",
+            "Não se verifica, nos elementos que instruem o ato administrativo, a existência de estudos técnico-científicos individualizados, específicos e suficientes que justifiquem a delimitação do corredor ecológico nos moldes est",
+            "O denominado Corredor Ecológico Carajás-Bacajá foi instituído por meio da Portaria GM/MMA nº 1.424/2025, instrumento infralegal que, sob a denominação de 'reconhecimento', estabelece diretrizes de gestão territorial com ",
+            "Diante do exposto, verifica-se que o denominado Corredor Ecológico Carajás-Bacajá: -  não se adequa ao conceito legal previsto no SNUC; -  incide sobre território amplamente antropizado e produtivo; -  foi instituído "
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_271_2026.pdf",
+      "title": "Susta a Portaria nº 76/2026 do IBAMA, que aprova a Agenda Regulatória para o biênio 2026-2027",
+      "questions": [
+        {
+          "query_id": "q019",
+          "type": "single_chunk",
+          "question": "Qual ato do IBAMA o PL 271/2026 susta e qual o seu conteúdo?",
+          "expected_answer": "A Portaria nº 76, de 27 de abril de 2026, do Instituto Brasileiro do Meio Ambiente e dos Recursos Naturais Renováveis (IBAMA), que aprova a Agenda Regulatória para o período de 2026 a 2027. A sustação se dá nos termos do art. 49, V, da Constituição Federal.",
+          "anchors": [
+            "(Do Sr. Cobalchini) Susta os efeitos da Portaria nº 76, de 27 de abril de 2026, do Instituto Brasileiro do Meio Ambiente e dos Recursos Naturais Renováveis - IBAMA, que aprova a Agenda Regulatória para o biênio 20262027."
+          ]
+        },
+        {
+          "query_id": "q020",
+          "type": "multi_chunk",
+          "question": "Quais temas previstos na Agenda Regulatória do IBAMA são criticados pelo PL 271/2026 e por quais razões?",
+          "expected_answer": "Revisão de procedimentos do Potencial de Periculosidade Ambiental (PPA) de agrotóxicos, que criaria exigências por ato infralegal em afronta à Lei nº 14.785/2023; licenciamento ambiental federal com diretrizes sobre emergência climática, classificação de risco e compensações ambientais sem delimitação normativa, ampliando condicionantes e insegurança jurídica para infraestrutura, energia, logística e agroindústria; regulamentação sobre espécies exóticas invasoras, análise de risco e controle de bioinvasão sem critérios objetivos, com risco para aquicultura, silvicultura e sistemas agropecuários; e revisão do controle de produtos florestais e das operações de importação/exportação da biodiversidade, sem coordenação com o Ministério da Agricultura e Pecuária e a ANVISA, gerando sobreposição regulatória e entraves ao comércio exterior.",
+          "anchors": [
+            "O presente Projeto de Decreto Legislativo tem por objetivo sustar os efeitos da Portaria nº 76, de 27 de abril de 2026, editada pelo IBAMA, a qual institui a Agenda Regulatória da autarquia para o biênio 2026-2027. Nos t",
+            "No tocante ao licenciamento ambiental federal, a agenda antecipa diretrizes relacionadas à emergência climática, classificação de risco e compensações ambientais, sem a devida delimitação normativa. Ainda que tais temas ",
+            "Câmara dos Deputados Gabinete do Deputado Cobalchini - MDB/SC Vigilância Sanitária pode gerar sobreposição regulatória, aumento da burocracia e entraves ao comércio exterior, em prejuízo à competitividade nacional. Cumpr"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_352_2026.pdf",
+      "title": "Susta as Portarias GM/MMA nº 1.666 e 1.667/2026, que classificam o tambaqui como espécie Vulnerável",
+      "questions": [
+        {
+          "query_id": "q021",
+          "type": "single_chunk",
+          "question": "Quais portarias o PL 352/2026 susta e qual classificação elas atribuem ao tambaqui?",
+          "expected_answer": "As Portarias GM/MMA nº 1.666 e 1.667, de 27 de abril de 2026, do Ministério do Meio Ambiente e Mudança do Clima, que classificam o tambaqui (Colossoma macropomum) como espécie Vulnerável e restringem sua captura, transporte e comercialização provenientes dos rios amazônicos. O fundamento invocado é o art. 49, incisos V, X e XI, da Constituição Federal.",
+          "anchors": [
+            "Susta os efeitos das Portarias GM/MMA nº 1.666 e 1.667, de 27 de abril de 2026, do Ministério do Meio Ambiente e Mudança do Clima, que classificam o tambaqui (Colossoma macropomum) como espécie Vulnerável e restringem su"
+          ]
+        },
+        {
+          "query_id": "q022",
+          "type": "multi_chunk",
+          "question": "Por que o PL 352/2026 considera as exigências das portarias sobre o tambaqui incompatíveis com a realidade das populações amazônicas?",
+          "expected_answer": "O tambaqui é pilar da segurança alimentar, da cultura regional e da economia ribeirinha no Amazonas, Pará, Rondônia, Acre e Roraima, sustentando milhares de famílias na pesca artesanal. As portarias criariam na prática um regime proibitivo sem lei formal, extrapolando o poder regulamentar. As exigências — Planos de Recuperação, sistemas complexos de rastreabilidade, estudos técnicos específicos e condicionantes burocráticas — transferem ao pequeno pescador artesanal um ônus técnico e financeiro impossível de suportar, sem qualquer previsão de transição, compensação financeira ou política mitigatória, o que reduziria abruptamente a renda de milhares de trabalhadores e agravaria a pobreza e a insegurança alimentar.",
+          "anchors": [
+            "O tambaqui (Colossoma macropomum) representa muito mais do que uma espécie da fauna amazônica. Trata-se de um dos principais pilares da segurança alimentar, da cultura regional e da economia ribeirinha da Amazônia brasil",
+            "Entretanto, as Portarias GM/MMA nº 1.666 e 1.667, de 27 de abril de 2026, editadas pelo Ministério do Meio Ambiente e Mudança do Clima, ultrapassam os limites constitucionais do poder regulamentar ao estabelecerem, na pr",
+            "e manejadores de várzea, sem que exista lei em sentido formal autorizando tamanha intervenção estatal. Além disso, as exigências impostas pelas normas - como elaboração de Planos de Recuperação, sistemas complexos de ras",
+            "redução abrupta da renda de milhares de trabalhadores amazônicos, agravando a pobreza, a insegurança alimentar e o isolamento socioeconômico de regiões já marcadas pela ausência do Estado e pela precariedade logística. D"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_385_2026.pdf",
+      "title": "Susta a Portaria GM/MMA nº 1.666/2026, sobre espécies de peixes e invertebrados aquáticos ameaçados de extinção",
+      "questions": [
+        {
+          "query_id": "q023",
+          "type": "single_chunk",
+          "question": "Quais municípios do Amazonas são citados pelo PL 385/2026 como dependentes da pesca artesanal de peixes ornamentais?",
+          "expected_answer": "Barcelos, Santa Isabel do Rio Negro e São Gabriel da Cachoeira — municípios historicamente vinculados à atividade da pesca ornamental sustentável, cujas famílias seriam diretamente afetadas pelas restrições da Portaria GM/MMA nº 1.666/2026.",
+          "anchors": [
+            "Art. 2º Este Decreto Legislativo entra em vigor na data de sua publicação. O presente Projeto de Decreto Legislativo tem por finalidade sustar os efeitos da Portaria GM/MMA nº 1.666/2026, diante dos graves impactos socio"
+          ]
+        },
+        {
+          "query_id": "q024",
+          "type": "multi_chunk",
+          "question": "Quais dispositivos constitucionais o PL 385/2026 invoca e qual efeito paradoxal ele atribui à Portaria nº 1.666/2026?",
+          "expected_answer": "Dispositivos: art. 225 (meio ambiente ecologicamente equilibrado), art. 170 (ordem econômica que assegura existência digna, valorização do trabalho humano e redução das desigualdades regionais e sociais) e art. 3º (objetivos fundamentais de erradicar a pobreza e reduzir desigualdades sociais e regionais). O efeito paradoxal: a pesca ornamental é atividade de baixo impacto que funciona como alternativa econômica ao desmatamento, ao garimpo ilegal e à exploração madeireira; ao restringi-la abruptamente sem transição ou compensação, a portaria tende a agravar a pobreza regional e a estimular indiretamente a migração para atividades ambientalmente mais nocivas — o oposto do objetivo declarado da norma.",
+          "anchors": [
+            "Art. 2º Este Decreto Legislativo entra em vigor na data de sua publicação. O presente Projeto de Decreto Legislativo tem por finalidade sustar os efeitos da Portaria GM/MMA nº 1.666/2026, diante dos graves impactos socio",
+            "Além disso, trata-se de atividade reconhecidamente de baixo impacto ambiental quando comparada a práticas predatórias frequentemente observadas na região amazônica, funcionando, inclusive, como instrumento indireto de pr",
+            "A consequência inevitável pode ser o agravamento da pobreza regional e, paradoxalmente, o estímulo indireto à migração para atividades ambientalmente mais nocivas, justamente o oposto do objetivo declarado pela norma. Da"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_415_2026.pdf",
+      "title": "Institui diretrizes nacionais para tratamento de chorume, resíduos sólidos urbanos e lodos de ETA e ETE",
+      "questions": [
+        {
+          "query_id": "q025",
+          "type": "single_chunk",
+          "question": "Em que condições excepcionais o PL 415/2026 admite a disposição de lodos de ETA e ETE em aterros sanitários?",
+          "expected_answer": "Pelo art. 10, excepcionalmente, desde que cumulativamente: apresentem teor de umidade inferior a 40%; atendam, após tratamento, aos parâmetros de lixiviação e solubilização da ABNT NBR 10.004 ou norma que a substitua; e possuam certificação técnica emitida ou reconhecida pelo órgão ambiental competente.",
+          "anchors": [
+            "- Art. 9º Fica proibida a disposição final em aterros sanitários de: - I - lodos de Estações de Tratamento de Água (ETA); - II - lodos de Estações de Tratamento de Esgoto (ETE); - III - lodos, lamas e resíduos industriai"
+          ]
+        },
+        {
+          "query_id": "q026",
+          "type": "multi_chunk",
+          "question": "Quais são os prazos de adequação previstos no PL 415/2026 para os empreendimentos que usam ETE para chorume, para os Municípios e para a regulamentação da lei?",
+          "expected_answer": "Empreendimentos (art. 5º): 90 dias para apresentar plano de adequação ao órgão licenciador e, contados da aprovação do plano, até 6 meses para sistemas exclusivamente biológicos convencionais, 12 meses para sistemas biológicos avançados ou híbridos e 24 meses para os demais. Municípios (art. 8º): até 1 ano para implantar a coleta diferenciada, admitidas etapas progressivas conforme viabilidade técnica, econômica e operacional. Poder Executivo (art. 12): 120 dias para regulamentar a lei.",
+          "anchors": [
+            "- Art. 3º Presume-se a incapacidade técnica dos sistemas convencionais de tratamento de esgoto sanitário para a remoção de poluentes recalcitrantes, metais pesados, toxinas, nitrogênio amoniacal, compostos orgânicos comp",
+            "- Art. 6º Os Municípios deverão implantar sistema de coleta diferenciada de resíduos sólidos urbanos, contemplando, no mínimo: - I - resíduos secos, não orgânicos e potencialmente recicláveis; - II - resíduos orgânicos e",
+            "Art. 12º O Poder Executivo regulamentará esta Lei no prazo máximo de 120 (cento e vinte) dias, definindo metas de adequação, critérios técnicos, métodos de fiscalização e mecanismos de incentivo. Art. 13º Esta Lei entra "
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_42_2026.pdf",
+      "title": "Altera a Lei Complementar nº 214/2025 para dispor sobre os limites de alíquotas do Imposto Seletivo",
+      "questions": [
+        {
+          "query_id": "q027",
+          "type": "single_chunk",
+          "question": "Quais limites de alíquota o PL 42/2026 fixa para o Imposto Seletivo e o que caracteriza sua finalidade arrecadatória?",
+          "expected_answer": "Alíquota mínima de 0% e máxima de 5% (novo art. 409 da LC nº 214/2025). O imposto tem natureza eminentemente regulatória, vedada a finalidade predominantemente arrecadatória, que se caracteriza quando: a exposição de motivos indicar objetivo de aumento permanente de receita; a majoração não vier acompanhada de estudos técnicos que demonstrem adequação, necessidade e proporcionalidade regulatória; ou os efeitos arrecadatórios superarem, de forma relevante e persistente, os efeitos regulatórios pretendidos.",
+          "anchors": [
+            "Art. 1º Esta Lei altera a Lei Complementar nº 214, de 16 de janeiro de 2025, para definir limites para as alíquotas do Imposto Seletivo. Art. 2º A Lei Complementar n° 214, de 2025, fica alterada com a seguinte nova redaç"
+          ]
+        },
+        {
+          "query_id": "q028",
+          "type": "multi_chunk",
+          "question": "O que a Avaliação de Impacto Regulatório deve demonstrar antes da instituição ou majoração do Imposto Seletivo, e qual a consequência de não haver reavaliação no prazo previsto?",
+          "expected_answer": "A AIR (art. 409-A, § 1º) deve demonstrar o problema regulatório, a inadequação de instrumentos menos restritivos, a proporcionalidade da alíquota, os impactos econômicos, concorrenciais e distributivos, e a estimativa de efeitos arrecadatórios e sua compatibilidade com a finalidade regulatória. Deve ainda analisar (§ 6º) alternativas menos restritivas — campanhas de informação, rotulagem, padrões técnicos, fiscalização, incentivos econômicos, autorregulação, mecanismos de mercado, restrições específicas e políticas focalizadas em grupos de risco — e a instituição ou majoração só é admitida quando demonstrada a insuficiência dessas alternativas (§ 7º). A alíquota deve ser reavaliada a cada 4 anos (§ 2º); na ausência de reavaliação no prazo, a alíquota vigente é automaticamente reduzida para o limite mínimo (§ 3º).",
+          "anchors": [
+            "'Art. 409-A. A definição ou alteração das alíquotas do Imposto Seletivo dependerá de lei ordinária específica, precedida obrigatoriamente de Avaliação de Impacto Regulatório - AIR. § 1º A AIR deverá demonstrar, no mínimo",
+            "mínimo estabelecido nesta Lei Complementar. § 4º É vedada a utilização do Imposto Seletivo como instrumento de indução comportamental genérica ou de restrição indireta à liberdade de consumo, salvo quando estritamente ne",
+            "VII - mecanismos de mercado, inclusive certificações voluntárias; VIII - restrições específicas e proporcionais de acesso ou uso, quando cabíveis; IX - políticas públicas focalizadas em grupos de risco, quando aplicável."
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_561_2026.pdf",
+      "title": "Institui o 'Disque Animal', canal nacional de denúncias de maus-tratos contra animais",
+      "questions": [
+        {
+          "query_id": "q029",
+          "type": "single_chunk",
+          "question": "Que tipos de denúncia o 'Disque Animal' recebe e a quais órgãos elas são encaminhadas?",
+          "expected_answer": "Recebe denúncias de abandono, maus-tratos, violência, tráfico de animais e práticas lesivas à fauna doméstica, silvestre e exótica (art. 1º). As denúncias são encaminhadas, conforme o caso, a autoridades policiais, ao Ministério Público e a órgãos ambientais (art. 4º). O serviço deve assegurar número telefônico gratuito de abrangência nacional e canais digitais de atendimento (art. 2º).",
+          "anchors": [
+            "- Art. 1º Fica instituído o 'Disque Animal', Canal Nacional de Denúncias de Maus-Tratos contra animais, destinado ao recebimento, registro e encaminhamento de denúncias relativas a: - I - abandono; - II - maus-tratos; II"
+          ]
+        },
+        {
+          "query_id": "q030",
+          "type": "multi_chunk",
+          "question": "Em quais dispositivos constitucionais e leis o PL 561/2026 fundamenta a criação do Disque Animal?",
+          "expected_answer": "Constituição: art. 225, que assegura o meio ambiente ecologicamente equilibrado, e seu § 1º, VII, que impõe ao Estado proteger a fauna e a flora vedando práticas cruéis; art. 23, sobre a competência comum dos entes federados para proteger o meio ambiente; e art. 48, quanto à competência legislativa da União. Legislação infraconstitucional: Lei nº 9.605/1998 (Lei de Crimes Ambientais), que tipifica maus-tratos e abusos contra animais, e Lei nº 14.064/2020, que agravou as penas para maus-tratos contra cães e gatos.",
+          "anchors": [
+            "A proteção e defesa dos animais constitui dever jurídico do Estado brasileiro e expressão direta dos valores fundamentais da República. A Constituição da República Federativa do Brasil de 1988, em seu art. 225, estabelec",
+            "O Projeto de Lei apresentado institui o 'Disque Animal', canal nacional destinado ao recebimento, registro e encaminhamento de denúncias de abandono, maus-tratos, violência, tráfico de animais e demais práticas lesivas à",
+            "Além disso, a iniciativa respeita o pacto federativo e a competência comum dos entes federados para proteger o meio ambiente, conforme art. 23 da Constituição da República Federativa do Brasil de 1988. O Projeto de Lei p"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_742_2026.pdf",
+      "title": "Proíbe a pulverização aérea de agrotóxicos em todo o território nacional",
+      "questions": [
+        {
+          "query_id": "q031",
+          "type": "single_chunk",
+          "question": "Como o PL 742/2026 define 'pulverização aérea' e 'populações expostas'?",
+          "expected_answer": "Pulverização aérea é toda forma de aplicação de agrotóxicos realizada por aeronaves agrícolas, aviões, helicópteros, drones ou quaisquer outros meios aéreos. Populações expostas são comunidades rurais, povos indígenas, comunidades quilombolas, trabalhadores e trabalhadoras do campo, escolas, unidades de saúde e demais populações situadas em áreas de influência da aplicação de agrotóxicos. A proibição vale independentemente do tipo de cultura, da extensão da área plantada ou do produto utilizado (arts. 1º, 2º e 4º).",
+          "anchors": [
+            "Art. 1º Fica proibida, em todo o território nacional, a pulverização aérea de agrotóxicos, seus componentes e afins, em quaisquer modalidades de aplicação por aeronaves tripuladas ou não tripuladas. Art. 2º Para os fins "
+          ]
+        },
+        {
+          "query_id": "q032",
+          "type": "multi_chunk",
+          "question": "Qual lei estadual inspira o PL 742/2026, qual a história por trás dela e como o projeto se harmoniza com a Lei nº 7.802/1989?",
+          "expected_answer": "Inspira-se na Lei Estadual nº 16.820, de 8 de janeiro de 2019, do Ceará — a Lei Zé Maria do Tomé —, que proibiu a pulverização aérea de agrotóxicos naquele estado, fruto da luta de comunidades camponesas da Chapada do Apodi. Zé Maria do Tomé, liderança camponesa, foi assassinado em 2010 por denunciar os impactos do uso indiscriminado de agrotóxicos. A constitucionalidade dessa lei foi reconhecida, inclusive no âmbito do STF, que consolidou o entendimento de que Estados e União podem adotar normas ambientais e sanitárias mais protetivas desde que não fragilizem o nível de proteção existente. O projeto se harmoniza com a Lei nº 7.802/1989, que regula os agrotóxicos, ao estabelecer critérios mais rigorosos sem impedir que Estados, DF e Municípios adotem medidas ainda mais protetivas.",
+          "anchors": [
+            "O presente Projeto de Lei dispõe sobre a proibição da pulverização aérea de agrotóxicos em todo o território nacional, prática amplamente reconhecida por estudos científicos e por organismos nacionais e internacionais co",
+            "Zé Maria do Tomé, liderança camponesa e símbolo dessa resistência, foi brutalmente assassinado em 2010 por denunciar os impactos do uso indiscriminado de agrotóxicos e defender o direito das comunidades à vida, à saúde e"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_752_2026.pdf",
+      "title": "Institui a Política Nacional de Justiça Climática e Proteção de Populações Vulneráveis aos Impactos das Mudanças Climáticas",
+      "questions": [
+        {
+          "query_id": "q033",
+          "type": "single_chunk",
+          "question": "O que caracteriza uma Zona de Vulnerabilidade Climática (ZVC) no PL 752/2026?",
+          "expected_answer": "Pelo art. 3º, a ZVC é caracterizada por: alta exposição a eventos climáticos extremos (enchentes, deslizamentos, secas severas, ondas de calor ou elevação do nível do mar); concentração de população de baixa renda ou em situação de vulnerabilidade social; e deficiência estrutural de infraestrutura urbana, saneamento ou drenagem. A identificação usa critérios técnicos do Poder Executivo com dados de defesa civil, mapeamentos de risco e indicadores socioeconômicos, podendo ser complementada pelos entes federativos.",
+          "anchors": [
+            "- Art. 3º. Fica instituído o conceito de Zona de Vulnerabilidade Climática (ZVC), caracterizada por: - I - alta exposição a eventos climáticos extremos, tais como enchentes, deslizamentos, secas severas, ondas de calor o"
+          ]
+        },
+        {
+          "query_id": "q034",
+          "type": "multi_chunk",
+          "question": "Que dados e estudos o PL 752/2026 apresenta para demonstrar a vulnerabilidade climática do Brasil?",
+          "expected_answer": "Rede Clima/CEMADEN: eventos extremos responderam por cerca de 91% de todos os desastres registrados no país nas últimas décadas. Global Climate Risk Index 2021: o Brasil ocupa a 27ª posição entre 180 nações. Entre 2008 e 2022 foram 404 eventos de desastres climáticos, com enchentes deslocando cerca de 2,5 milhões de pessoas e tempestades quase 1 milhão; em 2022 o Brasil teve o maior número de deslocamentos internos da América por desastres naturais, cerca de 708 mil pessoas. Banco Mundial e OCDE: perdas de cerca de 1,3% do PIB por ano, concentradas em infraestrutura (55%), energia (44%) e água (2%). O IPCC mostra que pobreza, desigualdade e vulnerabilidade climática estão interligadas, e o semiárido nordestino já enfrenta mais secas e irregularidade de chuvas.",
+          "anchors": [
+            "As mudanças climáticas já deixaram de ser uma projeção remota para se tornar uma realidade concreta e palpável no Brasil, com efeitos socioambientais intensos e cada vez mais frequentes. Segundo levantamento da Rede Clim",
+            "A variabilidade do clima também acentua desigualdades regionais e socioeconômicas. Regiões como o semiárido nordestino já enfrentam aumento de secas e irregularidade das chuvas, com impactos diretos na segurança hídrica "
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_770_2026.pdf",
+      "title": "Institui o Programa Nacional de Solidariedade Veterinária",
+      "questions": [
+        {
+          "query_id": "q035",
+          "type": "single_chunk",
+          "question": "Quem são os beneficiários do Programa Nacional de Solidariedade Veterinária?",
+          "expected_answer": "Pelo art. 8º, desde que cadastrados: tutores de animais domésticos em situação de vulnerabilidade socioeconômica (baixa renda ou sem renda, prioritariamente os inscritos em cadastros públicos de assistência social); protetores independentes de animais cadastrados junto aos órgãos competentes, sem finalidade lucrativa; ONGs de proteção animal sem fins lucrativos e legalmente constituídas; e entidades e órgãos públicos com tutela temporária de animais, como centros de controle de zoonoses e abrigos municipais.",
+          "anchors": [
+            "- I - Dotação orçamentária da União consignada anualmente para as finalidades do Programa, bem como eventuais aportes orçamentários dos Estados, Distrito Federal e Municípios que aderirem ao Programa; - II - Convênios, t"
+          ]
+        },
+        {
+          "query_id": "q036",
+          "type": "multi_chunk",
+          "question": "De quais fontes o Programa pode receber doações de produtos veterinários e que controles de triagem e descarte se aplicam a esses itens?",
+          "expected_answer": "Fontes (art. 13): pessoas físicas com produtos em desuso ou remanescentes de tratamento; clínicas, hospitais veterinários e profissionais autônomos com estoques excedentes; estabelecimentos comerciais e industriais do setor com produtos próximos do vencimento, com embalagens danificadas ou fora de linha, porém aptos ao uso seguro; órgãos públicos e entidades de fiscalização sanitária ou ambiental, incluindo produtos apreendidos ou oriundos de TACs; e outras fontes definidas em regulamento. Controles: todos os itens passam por triagem e inspeção antes da disponibilização, verificando integridade da embalagem, validade e qualidade aparente, podendo ser descartados de imediato (art. 14). O descarte de produtos vencidos ou impróprios deve ser seguro e ambientalmente adequado, conforme a Política Nacional de Resíduos Sólidos e a legislação sanitária sobre resíduos de serviços de saúde, podendo aproveitar pontos de coleta já existentes e parcerias com empresas de gestão de resíduos perigosos (art. 15).",
+          "anchors": [
+            "- rigoroso sobre os produtos doados e distribuídos no âmbito do Programa, registrando em sistema apropriado as informações pertinentes, incluindo a origem das doações, os tipos e quantidades de itens estocados, a identif",
+            "- produtos próximos do vencimento, com embalagens danificadas ou fora de linha comercial, porém aptos para uso seguro; IV. Órgãos públicos e entidades de fiscalização sanitária ou ambiental, incluindo doações de produtos",
+            "Parágrafo único. Sempre que possível, o Programa poderá aproveitar a estrutura de pontos de coleta de medicamentos inutilizados já existentes em farmácias, unidades de saúde ou estabelecimentos veterinários, bem como fir"
+          ]
+        }
+      ]
+    },
+    {
+      "filename": "PL_993_2026.pdf",
+      "title": "Altera a Lei nº 6.938/1981 para incluir referência ao sistema climático na obrigação de indenizar ou reparar danos ambientais",
+      "questions": [
+        {
+          "query_id": "q037",
+          "type": "single_chunk",
+          "question": "Como o PL 993/2026 define 'sistema climático' e 'dano ao sistema climático'?",
+          "expected_answer": "Sistema climático (novo inciso VI do art. 3º da Lei nº 6.938/1981): sistema complexo e interativo composto pela atmosfera, hidrosfera, criosfera, litosfera e biosfera. Dano ao sistema climático (inciso VII): impacto adverso, atual ou potencial, decorrente de atos ou omissões que causem ou contribuam para emissões de gases de efeito estufa acima dos limites normativos; desmatamento ou degradação de ecossistemas que funcionem como sumidouros de carbono; destruição ou comprometimento de sistemas naturais de regulação climática; e violação de metas, padrões ou compromissos da Política Nacional sobre Mudança do Clima (Lei nº 12.187/2009).",
+          "anchors": [
+            "Art. 1º Ficam acrescidos ao art. 3º da Lei nº 6.938, de 31 de agosto de 1981, os seguintes incisos VI e VII e o parágrafo único: \"Art. 3º .................................................................................."
+          ]
+        },
+        {
+          "query_id": "q038",
+          "type": "multi_chunk",
+          "question": "Que mudança o PL 993/2026 faz no § 1º do art. 14 da Lei nº 6.938/1981, quais critérios passam a caracterizar a responsabilidade por dano climático e como esse dano pode ser reparado?",
+          "expected_answer": "O § 1º do art. 14 passa a obrigar o poluidor, independentemente de culpa, a indenizar ou reparar os danos causados ao meio ambiente, ao sistema climático e a terceiros, com legitimidade do Ministério Público da União e dos Estados para as ações. O novo § 1º-A traz os critérios, isolada ou cumulativamente: nexo de causalidade entre a atividade e as emissões ou a degradação de sumidouros de carbono; superação de padrões, limites ou metas legais; descumprimento de obrigações de planos setoriais de mitigação e adaptação; laudos técnicos e científicos; e ocorrência de impactos desproporcionais sobre populações negras, indígenas, quilombolas, povos e comunidades tradicionais ou outros grupos em vulnerabilidade socioambiental. O § 1º-B prevê a reparação por cessação imediata das atividades danosas, recuperação de áreas que funcionem como sumidouros de carbono, compensação por redução líquida de emissões ou aumento de remoções (vedada a transferência de impactos a populações vulneráveis) e indenização pecuniária a fundos de mitigação e adaptação climática.",
+          "anchors": [
+            "Parágrafo único. A caracterização do dano ao sistema climático observará metodologias científicas reconhecidas pelo Painel Intergovernamental sobre Mudanças Climáticas - IPCC e pelos órgãos competentes do Sistema Naciona",
+            "III - o descumprimento de obrigações previstas em planos setoriais de mitigação e adaptação às mudanças climáticas; IV - laudos técnicos e científicos que demonstrem a contribuição da atividade para alterações no sistema"
+          ]
+        }
+      ]
+    }
+  ]
+}

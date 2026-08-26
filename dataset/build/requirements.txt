@@ -1,0 +1,8 @@
+# Pinned. The chunk count is a function of these versions: the same 19 PDFs and
+# the same settings gave 180 chunks on an older docling and 183 on 2.123.0.
+# Bump deliberately, rebuild, and diff out/manifest.json.
+docling==2.123.0
+docling-core==2.92.0
+transformers==5.16.1
+pandas==3.0.5
+pyarrow==25.0.1
