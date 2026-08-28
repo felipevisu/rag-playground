@@ -1,0 +1,7 @@
+# Pinned — sentence-transformers must match the loader's, or search embeds
+# queries with a different model than the index was built with.
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+psycopg2-binary==2.9.12
+pgvector==0.5.0
+sentence-transformers==6.0.0
