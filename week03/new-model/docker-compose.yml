@@ -1,3 +1,7 @@
+# Project name pinned: the compose network the eval attaches to is derived from
+# it, and it would otherwise follow this directory's name.
+name: week03-new-model
+
 # Host ports are shifted +1/+10 from week01 so both stacks can be up at once
 # and the eval can score MiniLM against multilingual-e5. Container ports and
 # service names are unchanged, so nothing inside the network had to move.
@@ -34,7 +38,7 @@ services:
       DATASET_DIR: /dataset
       HF_HOME: /root/.cache/huggingface
     volumes:
-      - ../dataset/out:/dataset:ro
+      - ../../dataset/out:/dataset:ro
       - ~/.cache/huggingface:/root/.cache/huggingface
 
   document-api:

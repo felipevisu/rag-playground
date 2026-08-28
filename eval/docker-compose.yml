@@ -2,7 +2,7 @@
 #
 #   docker compose up -d ui                        # painel em :8080, roda pelo botão
 #   docker compose run --rm eval --label "baseline"
-#   STACK=week03 docker compose run --rm eval --label "multilingual-e5"
+#   STACK=week03-new-model docker compose run --rm eval --label "multilingual-e5"
 #   docker compose run --rm eval --list
 #
 services:
@@ -44,8 +44,8 @@ services:
     networks:
       - week01
 
-# Which stack to score. Default week01 (MiniLM); week03 (multilingual-e5) is
-#   STACK=week03 docker compose run --rm eval --label "e5"
+# Which stack to score. Default week01 (MiniLM); week03-new-model (multilingual-e5) is
+#   STACK=week03-new-model docker compose run --rm eval --label "e5"
 # Same service name inside both networks, so API_URL never changes.
 networks:
   week01:

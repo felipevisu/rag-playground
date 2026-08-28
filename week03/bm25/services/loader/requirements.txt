@@ -1,0 +1,5 @@
+# No torch, no sentence-transformers, no pgvector: this stack never embeds
+# anything. That absence is the experiment.
+psycopg2-binary==2.9.12
+pandas==3.0.5
+pyarrow==25.0.1

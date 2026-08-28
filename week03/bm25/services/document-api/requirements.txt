@@ -1,0 +1,6 @@
+# rank-bm25 is ~200 lines over numpy. No torch, no transformers, no pgvector:
+# the point of this stack is that retrieval costs nothing to set up.
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+psycopg2-binary==2.9.12
+rank-bm25==0.2.2
