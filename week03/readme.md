@@ -13,6 +13,8 @@ sem uma linha de mudança.
 
 ## Resultado (38 perguntas, k=5)
 
+<img src="results.png" alt="results" />
+
 | Métrica | MiniLM (week01) | e5-base | BM25 |
 |---|---|---|---|
 | hit rate | 0.684 | **0.921** | 0.868 |
