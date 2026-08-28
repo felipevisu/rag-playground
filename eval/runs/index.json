@@ -1,6 +1,49 @@
 {
   "runs": [
     {
+      "run_id": "2026-08-28T13-05-36",
+      "label": "bm25 puro · sem embeddings",
+      "notes": "arm lexical do week03: rank-bm25 okapi, k1=1.5 b=0.75, sem stemmer",
+      "config": {
+        "k": 5,
+        "api": "http://document-api:8000",
+        "embedding_model": "none (BM25 léxico)",
+        "corpus_sha256": "1e05e97f4479ae9a5f2f329fc543485d66db8517fe077c9fe7305c3bfa68c06b",
+        "chunker": {
+          "class": "HybridChunker",
+          "max_tokens": 512,
+          "merge_peers": true,
+          "tokenizer": "sentence-transformers/all-MiniLM-L6-v2"
+        },
+        "n_queries": 38,
+        "n_chunks": 183
+      },
+      "metrics": {
+        "hit_rate": 0.8684,
+        "recall": 0.6886,
+        "precision": 0.2421,
+        "mrr": 0.6996,
+        "ndcg": 0.6326
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 0.8947,
+          "recall": 0.8947,
+          "precision": 0.1789,
+          "mrr": 0.7281,
+          "ndcg": 0.7713
+        },
+        "multi_chunk": {
+          "hit_rate": 0.8421,
+          "recall": 0.4825,
+          "precision": 0.3053,
+          "mrr": 0.6711,
+          "ndcg": 0.4938
+        }
+      },
+      "failures": 0
+    },
+    {
       "run_id": "2026-08-28T12-43-27",
       "label": "week03 · multilingual-e5-base 768d",
       "notes": "",
