@@ -5,7 +5,8 @@
 needed something that answers POST. This is that same static server plus one
 endpoint:
 
-    POST /api/run  {"label": "...", "note": "...", "k": 5}  ->  {"run_id": ...}
+    GET  /api/options                          ->  {"buckets": [...]}
+    POST /api/run  {"bucket", "label", "note", "k"}  ->  {"run_id": ...}
 
 run.py is imported, not shelled out to: same process, same runs/ directory, and
 the exit-with-a-message paths (API down, dataset missing) come back as SystemExit
@@ -32,6 +33,18 @@ class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *a, **kw):
         super().__init__(*a, directory=HERE, **kw)
 
+    def do_GET(self):
+        if self.path.rstrip("/") != "/api/options":
+            return super().do_GET()
+        try:
+            buckets = [b for b in evaluation.list_buckets(evaluation.API)
+                       if b["status"] == "ready" and b.get("qrels_count")]
+            self.reply(200, {"buckets": buckets})
+        except SystemExit as e:
+            self.reply(502, {"error": str(e.code)})
+        except Exception as e:
+            self.reply(500, {"error": f"{type(e).__name__}: {e}"})
+
     def do_POST(self):
         if self.path.rstrip("/") != "/api/run":
             return self.reply(404, {"error": "not found"})
@@ -40,14 +53,17 @@ class Handler(SimpleHTTPRequestHandler):
         try:
             n = int(self.headers.get("Content-Length") or 0)
             body = json.loads(self.rfile.read(n) or b"{}")
+            if not body.get("bucket"):
+                return self.reply(400, {"error": "bucket é obrigatório"})
             payload = evaluation.run(
                 str(body.get("label", "")),
                 str(body.get("note", "")),
                 max(1, min(50, int(body.get("k", 5)))),
                 evaluation.API,
+                str(body["bucket"]),
             )
             self.reply(200, {"run_id": payload["run_id"], "metrics": payload["metrics"]})
-        except SystemExit as e:  # run.py's sys.exit("document-api unreachable…")
+        except SystemExit as e:  # run.py's sys.exit("chunks-api unreachable…", sha mismatch…)
             self.reply(502, {"error": str(e.code)})
         except Exception as e:
             self.reply(500, {"error": f"{type(e).__name__}: {e}"})

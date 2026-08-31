@@ -1,0 +1,2489 @@
+{
+  "run_id": "2026-08-31T03-06-13",
+  "label": "e5-base · legal-1200 e5small",
+  "notes": "",
+  "config": {
+    "k": 5,
+    "api": "http://chunks-api:8000",
+    "bucket": "0c80fac6",
+    "bucket_name": "legal-1200 e5small",
+    "retriever": "e5-base",
+    "embedding_model": "e5-base",
+    "corpus_sha256": "9b09baec3732ebf31aa5b580bde4b974365795a74d421304dbe5c8cd3dbe46c9",
+    "n_queries": 38,
+    "n_chunks": 241,
+    "n_qrels": 132
+  },
+  "metrics": {
+    "hit_rate": 0.8684,
+    "recall": 0.6828,
+    "precision": 0.2895,
+    "mrr": 0.6075,
+    "ndcg": 0.5696
+  },
+  "metrics_by_type": {
+    "single_chunk": {
+      "hit_rate": 0.8333,
+      "recall": 0.8333,
+      "precision": 0.1667,
+      "mrr": 0.5486,
+      "ndcg": 0.6192
+    },
+    "multi_chunk": {
+      "hit_rate": 0.8846,
+      "recall": 0.6133,
+      "precision": 0.3462,
+      "mrr": 0.6346,
+      "ndcg": 0.5467
+    }
+  },
+  "failures": 0,
+  "per_query": [
+    {
+      "query_id": "q001",
+      "question": "O que o PL 1502/2026 define como racismo ambiental?",
+      "type": "single_chunk",
+      "filename": "PL_1502_2026.pdf",
+      "expected": [
+        "PL_1502_2026::0003"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_1502_2026::0000",
+          "rank": 1,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8734,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0032",
+          "rank": 2,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 32,
+          "similarity": 0.8553,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_993_2026::0007",
+          "rank": 3,
+          "filename": "PL_993_2026.pdf",
+          "chunk_index": 7,
+          "similarity": 0.8548,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0030",
+          "rank": 4,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 30,
+          "similarity": 0.8477,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0031",
+          "rank": 5,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 31,
+          "similarity": 0.8459,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 0,
+      "total": 1,
+      "best_rank": null,
+      "hit_rate": 0.0,
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "dcg": 0,
+      "idcg": 1.0,
+      "verdict": "fail"
+    },
+    {
+      "query_id": "q002",
+      "question": "Quais são as fontes de recursos do Fundo Nacional de Adaptação e Reparação Climática (FNARC) e como é composto o seu Comitê Gestor?",
+      "type": "multi_chunk",
+      "filename": "PL_1502_2026.pdf",
+      "expected": [
+        "PL_1502_2026::0006",
+        "PL_1502_2026::0007"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_1502_2026::0005",
+          "rank": 1,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 5,
+          "similarity": 0.8691,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0007",
+          "rank": 2,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 7,
+          "similarity": 0.8639,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1502_2026::0006",
+          "rank": 3,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 6,
+          "similarity": 0.86,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1502_2026::0004",
+          "rank": 4,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.856,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0027",
+          "rank": 5,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 27,
+          "similarity": 0.8549,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 0.5,
+      "ndcg": 0.6934264036172708,
+      "dcg": 1.1309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q003",
+      "question": "Qual ato do Poder Executivo o PL 182/2026 pretende sustar e o que esse ato institui?",
+      "type": "single_chunk",
+      "filename": "PL_182_2026.pdf",
+      "expected": [
+        "PL_182_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_253_2026::0002",
+          "rank": 1,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8539,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_271_2026::0003",
+          "rank": 2,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8522,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_182_2026::0001",
+          "rank": 3,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8499,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_271_2026::0006",
+          "rank": 4,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 6,
+          "similarity": 0.8415,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_182_2026::0004",
+          "rank": 5,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8365,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 3,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.5,
+      "dcg": 0.5,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q004",
+      "question": "Quais dispositivos constitucionais e quais princípios da Administração Pública o PL 182/2026 alega terem sido violados pela portaria que pretende sustar?",
+      "type": "multi_chunk",
+      "filename": "PL_182_2026.pdf",
+      "expected": [
+        "PL_182_2026::0002",
+        "PL_182_2026::0003",
+        "PL_182_2026::0004"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_271_2026::0003",
+          "rank": 1,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8687,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_182_2026::0001",
+          "rank": 2,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8629,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_385_2026::0001",
+          "rank": 3,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8572,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_182_2026::0002",
+          "rank": 4,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.85,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_263_2026::0008",
+          "rank": 5,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 8,
+          "similarity": 0.8486,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 3,
+      "best_rank": 4,
+      "hit_rate": 1.0,
+      "recall": 0.3333333333333333,
+      "precision": 0.2,
+      "mrr": 0.25,
+      "ndcg": 0.20210734650054757,
+      "dcg": 0.43067655807339306,
+      "idcg": 2.1309297535714578,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q005",
+      "question": "Em que hipóteses NÃO se aplica o perdimento do meio de transporte segundo o PL 1928/2026?",
+      "type": "single_chunk",
+      "filename": "PL_1928_2026.pdf",
+      "expected": [
+        "PL_1928_2026::0007"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_1928_2026::0007",
+          "rank": 1,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 7,
+          "similarity": 0.8627,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1928_2026::0006",
+          "rank": 2,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 6,
+          "similarity": 0.8571,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1928_2026::0000",
+          "rank": 3,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8562,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1928_2026::0011",
+          "rank": 4,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 11,
+          "similarity": 0.8516,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1928_2026::0017",
+          "rank": 5,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 17,
+          "similarity": 0.8413,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q006",
+      "question": "Quais situações autorizam a apreensão de bens e, uma vez declarado o perdimento em favor da União, quais destinações esses bens podem receber?",
+      "type": "multi_chunk",
+      "filename": "PL_1928_2026.pdf",
+      "expected": [
+        "PL_1928_2026::0003",
+        "PL_1928_2026::0011"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_1928_2026::0011",
+          "rank": 1,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 11,
+          "similarity": 0.8737,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1928_2026::0017",
+          "rank": 2,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 17,
+          "similarity": 0.8639,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1928_2026::0013",
+          "rank": 3,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 13,
+          "similarity": 0.8611,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1928_2026::0015",
+          "rank": 4,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 15,
+          "similarity": 0.8518,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1928_2026::0012",
+          "rank": 5,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 12,
+          "similarity": 0.8503,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 0.5,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 0.6131471927654584,
+      "dcg": 1.0,
+      "idcg": 1.6309297535714575,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q007",
+      "question": "Quantos nomes cada parlamentar membro da Comissão pode indicar ao Prêmio Câmara Ambiental e Desenvolvimento Sustentável, e até quando as indicações devem ser apresentadas?",
+      "type": "multi_chunk",
+      "filename": "PL_21_2026.pdf",
+      "expected": [
+        "PL_21_2026::0002",
+        "PL_21_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_21_2026::0009",
+          "rank": 1,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 9,
+          "similarity": 0.8734,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_21_2026::0000",
+          "rank": 2,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8704,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_21_2026::0007",
+          "rank": 3,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 7,
+          "similarity": 0.8608,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_21_2026::0002",
+          "rank": 4,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8574,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_21_2026::0004",
+          "rank": 5,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8572,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 2,
+      "best_rank": 4,
+      "hit_rate": 1.0,
+      "recall": 0.5,
+      "precision": 0.2,
+      "mrr": 0.25,
+      "ndcg": 0.2640681225725909,
+      "dcg": 0.43067655807339306,
+      "idcg": 1.6309297535714575,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q008",
+      "question": "Quais são todas as vedações à indicação de candidatos ao Prêmio e quando e onde ocorre a cerimônia de premiação?",
+      "type": "multi_chunk",
+      "filename": "PL_21_2026.pdf",
+      "expected": [
+        "PL_21_2026::0002",
+        "PL_21_2026::0005",
+        "PL_21_2026::0006"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_21_2026::0006",
+          "rank": 1,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 6,
+          "similarity": 0.8398,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_21_2026::0007",
+          "rank": 2,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 7,
+          "similarity": 0.8293,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_21_2026::0005",
+          "rank": 3,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 5,
+          "similarity": 0.8244,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_770_2026::0015",
+          "rank": 4,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 15,
+          "similarity": 0.8241,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_21_2026::0002",
+          "rank": 5,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8225,
+          "expected": true
+        }
+      ],
+      "k": 5,
+      "hits": 3,
+      "total": 3,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.6,
+      "mrr": 1.0,
+      "ndcg": 0.8854598815714874,
+      "dcg": 1.8868528072345416,
+      "idcg": 2.1309297535714578,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q009",
+      "question": "Qual decreto o PL 253/2026 susta e em quais municípios fica a unidade de conservação criada por ele?",
+      "type": "single_chunk",
+      "filename": "PL_253_2026.pdf",
+      "expected": [
+        "PL_253_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_253_2026::0002",
+          "rank": 1,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8786,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_253_2026::0004",
+          "rank": 2,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8646,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_253_2026::0001",
+          "rank": 3,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8594,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_182_2026::0001",
+          "rank": 4,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.858,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_385_2026::0001",
+          "rank": 5,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8571,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 3,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.5,
+      "dcg": 0.5,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q010",
+      "question": "Quais vícios o PL 253/2026 aponta no Decreto nº 12.888/2026 e em quais normas se apoia para pedir sua sustação?",
+      "type": "multi_chunk",
+      "filename": "PL_253_2026.pdf",
+      "expected": [
+        "PL_253_2026::0002",
+        "PL_253_2026::0003",
+        "PL_253_2026::0004"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_253_2026::0002",
+          "rank": 1,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8674,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_261_2026::0004",
+          "rank": 2,
+          "filename": "PL_261_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.858,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_253_2026::0004",
+          "rank": 3,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8433,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_271_2026::0003",
+          "rank": 4,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8365,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_385_2026::0001",
+          "rank": 5,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8362,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 3,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 0.6666666666666666,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 0.7039180890341347,
+      "dcg": 1.5,
+      "idcg": 2.1309297535714578,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q011",
+      "question": "Qual é a definição de animal comunitário adotada pelo PL 255/2026 e que proteção lhe é conferida?",
+      "type": "multi_chunk",
+      "filename": "PL_255_2026.pdf",
+      "expected": [
+        "PL_255_2026::0000",
+        "PL_255_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_255_2026::0000",
+          "rank": 1,
+          "filename": "PL_255_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8929,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_255_2026::0003",
+          "rank": 2,
+          "filename": "PL_255_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8782,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_255_2026::0001",
+          "rank": 3,
+          "filename": "PL_255_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8699,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_255_2026::0004",
+          "rank": 4,
+          "filename": "PL_255_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8574,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_770_2026::0023",
+          "rank": 5,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 23,
+          "similarity": 0.8567,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 0.9197207891481876,
+      "dcg": 1.5,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q012",
+      "question": "Que alteração o PL 255/2026 promove na Lei nº 9.605/1998 e qual a justificativa apresentada para essa mudança?",
+      "type": "multi_chunk",
+      "filename": "PL_255_2026.pdf",
+      "expected": [
+        "PL_255_2026::0001",
+        "PL_255_2026::0003",
+        "PL_255_2026::0004"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_253_2026::0002",
+          "rank": 1,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.849,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_261_2026::0004",
+          "rank": 2,
+          "filename": "PL_261_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8482,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_352_2026::0000",
+          "rank": 3,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8396,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_182_2026::0001",
+          "rank": 4,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8375,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_2586_2026::0000",
+          "rank": 5,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8365,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 0,
+      "total": 3,
+      "best_rank": null,
+      "hit_rate": 0.0,
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "dcg": 0,
+      "idcg": 2.1309297535714578,
+      "verdict": "fail"
+    },
+    {
+      "query_id": "q013",
+      "question": "Qual a diferença entre desinformação climática e desinformação socioambiental no PL 2586/2026?",
+      "type": "multi_chunk",
+      "filename": "PL_2586_2026.pdf",
+      "expected": [
+        "PL_2586_2026::0002",
+        "PL_2586_2026::0003"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_2586_2026::0000",
+          "rank": 1,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8761,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_2586_2026::0002",
+          "rank": 2,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8741,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_2586_2026::0025",
+          "rank": 3,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 25,
+          "similarity": 0.8659,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_2586_2026::0003",
+          "rank": 4,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8653,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_2586_2026::0022",
+          "rank": 5,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 22,
+          "similarity": 0.864,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 0.5,
+      "ndcg": 0.6509209298071326,
+      "dcg": 1.0616063116448506,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q014",
+      "question": "Quais são as modalidades de transparência pública ambiental e climática definidas no PL 2586/2026 e como elas se relacionam com o entendimento do STJ sobre o dever estatal de transparência ambiental?",
+      "type": "multi_chunk",
+      "filename": "PL_2586_2026.pdf",
+      "expected": [
+        "PL_2586_2026::0003",
+        "PL_2586_2026::0004",
+        "PL_2586_2026::0005",
+        "PL_2586_2026::0020",
+        "PL_2586_2026::0021",
+        "PL_2586_2026::0024"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_2586_2026::0004",
+          "rank": 1,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8658,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_2586_2026::0021",
+          "rank": 2,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 21,
+          "similarity": 0.8655,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_2586_2026::0003",
+          "rank": 3,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8616,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_2586_2026::0006",
+          "rank": 4,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 6,
+          "similarity": 0.8585,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_2586_2026::0009",
+          "rank": 5,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 9,
+          "similarity": 0.8581,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 3,
+      "total": 6,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 0.5,
+      "precision": 0.6,
+      "mrr": 1.0,
+      "ndcg": 0.7227265726449519,
+      "dcg": 2.1309297535714578,
+      "idcg": 2.9484591188793923,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q015",
+      "question": "Qual é a área da RDS Córregos dos Vales do Norte de Minas e qual objetivo o ICMBio atribui a ela?",
+      "type": "single_chunk",
+      "filename": "PL_261_2026.pdf",
+      "expected": [
+        "PL_261_2026::0002"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_261_2026::0002",
+          "rank": 1,
+          "filename": "PL_261_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8817,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_261_2026::0003",
+          "rank": 2,
+          "filename": "PL_261_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8729,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_261_2026::0000",
+          "rank": 3,
+          "filename": "PL_261_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.858,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_253_2026::0002",
+          "rank": 4,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8527,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_253_2026::0000",
+          "rank": 5,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8505,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q016",
+      "question": "Com quais argumentos e dados o PL 261/2026 sustenta que houve desvio de finalidade na criação da RDS Córregos dos Vales do Norte de Minas?",
+      "type": "multi_chunk",
+      "filename": "PL_261_2026.pdf",
+      "expected": [
+        "PL_261_2026::0002",
+        "PL_261_2026::0003"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_253_2026::0002",
+          "rank": 1,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8899,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_261_2026::0003",
+          "rank": 2,
+          "filename": "PL_261_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8841,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_261_2026::0002",
+          "rank": 3,
+          "filename": "PL_261_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.872,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_253_2026::0000",
+          "rank": 4,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8715,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_261_2026::0000",
+          "rank": 5,
+          "filename": "PL_261_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8708,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 0.5,
+      "ndcg": 0.6934264036172708,
+      "dcg": 1.1309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q017",
+      "question": "Como a Lei nº 9.985/2000 (SNUC) define corredor ecológico, segundo o PL 263/2026?",
+      "type": "single_chunk",
+      "filename": "PL_263_2026.pdf",
+      "expected": [
+        "PL_263_2026::0002"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_263_2026::0002",
+          "rank": 1,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8967,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_263_2026::0001",
+          "rank": 2,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8772,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_253_2026::0002",
+          "rank": 3,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8657,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_263_2026::0007",
+          "rank": 4,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 7,
+          "similarity": 0.8594,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_263_2026::0003",
+          "rank": 5,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.859,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q018",
+      "question": "Quais vícios o PL 263/2026 identifica na Portaria que reconheceu o Corredor Ecológico Carajás-Bacajá?",
+      "type": "multi_chunk",
+      "filename": "PL_263_2026.pdf",
+      "expected": [
+        "PL_263_2026::0001",
+        "PL_263_2026::0003",
+        "PL_263_2026::0004",
+        "PL_263_2026::0005",
+        "PL_263_2026::0006",
+        "PL_263_2026::0007",
+        "PL_263_2026::0008"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_263_2026::0006",
+          "rank": 1,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 6,
+          "similarity": 0.8937,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_263_2026::0000",
+          "rank": 2,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8887,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_263_2026::0001",
+          "rank": 3,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8778,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_263_2026::0007",
+          "rank": 4,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 7,
+          "similarity": 0.8628,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_271_2026::0003",
+          "rank": 5,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8504,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 3,
+      "total": 7,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 0.42857142857142855,
+      "precision": 0.6,
+      "mrr": 1.0,
+      "ndcg": 0.6548086577531307,
+      "dcg": 1.9306765580733931,
+      "idcg": 2.9484591188793923,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q019",
+      "question": "Qual ato do IBAMA o PL 271/2026 susta e qual o seu conteúdo?",
+      "type": "multi_chunk",
+      "filename": "PL_271_2026.pdf",
+      "expected": [
+        "PL_271_2026::0001",
+        "PL_271_2026::0002",
+        "PL_271_2026::0003"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_271_2026::0001",
+          "rank": 1,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8823,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_271_2026::0000",
+          "rank": 2,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8673,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_271_2026::0003",
+          "rank": 3,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8639,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_263_2026::0000",
+          "rank": 4,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8374,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_352_2026::0002",
+          "rank": 5,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8363,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 3,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 0.6666666666666666,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 0.7039180890341347,
+      "dcg": 1.5,
+      "idcg": 2.1309297535714578,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q020",
+      "question": "Quais temas previstos na Agenda Regulatória do IBAMA são criticados pelo PL 271/2026 e por quais razões?",
+      "type": "multi_chunk",
+      "filename": "PL_271_2026.pdf",
+      "expected": [
+        "PL_271_2026::0003",
+        "PL_271_2026::0004",
+        "PL_271_2026::0005"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_271_2026::0001",
+          "rank": 1,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.88,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_271_2026::0000",
+          "rank": 2,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8734,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_271_2026::0003",
+          "rank": 3,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8679,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_271_2026::0005",
+          "rank": 4,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 5,
+          "similarity": 0.8481,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_271_2026::0004",
+          "rank": 5,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8481,
+          "expected": true
+        }
+      ],
+      "k": 5,
+      "hits": 3,
+      "total": 3,
+      "best_rank": 3,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.6,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.6182885020492784,
+      "dcg": 1.3175293653079347,
+      "idcg": 2.1309297535714578,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q021",
+      "question": "Quais portarias o PL 352/2026 susta e qual classificação elas atribuem ao tambaqui?",
+      "type": "single_chunk",
+      "filename": "PL_352_2026.pdf",
+      "expected": [
+        "PL_352_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_352_2026::0000",
+          "rank": 1,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8718,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_352_2026::0002",
+          "rank": 2,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8619,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_352_2026::0001",
+          "rank": 3,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8482,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_352_2026::0004",
+          "rank": 4,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8327,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_385_2026::0001",
+          "rank": 5,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.832,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 3,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.5,
+      "dcg": 0.5,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q022",
+      "question": "Por que o PL 352/2026 considera as exigências das portarias sobre o tambaqui incompatíveis com a realidade das populações amazônicas?",
+      "type": "multi_chunk",
+      "filename": "PL_352_2026.pdf",
+      "expected": [
+        "PL_352_2026::0003",
+        "PL_352_2026::0004"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_352_2026::0002",
+          "rank": 1,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8767,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_352_2026::0000",
+          "rank": 2,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8696,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_352_2026::0004",
+          "rank": 3,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.858,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_385_2026::0001",
+          "rank": 4,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8527,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_385_2026::0004",
+          "rank": 5,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8519,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 2,
+      "best_rank": 3,
+      "hit_rate": 1.0,
+      "recall": 0.5,
+      "precision": 0.2,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.3065735963827292,
+      "dcg": 0.5,
+      "idcg": 1.6309297535714575,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q023",
+      "question": "Quais municípios do Amazonas são citados pelo PL 385/2026 como dependentes da pesca artesanal de peixes ornamentais?",
+      "type": "multi_chunk",
+      "filename": "PL_385_2026.pdf",
+      "expected": [
+        "PL_385_2026::0001",
+        "PL_385_2026::0002"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_385_2026::0001",
+          "rank": 1,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8735,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_385_2026::0002",
+          "rank": 2,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8718,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_352_2026::0002",
+          "rank": 3,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8598,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_352_2026::0003",
+          "rank": 4,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8534,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_385_2026::0003",
+          "rank": 5,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8407,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q024",
+      "question": "Quais dispositivos constitucionais o PL 385/2026 invoca e qual efeito paradoxal ele atribui à Portaria nº 1.666/2026?",
+      "type": "multi_chunk",
+      "filename": "PL_385_2026.pdf",
+      "expected": [
+        "PL_385_2026::0001",
+        "PL_385_2026::0003",
+        "PL_385_2026::0004"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_385_2026::0001",
+          "rank": 1,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8546,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_352_2026::0004",
+          "rank": 2,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8538,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_271_2026::0003",
+          "rank": 3,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8504,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_182_2026::0001",
+          "rank": 4,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8496,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_182_2026::0002",
+          "rank": 5,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.847,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 3,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 0.3333333333333333,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 0.46927872602275644,
+      "dcg": 1.0,
+      "idcg": 2.1309297535714578,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q025",
+      "question": "Em que condições excepcionais o PL 415/2026 admite a disposição de lodos de ETA e ETE em aterros sanitários?",
+      "type": "single_chunk",
+      "filename": "PL_415_2026.pdf",
+      "expected": [
+        "PL_415_2026::0009"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_415_2026::0008",
+          "rank": 1,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 8,
+          "similarity": 0.893,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_415_2026::0012",
+          "rank": 2,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 12,
+          "similarity": 0.8656,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_415_2026::0001",
+          "rank": 3,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8653,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_415_2026::0009",
+          "rank": 4,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 9,
+          "similarity": 0.8592,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_415_2026::0002",
+          "rank": 5,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8454,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 4,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.25,
+      "ndcg": 0.43067655807339306,
+      "dcg": 0.43067655807339306,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q026",
+      "question": "Quais são os prazos de adequação previstos no PL 415/2026 para os empreendimentos que usam ETE para chorume, para os Municípios e para a regulamentação da lei?",
+      "type": "multi_chunk",
+      "filename": "PL_415_2026.pdf",
+      "expected": [
+        "PL_415_2026::0004",
+        "PL_415_2026::0007",
+        "PL_415_2026::0011"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_415_2026::0004",
+          "rank": 1,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8701,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_415_2026::0012",
+          "rank": 2,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 12,
+          "similarity": 0.8529,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_415_2026::0001",
+          "rank": 3,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8442,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_415_2026::0000",
+          "rank": 4,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8413,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_263_2026::0009",
+          "rank": 5,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 9,
+          "similarity": 0.8402,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 3,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 0.3333333333333333,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 0.46927872602275644,
+      "dcg": 1.0,
+      "idcg": 2.1309297535714578,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q027",
+      "question": "Quais limites de alíquota o PL 42/2026 fixa para o Imposto Seletivo e o que caracteriza sua finalidade arrecadatória?",
+      "type": "multi_chunk",
+      "filename": "PL_42_2026.pdf",
+      "expected": [
+        "PL_42_2026::0001",
+        "PL_42_2026::0002"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_42_2026::0002",
+          "rank": 1,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8873,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_42_2026::0010",
+          "rank": 2,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 10,
+          "similarity": 0.8742,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_42_2026::0000",
+          "rank": 3,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8741,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_42_2026::0001",
+          "rank": 4,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8659,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_42_2026::0008",
+          "rank": 5,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 8,
+          "similarity": 0.863,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 0.8772153153380493,
+      "dcg": 1.4306765580733931,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q028",
+      "question": "O que a Avaliação de Impacto Regulatório deve demonstrar antes da instituição ou majoração do Imposto Seletivo, e qual a consequência de não haver reavaliação no prazo previsto?",
+      "type": "multi_chunk",
+      "filename": "PL_42_2026.pdf",
+      "expected": [
+        "PL_42_2026::0002",
+        "PL_42_2026::0003",
+        "PL_42_2026::0004",
+        "PL_42_2026::0006",
+        "PL_42_2026::0007"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_42_2026::0008",
+          "rank": 1,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 8,
+          "similarity": 0.8558,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_42_2026::0004",
+          "rank": 2,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8534,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_42_2026::0002",
+          "rank": 3,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8484,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_42_2026::0010",
+          "rank": 4,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 10,
+          "similarity": 0.8457,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_42_2026::0003",
+          "rank": 5,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8451,
+          "expected": true
+        }
+      ],
+      "k": 5,
+      "hits": 3,
+      "total": 5,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 0.6,
+      "precision": 0.6,
+      "mrr": 0.5,
+      "ndcg": 0.5147714448836774,
+      "dcg": 1.5177825608059992,
+      "idcg": 2.9484591188793923,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q029",
+      "question": "Que tipos de denúncia o 'Disque Animal' recebe e a quais órgãos elas são encaminhadas?",
+      "type": "multi_chunk",
+      "filename": "PL_561_2026.pdf",
+      "expected": [
+        "PL_561_2026::0000",
+        "PL_561_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_561_2026::0001",
+          "rank": 1,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.896,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_561_2026::0000",
+          "rank": 2,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8861,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_561_2026::0003",
+          "rank": 3,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8812,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_561_2026::0006",
+          "rank": 4,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 6,
+          "similarity": 0.8778,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_561_2026::0004",
+          "rank": 5,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8393,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q030",
+      "question": "Em quais dispositivos constitucionais e leis o PL 561/2026 fundamenta a criação do Disque Animal?",
+      "type": "multi_chunk",
+      "filename": "PL_561_2026.pdf",
+      "expected": [
+        "PL_561_2026::0002",
+        "PL_561_2026::0003",
+        "PL_561_2026::0004",
+        "PL_561_2026::0006"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_561_2026::0000",
+          "rank": 1,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8675,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_561_2026::0006",
+          "rank": 2,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 6,
+          "similarity": 0.8529,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_561_2026::0003",
+          "rank": 3,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8498,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_385_2026::0000",
+          "rank": 4,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8478,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_561_2026::0004",
+          "rank": 5,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8453,
+          "expected": true
+        }
+      ],
+      "k": 5,
+      "hits": 3,
+      "total": 4,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 0.75,
+      "precision": 0.6,
+      "mrr": 0.5,
+      "ndcg": 0.592512031964586,
+      "dcg": 1.5177825608059992,
+      "idcg": 2.5616063116448506,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q031",
+      "question": "Como o PL 742/2026 define 'pulverização aérea' e 'populações expostas'?",
+      "type": "single_chunk",
+      "filename": "PL_742_2026.pdf",
+      "expected": [
+        "PL_742_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_742_2026::0000",
+          "rank": 1,
+          "filename": "PL_742_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8668,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_742_2026::0007",
+          "rank": 2,
+          "filename": "PL_742_2026.pdf",
+          "chunk_index": 7,
+          "similarity": 0.8621,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_742_2026::0001",
+          "rank": 3,
+          "filename": "PL_742_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8568,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_271_2026::0003",
+          "rank": 4,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8336,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_752_2026::0000",
+          "rank": 5,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8335,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 3,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.5,
+      "dcg": 0.5,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q032",
+      "question": "Qual lei estadual inspira o PL 742/2026, qual a história por trás dela e como o projeto se harmoniza com a Lei nº 7.802/1989?",
+      "type": "multi_chunk",
+      "filename": "PL_742_2026.pdf",
+      "expected": [
+        "PL_742_2026::0008",
+        "PL_742_2026::0009"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_253_2026::0002",
+          "rank": 1,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8381,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_742_2026::0004",
+          "rank": 2,
+          "filename": "PL_742_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8376,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_561_2026::0004",
+          "rank": 3,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.834,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_271_2026::0003",
+          "rank": 4,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8336,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0000",
+          "rank": 5,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.83,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 0,
+      "total": 2,
+      "best_rank": null,
+      "hit_rate": 0.0,
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "dcg": 0,
+      "idcg": 1.6309297535714575,
+      "verdict": "fail"
+    },
+    {
+      "query_id": "q033",
+      "question": "O que caracteriza uma Zona de Vulnerabilidade Climática (ZVC) no PL 752/2026?",
+      "type": "single_chunk",
+      "filename": "PL_752_2026.pdf",
+      "expected": [
+        "PL_752_2026::0002"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_752_2026::0002",
+          "rank": 1,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8807,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_752_2026::0003",
+          "rank": 2,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8707,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_752_2026::0004",
+          "rank": 3,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8621,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_752_2026::0000",
+          "rank": 4,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8594,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0000",
+          "rank": 5,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8552,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q034",
+      "question": "Que dados e estudos o PL 752/2026 apresenta para demonstrar a vulnerabilidade climática do Brasil?",
+      "type": "multi_chunk",
+      "filename": "PL_752_2026.pdf",
+      "expected": [
+        "PL_752_2026::0007",
+        "PL_752_2026::0008",
+        "PL_752_2026::0009"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_752_2026::0000",
+          "rank": 1,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8675,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0000",
+          "rank": 2,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8598,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0035",
+          "rank": 3,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 35,
+          "similarity": 0.8589,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0032",
+          "rank": 4,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 32,
+          "similarity": 0.8581,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_752_2026::0010",
+          "rank": 5,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 10,
+          "similarity": 0.8557,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 0,
+      "total": 3,
+      "best_rank": null,
+      "hit_rate": 0.0,
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "dcg": 0,
+      "idcg": 2.1309297535714578,
+      "verdict": "fail"
+    },
+    {
+      "query_id": "q035",
+      "question": "Quem são os beneficiários do Programa Nacional de Solidariedade Veterinária?",
+      "type": "single_chunk",
+      "filename": "PL_770_2026.pdf",
+      "expected": [
+        "PL_770_2026::0008"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_770_2026::0001",
+          "rank": 1,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.8814,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_770_2026::0003",
+          "rank": 2,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.8803,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_770_2026::0000",
+          "rank": 3,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8796,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_770_2026::0022",
+          "rank": 4,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 22,
+          "similarity": 0.8662,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_770_2026::0019",
+          "rank": 5,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 19,
+          "similarity": 0.859,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 0,
+      "total": 1,
+      "best_rank": null,
+      "hit_rate": 0.0,
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "dcg": 0,
+      "idcg": 1.0,
+      "verdict": "fail"
+    },
+    {
+      "query_id": "q036",
+      "question": "De quais fontes o Programa pode receber doações de produtos veterinários e que controles de triagem e descarte se aplicam a esses itens?",
+      "type": "multi_chunk",
+      "filename": "PL_770_2026.pdf",
+      "expected": [
+        "PL_770_2026::0013",
+        "PL_770_2026::0014",
+        "PL_770_2026::0015",
+        "PL_770_2026::0016"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_770_2026::0004",
+          "rank": 1,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.8687,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_770_2026::0021",
+          "rank": 2,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 21,
+          "similarity": 0.8659,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_770_2026::0013",
+          "rank": 3,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 13,
+          "similarity": 0.8656,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_770_2026::0016",
+          "rank": 4,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 16,
+          "similarity": 0.8639,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_770_2026::0005",
+          "rank": 5,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 5,
+          "similarity": 0.8584,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 4,
+      "best_rank": 3,
+      "hit_rate": 1.0,
+      "recall": 0.5,
+      "precision": 0.4,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.36331756126716835,
+      "dcg": 0.9306765580733931,
+      "idcg": 2.5616063116448506,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q037",
+      "question": "Como o PL 993/2026 define 'sistema climático' e 'dano ao sistema climático'?",
+      "type": "single_chunk",
+      "filename": "PL_993_2026.pdf",
+      "expected": [
+        "PL_993_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_993_2026::0000",
+          "rank": 1,
+          "filename": "PL_993_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8788,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1502_2026::0000",
+          "rank": 2,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8611,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_993_2026::0006",
+          "rank": 3,
+          "filename": "PL_993_2026.pdf",
+          "chunk_index": 6,
+          "similarity": 0.861,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_752_2026::0000",
+          "rank": 4,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8566,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_2586_2026::0002",
+          "rank": 5,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.8552,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q038",
+      "question": "Que mudança o PL 993/2026 faz no § 1º do art. 14 da Lei nº 6.938/1981, quais critérios passam a caracterizar a responsabilidade por dano climático e como esse dano pode ser reparado?",
+      "type": "multi_chunk",
+      "filename": "PL_993_2026.pdf",
+      "expected": [
+        "PL_993_2026::0002",
+        "PL_993_2026::0003",
+        "PL_993_2026::0004"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_993_2026::0000",
+          "rank": 1,
+          "filename": "PL_993_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8843,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_993_2026::0002",
+          "rank": 2,
+          "filename": "PL_993_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.877,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1502_2026::0023",
+          "rank": 3,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 23,
+          "similarity": 0.8683,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0000",
+          "rank": 4,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8621,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_752_2026::0000",
+          "rank": 5,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.8603,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 3,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 0.3333333333333333,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.2960819109658652,
+      "dcg": 0.6309297535714575,
+      "idcg": 2.1309297535714578,
+      "verdict": "partial"
+    }
+  ]
+}
