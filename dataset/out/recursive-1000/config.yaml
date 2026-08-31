@@ -1,0 +1,8 @@
+name: recursive-1000
+splitter: recursive
+unit: chars
+max: 1000
+min: 0
+overlap: 100
+tokenizer: ''
+strip_footer: true

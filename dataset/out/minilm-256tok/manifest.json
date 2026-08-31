@@ -1,0 +1,28 @@
+{
+  "built_at": "2026-08-31T01:52:37+00:00",
+  "config": {
+    "name": "minilm-256tok",
+    "splitter": "legal",
+    "unit": "tokens",
+    "max": 256,
+    "min": 64,
+    "overlap": 0,
+    "tokenizer": "sentence-transformers/all-MiniLM-L6-v2",
+    "strip_footer": true
+  },
+  "versions": {
+    "pypdf": "6.16.2",
+    "transformers": "5.8.1",
+    "pyarrow": "25.0.1"
+  },
+  "counts": {
+    "documents": 19,
+    "chunks": 334,
+    "size_min": 17,
+    "size_median": 165,
+    "size_max": 256,
+    "queries": 38,
+    "qrels": 143
+  },
+  "pdfs_sha256": "e37d20e0c5bc32c8b7826aa15a8637a78e37e74c103f6854994e32fa928afaf4"
+}
