@@ -1,6 +1,170 @@
 {
   "runs": [
     {
+      "run_id": "2026-08-31T03-14-15",
+      "label": "e5-large · e5large e5large",
+      "notes": "",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "39c5478d",
+        "bucket_name": "e5large e5large",
+        "retriever": "e5-large",
+        "embedding_model": "e5-large",
+        "corpus_sha256": "0dcd64ffa9c62d6899be18520e20efcbfb7481d8171f6e3e2abbaf56ee4a17a4",
+        "n_queries": 38,
+        "n_chunks": 175,
+        "n_qrels": 126
+      },
+      "metrics": {
+        "hit_rate": 0.9737,
+        "recall": 0.7766,
+        "precision": 0.3105,
+        "mrr": 0.7737,
+        "ndcg": 0.6979
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.7423,
+          "ndcg": 0.8051
+        },
+        "multi_chunk": {
+          "hit_rate": 0.96,
+          "recall": 0.6605,
+          "precision": 0.368,
+          "mrr": 0.79,
+          "ndcg": 0.6421
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-08-31T03-09-25",
+      "label": "e5-large · legal-1200 e5large",
+      "notes": "",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "d8043cfd",
+        "bucket_name": "legal-1200 e5large",
+        "retriever": "e5-large",
+        "embedding_model": "e5-large",
+        "corpus_sha256": "9b09baec3732ebf31aa5b580bde4b974365795a74d421304dbe5c8cd3dbe46c9",
+        "n_queries": 38,
+        "n_chunks": 241,
+        "n_qrels": 132
+      },
+      "metrics": {
+        "hit_rate": 0.8947,
+        "recall": 0.7137,
+        "precision": 0.3053,
+        "mrr": 0.6895,
+        "ndcg": 0.625
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 0.9167,
+          "recall": 0.9167,
+          "precision": 0.1833,
+          "mrr": 0.6208,
+          "ndcg": 0.6931
+        },
+        "multi_chunk": {
+          "hit_rate": 0.8846,
+          "recall": 0.6201,
+          "precision": 0.3615,
+          "mrr": 0.7212,
+          "ndcg": 0.5936
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-08-31T03-06-13",
+      "label": "e5-base · legal-1200 e5small",
+      "notes": "",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "0c80fac6",
+        "bucket_name": "legal-1200 e5small",
+        "retriever": "e5-base",
+        "embedding_model": "e5-base",
+        "corpus_sha256": "9b09baec3732ebf31aa5b580bde4b974365795a74d421304dbe5c8cd3dbe46c9",
+        "n_queries": 38,
+        "n_chunks": 241,
+        "n_qrels": 132
+      },
+      "metrics": {
+        "hit_rate": 0.8684,
+        "recall": 0.6828,
+        "precision": 0.2895,
+        "mrr": 0.6075,
+        "ndcg": 0.5696
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 0.8333,
+          "recall": 0.8333,
+          "precision": 0.1667,
+          "mrr": 0.5486,
+          "ndcg": 0.6192
+        },
+        "multi_chunk": {
+          "hit_rate": 0.8846,
+          "recall": 0.6133,
+          "precision": 0.3462,
+          "mrr": 0.6346,
+          "ndcg": 0.5467
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-08-31T03-04-15",
+      "label": "bm25 · legal-1200 bm25",
+      "notes": "",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "d556057b",
+        "bucket_name": "legal-1200 bm25",
+        "retriever": "bm25",
+        "embedding_model": "bm25",
+        "corpus_sha256": "9b09baec3732ebf31aa5b580bde4b974365795a74d421304dbe5c8cd3dbe46c9",
+        "n_queries": 38,
+        "n_chunks": 241,
+        "n_qrels": 132
+      },
+      "metrics": {
+        "hit_rate": 0.8421,
+        "recall": 0.6016,
+        "precision": 0.2632,
+        "mrr": 0.586,
+        "ndcg": 0.5125
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 0.6667,
+          "recall": 0.6667,
+          "precision": 0.1333,
+          "mrr": 0.3389,
+          "ndcg": 0.4196
+        },
+        "multi_chunk": {
+          "hit_rate": 0.9231,
+          "recall": 0.5716,
+          "precision": 0.3231,
+          "mrr": 0.7,
+          "ndcg": 0.5553
+        }
+      },
+      "failures": 0
+    },
+    {
       "run_id": "2026-08-28T13-05-36",
       "label": "bm25 puro · sem embeddings",
       "notes": "arm lexical do week03: rank-bm25 okapi, k1=1.5 b=0.75, sem stemmer",

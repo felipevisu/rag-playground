@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 """Run the retrieval eval and append the result to runs/.
 
-Questions and ground truth come from dataset/out/*.parquet. Retrieval comes from
-week01's document-api. Nothing here holds an opinion about what a good chunk is
--- that lives in the dataset.
+Questions come from dataset/out/queries.parquet (they don't depend on the
+chunker). Everything chunker-specific comes from one week04 bucket: retrieval
+at /api/buckets/<id>/search, the gabarito at /api/buckets/<id>/answers. The
+bucket was uploaded with both files from the same dataset/out/<config>/, so
+the chunk_ids agree by construction.
 
 Each run is one JSON file in runs/, plus a regenerated runs/index.json holding
 the summaries. The files are the database: git-diffable, hand-editable, and
 readable by index.html without a database.
 
-  python run.py --label "baseline minilm k=5"
-  python run.py --k 10 --label "top-10" --note "does more context help?"
+  python run.py --bucket 59cb0095 --label "e5-base"
+  python run.py --bucket 59cb0095 --k 10 --label "top-10"
+  python run.py --options           # ready buckets
   python run.py --list          # history, newest first
   python run.py --reindex       # rebuild index.json after editing notes by hand
   python run.py --self-check    # metric asserts, no API and no dataset needed
@@ -30,7 +33,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 RUNS = HERE / "runs"
 DATASET = Path(os.environ.get("DATASET_DIR", HERE.parent / "dataset" / "out"))
-API = os.environ.get("API_URL", "http://localhost:8000")
+API = os.environ.get("API_URL", "http://localhost:8000")  # week04 chunks-api
 
 METRICS = ("hit_rate", "recall", "precision", "mrr", "ndcg")
 
@@ -83,55 +86,71 @@ def aggregate(rows: list[dict]) -> dict:
 
 # ── dataset + api ──────────────────────────────────────────────────────────
 
-def load_dataset() -> tuple[list[dict], dict, dict]:
+def load_queries() -> list[dict]:
     import pyarrow.parquet as pq
 
-    missing = [f for f in ("queries.parquet", "answers.parquet") if not (DATASET / f).exists()]
-    if missing:
-        sys.exit(
-            f"{', '.join(missing)} not found in {DATASET}.\n"
-            f"Build the dataset first:  cd dataset && docker compose run --rm build"
-        )
+    path = DATASET / "queries.parquet"
+    if not path.exists():
+        sys.exit(f"{path} not found. Build the dataset first (dataset/build/build.py).")
+    return pq.read_table(path).to_pylist()
 
-    queries = pq.read_table(DATASET / "queries.parquet").to_pylist()
-    answers = pq.read_table(DATASET / "answers.parquet").to_pylist()
 
+def load_qrels(api: str, bucket: str) -> dict[str, list[str]]:
+    """query_id -> [chunk_id] from the bucket's own gabarito."""
     qrels: dict[str, list[str]] = {}
-    for a in answers:
-        qrels.setdefault(a["query_id"], []).append(a["chunk_id"])
+    for a in get_json(f"{api}/api/buckets/{bucket}/answers"):
+        if a["chunk_id"] not in qrels.setdefault(a["query_id"], []):
+            qrels[a["query_id"]].append(a["chunk_id"])
+    if not qrels:
+        sys.exit(f"bucket {bucket} has no gabarito (answers.parquet was not uploaded)")
+    return qrels
 
-    manifest_path = DATASET / "manifest.json"
-    manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
-    return queries, qrels, manifest
 
-
-def search(api: str, question: str, k: int) -> list[dict]:
-    url = f"{api}/api/search?" + urllib.parse.urlencode({"q": question, "k": k})
-    with urllib.request.urlopen(url, timeout=60) as r:
+def search(api: str, bucket: str, question: str, k: int) -> list[dict]:
+    url = f"{api}/api/buckets/{bucket}/search?" + urllib.parse.urlencode({"q": question, "k": k})
+    with urllib.request.urlopen(url, timeout=120) as r:
         return json.loads(r.read())["results"]
 
 
-def api_info(api: str) -> dict:
+def get_json(url: str) -> dict:
     try:
-        with urllib.request.urlopen(f"{api}/api/health", timeout=10) as r:
+        with urllib.request.urlopen(url, timeout=10) as r:
             return json.loads(r.read())
+    except urllib.error.HTTPError as e:
+        sys.exit(f"{url} -> {e.code}: {e.read().decode(errors='replace')[:200]}")
     except urllib.error.URLError as e:
-        sys.exit(f"document-api unreachable at {api}: {e}\nIs week01 up?")
+        sys.exit(f"chunks-api unreachable at {url}: {e}\nIs week04 up?")
+
+
+def list_buckets(api: str) -> list[dict]:
+    return get_json(f"{api}/api/buckets")
+
+
+def bucket_info(api: str, bucket: str) -> dict:
+    b = get_json(f"{api}/api/buckets/{bucket}")
+    if b["status"] != "ready":
+        sys.exit(f"bucket {bucket} ({b['name']}) is {b['status']}, not ready")
+    return b
 
 
 # ── run ────────────────────────────────────────────────────────────────────
 
-def run(label: str, note: str, k: int, api: str) -> dict:
+def run(label: str, note: str, k: int, api: str, bucket: str) -> dict:
     api = api.rstrip("/")
-    health = api_info(api)
-    queries, qrels, manifest = load_dataset()
+    b = bucket_info(api, bucket)
+    queries = load_queries()
+    qrels = load_qrels(api, bucket)
+    missing = [q["query_id"] for q in queries if q["query_id"] not in qrels]
+    if missing:
+        print(f"warning: {len(missing)} question(s) have no gabarito in this bucket: {missing[:5]}",
+              file=sys.stderr)
 
-    print(f"{len(queries)} queries · k={k} · {api}")
+    print(f"{len(queries)} queries · k={k} · bucket {bucket} ({b['name']}, {b['retriever']})")
     per_query, failures = [], 0
     for i, q in enumerate(queries, 1):
         expected = qrels.get(q["query_id"], [])
         try:
-            results = search(api, q["question"], k)
+            results = search(api, bucket, q["question"], k)
         except (urllib.error.URLError, TimeoutError) as e:
             failures += 1
             print(f"  [{i}/{len(queries)}] {q['query_id']} FAILED: {e}")
@@ -141,7 +160,9 @@ def run(label: str, note: str, k: int, api: str) -> dict:
         per_query.append({
             "query_id": q["query_id"],
             "question": q["question"],
-            "type": q["type"],
+            # derived from the gabarito, not declared: a chunker that splits an
+            # answer in two makes that question multi_chunk for this dataset
+            "type": "multi_chunk" if len(expected) > 1 else "single_chunk",
             "filename": q["filename"],
             "expected": expected,
             "retrieved": [
@@ -170,11 +191,14 @@ def run(label: str, note: str, k: int, api: str) -> dict:
         "config": {
             "k": k,
             "api": api,
-            "embedding_model": health.get("embedding_model", "unknown"),
-            "corpus_sha256": manifest.get("corpus_sha256", "unknown"),
-            "chunker": manifest.get("chunker", {}),
+            "bucket": bucket,
+            "bucket_name": b["name"],
+            "retriever": b["retriever"],
+            "embedding_model": b["retriever"],
+            "corpus_sha256": b["parquet_sha"],
             "n_queries": len(queries),
-            "n_chunks": manifest.get("counts", {}).get("chunks"),
+            "n_chunks": b["chunk_count"],
+            "n_qrels": b["qrels_count"],
         },
         "metrics": aggregate(per_query),
         "metrics_by_type": {
@@ -229,6 +253,15 @@ def reindex() -> int:
     (RUNS / "index.json").write_text(
         json.dumps({"runs": runs}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
+    return 0
+
+
+def show_options(api: str) -> int:
+    print("buckets (ready, with gabarito):")
+    for b in list_buckets(api.rstrip("/")):
+        if b["status"] == "ready" and b.get("qrels_count"):
+            print(f"  {b['id']}  {b['name']:<32} {b['retriever']:<10} {b['chunk_count']:>4} chunks  "
+                  f"{b['qrels_count']:>4} qrels  sha {b['parquet_sha'][:12]}")
     return 0
 
 
@@ -296,7 +329,9 @@ if __name__ == "__main__":
     ap.add_argument("--label", default="", help="short name for this run")
     ap.add_argument("--note", default="", help="what you changed and why")
     ap.add_argument("--k", type=int, default=5, help="top-K to retrieve (default 5)")
-    ap.add_argument("--api", default=API, help=f"document-api base URL (default {API})")
+    ap.add_argument("--api", default=API, help=f"chunks-api base URL (default {API})")
+    ap.add_argument("--bucket", help="week04 bucket id (search + gabarito)")
+    ap.add_argument("--options", action="store_true", help="list ready buckets")
     ap.add_argument("--list", action="store_true", help="show run history")
     ap.add_argument("--reindex", action="store_true", help="rebuild index.json from run files")
     ap.add_argument("--self-check", action="store_true", help="metric asserts only")
@@ -308,4 +343,8 @@ if __name__ == "__main__":
         sys.exit(show_list())
     if a.reindex:
         sys.exit(reindex())
-    run(a.label, a.note, a.k, a.api)
+    if a.options:
+        sys.exit(show_options(a.api))
+    if not a.bucket:
+        ap.error("--bucket is required (see --options)")
+    run(a.label, a.note, a.k, a.api, a.bucket)

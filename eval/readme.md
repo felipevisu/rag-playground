@@ -3,9 +3,14 @@
 Mede a qualidade do retrieval e guarda o histórico, para que "melhorei?" tenha
 resposta em número e não em impressão.
 
-Perguntas e gabarito vêm de [`../dataset/out`](../dataset). Os resultados vêm do
-`document-api` do week01. Este diretório não tem opinião sobre o que é um chunk
-certo — isso mora no dataset.
+Perguntas vêm de [`../dataset/out/queries.parquet`](../dataset) — não dependem
+de chunker. Tudo o que depende vem de um **bucket** do [`../week04`](../week04):
+a busca em `/api/buckets/<id>/search` e o gabarito em `/api/buckets/<id>/answers`.
+O bucket subiu `corpus.parquet` + `answers.parquet` da mesma pasta
+`dataset/out/<config>/`, então os chunk_ids batem por construção. Este diretório
+não tem opinião sobre o que é um chunk certo — isso mora no dataset.
+
+Cada run escolhe **um bucket**. Só aparecem buckets `ready` com gabarito.
 
 ```
 run.py            roda a avaliação e grava em runs/
@@ -22,7 +27,8 @@ lidos pelo `index.html` direto do navegador.
 
 ## Rodando
 
-O week01 precisa estar de pé (`cd ../week01 && docker compose up -d`).
+O week04 precisa estar de pé (`cd ../week04 && docker compose up -d`), com pelo
+menos um bucket `ready`.
 
 ### Pelo painel
 
@@ -32,13 +38,14 @@ docker compose up -d ui
 
 → **http://localhost:8080/**
 
-Preencha rótulo, nota e `k`, clique **▶ Rodar**. O `server.py` importa o
+Escolha o bucket, preencha rótulo (opcional — o padrão é
+`<retriever> · <nome do bucket>`), nota e `k`, clique **▶ Rodar**. O `server.py` importa o
 `run.py` e executa no próprio processo; a resposta só volta no fim (~1 min), e o
 painel recarrega sozinho já com o run novo selecionado. Log ao vivo em
 `docker compose logs -f ui`. Uma avaliação por vez — a segunda leva 409, porque
 o `run_id` tem resolução de segundo e duas gravariam por cima uma da outra.
 
-O `ui` fala com o `document-api`, então precisa da rede do week01 no ar.
+O `ui` fala com o `chunks-api`, então precisa da rede do week04 no ar.
 
 ### Pelo terminal
 
@@ -47,8 +54,9 @@ O serviço `eval` fica atrás de um profile de propósito: sem isso, um
 normalmente.
 
 ```sh
-docker compose run --rm eval --label "baseline minilm k=5"
-docker compose run --rm eval --k 10 --label "top-10" --note "mais contexto ajuda?"
+docker compose run --rm eval --options     # buckets prontos com gabarito
+docker compose run --rm eval --bucket d556057b --label "bm25 · legal-1200"
+docker compose run --rm eval --bucket d556057b --k 10 --label "top-10"
 docker compose run --rm eval --list        # histórico no terminal
 docker compose run --rm eval --self-check  # asserts das métricas, sem API
 ```
@@ -97,14 +105,18 @@ possa ser atribuída em vez de adivinhada:
 ```json
 "config": {
   "k": 5,
-  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
-  "corpus_sha256": "1e05e97f4479…",
-  "chunker": { "max_tokens": 512, "merge_peers": true, … },
+  "bucket": "d556057b",
+  "bucket_name": "legal-1200 bm25",
+  "retriever": "bm25",
+  "corpus_sha256": "9b09baec3732…",
   "n_queries": 38,
-  "n_chunks": 183
+  "n_chunks": 241,
+  "n_qrels": 132
 }
 ```
 
-`corpus_sha256` e `chunker` vêm do `manifest.json` do dataset; o modelo vem do
-`/api/health` do `document-api`. Comparar dois runs cujo `corpus_sha256` difere
-compara duas coisas ao mesmo tempo.
+Tudo vem do bucket. `type` (`single_chunk`/`multi_chunk`) é derivado do
+gabarito — quantos chunks a resposta ocupa **neste** chunker — não declarado na
+pergunta. Comparar dois runs cujo `corpus_sha256` difere compara chunker e
+retriever ao mesmo tempo; o nome do bucket é o que diz qual config de chunker
+foi.
