@@ -1,0 +1,8 @@
+name: legal-1200
+splitter: legal
+unit: chars
+max: 1200
+min: 300
+overlap: 0
+tokenizer: ''
+strip_footer: true

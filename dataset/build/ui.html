@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>chunker</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 14px/1.4 system-ui, sans-serif; margin: 0; display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
+  aside { padding: 16px; border-right: 1px solid #8884; overflow: auto; }
+  main { padding: 16px; overflow: auto; }
+  h1 { font-size: 16px; margin: 0 0 12px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; opacity: .6; margin: 20px 0 8px; }
+  label { display: block; margin: 8px 0 2px; font-size: 12px; opacity: .7; }
+  input, select { width: 100%; box-sizing: border-box; padding: 6px; font: inherit; }
+  input[type=checkbox] { width: auto; }
+  button { margin-top: 12px; padding: 8px 12px; font: inherit; cursor: pointer; }
+  #status { margin-top: 8px; font-size: 12px; white-space: pre-wrap; }
+  .hint { font-size: 11px; opacity: .6; margin-top: 4px; }
+  .err { color: #c33; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #8883; vertical-align: top; }
+  th { font-size: 12px; opacity: .7; position: sticky; top: 0; background: Canvas; }
+  td.text { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 12px; max-width: 900px; }
+  .mono { font-family: ui-monospace, monospace; font-size: 12px; }
+  .builds a { display: block; padding: 4px 0; cursor: pointer; text-decoration: none; color: inherit; }
+  .builds a.sel { font-weight: 600; }
+  .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .toolbar select { width: auto; }
+  code { font-size: 12px; }
+</style>
+</head>
+<body>
+<aside>
+  <h1>chunker</h1>
+  <form id="f">
+    <label>name</label><input name="name" required placeholder="legal-1200">
+    <label>splitter</label><select name="splitter" id="splitter"></select>
+    <div class="hint" id="splitterHint"></div>
+    <label>unit</label><select name="unit" id="unit"></select>
+    <div id="fTokenizer"><label>tokenizer</label><select name="tokenizer" id="tokenizer"></select><div class="hint" id="tokHint"></div></div>
+    <label>max <span class="unitName"></span></label><input name="max" type="number" value="1000" min="1">
+    <div id="fMin"><label>min <span class="unitName"></span> — funde vizinhos até este tamanho</label><input name="min" type="number" value="0" min="0"></div>
+    <div id="fOverlap"><label>overlap <span class="unitName"></span></label><input name="overlap" type="number" value="0" min="0"></div>
+    <label><input name="strip_footer" type="checkbox" checked> strip_footer</label>
+    <button>gerar</button>
+    <div id="status"></div>
+  </form>
+
+  <h2>builds</h2>
+  <div class="builds" id="builds"></div>
+</aside>
+
+<main>
+  <div id="empty">Escolha uma config e clique <b>gerar</b>, ou selecione um build à esquerda.</div>
+  <div id="view" hidden>
+    <div class="toolbar">
+      <b id="vname"></b>
+      <span id="vcounts" class="mono"></span>
+      <select id="fileFilter"></select>
+      <a id="dlParquet">↓ corpus.parquet</a>
+      <a id="dlJsonl">↓ corpus.jsonl</a>
+      <a id="dlAnswers">↓ answers.parquet</a>
+      <a id="dlManifest">↓ manifest</a>
+      <label style="display:inline;margin:0"><input type="checkbox" id="onlyAnswers"> só chunks com resposta</label>
+    </div>
+    <details><summary>config</summary><pre id="vconfig" class="mono"></pre></details>
+    <table>
+      <thead><tr><th>chunk_id</th><th>pages</th><th>heading</th><th>size</th><th>queries</th><th>text</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+let chunks = [], current = null;
+
+async function api(path, opts) {
+  const r = await fetch(path, opts);
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.error || r.statusText);
+  return j;
+}
+
+// What each splitter supports. Mirrors Config.validate in chunkers.py.
+const SPLITTER = {
+  fixed:     { hint: 'janela de tamanho fixo; corta onde cair',                    min: false, overlap: true },
+  recursive: { hint: 'corta em \\n\\n → \\n → ". " → "; " → espaço, o mais grosso que caiba', min: true,  overlap: true },
+  sentence:  { hint: 'corta no fim de frase, agrupa até max',                       min: true,  overlap: true },
+  legal:     { hint: 'corta em Art./§/Parágrafo único/JUSTIFICAÇÃO; guarda heading', min: true,  overlap: false },
+};
+
+let TOKENIZERS = {};
+
+function adapt() {
+  const sp = SPLITTER[$('#splitter').value], unit = $('#unit').value;
+  $('#splitterHint').textContent = sp.hint;
+  document.querySelectorAll('.unitName').forEach(e => e.textContent = `(${unit})`);
+  $('#fTokenizer').hidden = unit !== 'tokens';
+  $('#fMin').hidden = !sp.min;
+  $('#fOverlap').hidden = !sp.overlap;
+  if (!sp.min) $('[name=min]').value = 0;
+  if (!sp.overlap) $('[name=overlap]').value = 0;
+  if (unit === 'tokens') {
+    const lim = TOKENIZERS[$('#tokenizer').value];
+    $('#tokHint').textContent = `modelo aceita até ${lim} tokens — max deve ficar ≤ ${lim}`;
+    $('[name=max]').max = lim;
+    if (+$('[name=max]').value > lim) $('[name=max]').value = lim;
+  } else {
+    $('[name=max]').removeAttribute('max');
+  }
+}
+
+async function loadOptions() {
+  const o = await api('/api/options');
+  TOKENIZERS = o.tokenizers;
+  $('#splitter').innerHTML = o.splitters.map(s => `<option>${s}</option>`).join('');
+  $('#unit').innerHTML = o.units.map(s => `<option>${s}</option>`).join('');
+  $('#tokenizer').innerHTML = Object.keys(o.tokenizers).map(t => `<option>${t}</option>`).join('');
+  $('#splitter').onchange = $('#unit').onchange = $('#tokenizer').onchange = adapt;
+  adapt();
+}
+
+async function loadBuilds() {
+  const bs = await api('/api/builds');
+  $('#builds').innerHTML = bs.map(b =>
+    `<a data-name="${esc(b.name)}" class="${b.name === current ? 'sel' : ''}">${esc(b.name)} <span class="mono" style="opacity:.6">${b.counts.chunks}</span></a>`
+  ).join('') || '<span style="opacity:.6">nenhum</span>';
+  $('#builds').querySelectorAll('a').forEach(a => a.onclick = () => show(a.dataset.name));
+  return bs;
+}
+
+async function show(name) {
+  current = name;
+  const builds = await loadBuilds();
+  const m = builds.find(b => b.name === name);
+  chunks = await api(`/api/chunks?name=${encodeURIComponent(name)}`);
+  $('#empty').hidden = true; $('#view').hidden = false;
+  $('#vname').textContent = name;
+  $('#vcounts').textContent = `${m.counts.documents} docs · ${m.counts.chunks} chunks · size ${m.counts.size_min}/${m.counts.size_median}/${m.counts.size_max} ${m.config.unit} · ${m.counts.qrels} qrels / ${m.counts.queries} queries`;
+  $('#vconfig').textContent = JSON.stringify(m.config, null, 2);
+  $('#dlParquet').href = `/out/${name}/corpus.parquet`;
+  $('#dlJsonl').href = `/out/${name}/corpus.jsonl`;
+  $('#dlAnswers').href = `/out/${name}/answers.parquet`;
+  $('#dlManifest').href = `/out/${name}/manifest.json`;
+  const files = [...new Set(chunks.map(c => c.filename))];
+  $('#fileFilter').innerHTML = `<option value="">todos (${files.length})</option>` + files.map(f => `<option>${esc(f)}</option>`).join('');
+  renderRows();
+}
+
+function renderRows() {
+  const f = $('#fileFilter').value, only = $('#onlyAnswers').checked;
+  const rows = chunks.filter(c => (!f || c.filename === f) && (!only || c.queries.length));
+  $('#rows').innerHTML = rows.map(c => `<tr>
+    <td class="mono">${esc(c.chunk_id)}</td>
+    <td class="mono">${c.pages.join(',')}</td>
+    <td>${esc(c.heading || '')}</td>
+    <td class="mono">${c.size}</td>
+    <td class="mono">${c.queries.join(' ')}</td>
+    <td class="text">${esc(c.text)}</td></tr>`).join('');
+}
+$('#fileFilter').onchange = $('#onlyAnswers').onchange = renderRows;
+
+$('#f').onsubmit = async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const cfg = {
+    name: fd.get('name'), splitter: fd.get('splitter'), unit: fd.get('unit'),
+    tokenizer: fd.get('unit') === 'tokens' ? fd.get('tokenizer') : '',
+    max: +fd.get('max'), min: +fd.get('min'), overlap: +fd.get('overlap'),
+    strip_footer: fd.has('strip_footer'),
+  };
+  const st = $('#status'); st.className = ''; st.textContent = 'gerando…';
+  try {
+    const m = await api('/api/build', { method: 'POST', body: JSON.stringify(cfg) });
+    st.textContent = `ok: ${m.counts.chunks} chunks`;
+    await show(cfg.name);
+  } catch (err) { st.className = 'err'; st.textContent = err.message; }
+};
+
+loadOptions().then(loadBuilds);
+</script>
+</body>
+</html>

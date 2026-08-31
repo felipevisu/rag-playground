@@ -1,0 +1,8 @@
+name: minilm-256tok
+splitter: legal
+unit: tokens
+max: 256
+min: 64
+overlap: 0
+tokenizer: sentence-transformers/all-MiniLM-L6-v2
+strip_footer: true

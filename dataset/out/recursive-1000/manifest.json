@@ -1,0 +1,28 @@
+{
+  "built_at": "2026-08-31T01:52:24+00:00",
+  "config": {
+    "name": "recursive-1000",
+    "splitter": "recursive",
+    "unit": "chars",
+    "max": 1000,
+    "min": 0,
+    "overlap": 100,
+    "tokenizer": "",
+    "strip_footer": true
+  },
+  "versions": {
+    "pypdf": "6.16.2",
+    "transformers": "5.8.1",
+    "pyarrow": "25.0.1"
+  },
+  "counts": {
+    "documents": 19,
+    "chunks": 192,
+    "size_min": 138,
+    "size_median": 965,
+    "size_max": 999,
+    "queries": 38,
+    "qrels": 147
+  },
+  "pdfs_sha256": "e37d20e0c5bc32c8b7826aa15a8637a78e37e74c103f6854994e32fa928afaf4"
+}

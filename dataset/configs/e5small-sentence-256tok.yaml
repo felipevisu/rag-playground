@@ -1,0 +1,8 @@
+name: e5small-sentence-256tok
+splitter: sentence
+unit: tokens
+max: 256
+min: 0
+overlap: 0
+tokenizer: intfloat/multilingual-e5-small
+strip_footer: true

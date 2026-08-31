@@ -1,127 +1,150 @@
 # dataset
 
-Frozen evaluation dataset for the RAG playground. Built once, committed, reused
-by every week.
+Evaluation dataset for the RAG playground: 19 Projetos de Lei (2026, meio
+ambiente), 38 questions with verbatim answer passages, and as many chunked
+corpora as you want to compare.
 
 ```
 source/            inputs — hand-edited or downloaded. This is the work you lose.
-  pdfs/              19 Projetos de Lei (2026, meio ambiente)
-  metadata.csv       written by build/download.py
-  ground-truth.json  questions, reference answers, anchors
-build/             tooling. No data.
-  build.py           chunk the PDFs, resolve the ground truth, write out/
+  pdfs/              the 19 PDFs
+  metadata.csv       written by download.py
   download.py        pull fresh PDFs from the Câmara open-data API
-  Dockerfile
-  requirements.txt   pinned — the chunk count depends on these versions
+  questions-and-answers.json
+                     questions + verbatim answer passages. Source of truth.
+configs/           one YAML per chunker configuration (the UI writes these too)
+build/             tooling. No data.
+  chunkers.py        parse + split + pack -> chunks
+  resolve.py         answer passages -> chunk ids
+  build.py           CLI: one config -> out/<name>/
+  serve.py, ui.html  local UI: pick a config, build, browse chunks, download
+  test_*.py          self-checks: python test_chunkers.py && python test_resolve.py
 out/               generated. Never edit by hand.
-  corpus.parquet     the chunks
-  queries.parquet    the questions
-  answers.parquet    the qrels — which chunks answer which question
-  manifest.json      what produced this build
+  queries.parquet    the questions (config-independent)
+  <name>/            one folder per config
+    corpus.parquet     the chunks
+    answers.parquet    qrels — which chunks hold each answer passage
+    manifest.json      config, versions, counts, sha of the PDFs
+    config.yaml        copy of the config
 ```
 
-The rule the layout enforces: **`out/` is fully reproducible from `source/` +
-`build/`.** Delete `out/` and one command brings it back. Delete `source/` and
-you have lost human work.
+Rule: **`out/` is fully reproducible from `source/` + `configs/` + `build/`.**
 
-## Why the chunks live here and not in the DB
+## Setup
 
-`chunks.id` in week01's Postgres is a `SERIAL` — it changes on every re-ingest.
-`chunk_index` moves too whenever the chunker changes, and the chunker is
-tokenizer-coupled to the embedding model (see
-`week01/services/worker/main.py:59`), so swapping `all-MiniLM-L6-v2` for another
-model reshuffles every boundary.
+```sh
+cd build
+python3.12 -m venv venv            # 3.12 recommended; 3.14 lacks lzma on some pyenv builds
+venv/bin/pip install -r requirements.txt
+```
 
-Ground truth that points at those ids rots. So the chunks themselves are the
-artifact: split once, frozen here, and everything downstream indexes *these*
-rows. Swap the embedding model, re-embed the same `chunk_id`s, and the eval
-numbers stay comparable.
-
-This is not hypothetical. The same 19 PDFs with the same settings produced 180
-chunks on one docling build and 183 on the next. That is what `manifest.json`
-and the pinned `requirements.txt` are for.
+Or with docker: `docker compose run --rm build configs/legal-1200.yaml`,
+`docker compose up ui`.
 
 ## Building
 
 ```sh
-docker compose run --rm build                  # full, ~35 min on CPU
-docker compose run --rm build --reuse-corpus   # re-resolve only, seconds
-python3 build/build.py --self-check            # resolver asserts, no docker
+venv/bin/python build.py ../configs/legal-1200.yaml    # -> out/legal-1200/
+venv/bin/python serve.py                              # UI at http://localhost:8765
 ```
 
-`--reuse-corpus` skips docling and re-resolves the ground truth against the
-existing `out/corpus.parquet`. Use it while fixing anchors; re-chunking 19 PDFs
-to test a one-line edit is 40 minutes of CPU for nothing.
+A build takes seconds (pypdf, no ML). `unit: tokens` downloads the tokenizer
+on first use (~1 MB, cached in `~/.cache/huggingface`).
 
-An anchor that resolves to nothing aborts the build rather than writing a
-quietly weaker ground truth. Fix the anchor and re-run.
+A passage from `questions-and-answers.json` that cannot be found in its PDF
+aborts the build and names the passage. Fix it (it must be verbatim) and re-run.
+
+## Chunker configuration
+
+```yaml
+name: legal-1200          # -> out/legal-1200/
+splitter: legal           # fixed | recursive | sentence | legal
+unit: chars               # chars | words | tokens
+max: 1200                 # hard ceiling per chunk, in `unit`
+min: 300                  # merge neighbours until at least this big (0 = off)
+overlap: 0                # tail of the previous chunk repeated at the start of the next
+tokenizer: ""             # HF model id, required when unit == tokens
+strip_footer: true        # drop the Câmara page footer before chunking
+```
+
+| splitter | cuts at | `min` | `overlap` | `heading` |
+|---|---|---|---|---|
+| `fixed` | every `max` units, wherever that lands | — | ✓ | — |
+| `recursive` | `\n\n` → `\n` → `. ` → `; ` → space, coarsest that fits | ✓ | ✓ | — |
+| `sentence` | sentence ends, grouped up to `max` | ✓ | ✓ | — |
+| `legal` | `Art.`, `§`, `Parágrafo único`, `CAPÍTULO`, `JUSTIFICAÇÃO` | ✓ | ✗ | `Art. 3º` etc. |
+
+`unit: tokens` measures with the embedding model's own tokenizer, so `max`
+means what the model will actually see. Known limits are listed in
+`chunkers.TOKENIZERS` and shown in the UI; e.g. `all-MiniLM-L6-v2` truncates
+at 256 regardless of its config.
+
+The chunk count is a function of the config *and* of the pinned versions in
+`requirements.txt`. Diff two `manifest.json` to see what changed.
 
 ## Schemas
 
-**corpus.parquet** — 183 rows
+**corpus.parquet**
 
 | column | type | notes |
 |---|---|---|
-| `chunk_id` | str | `PL_1502_2026::0003` — stable, readable, not a `SERIAL` |
+| `chunk_id` | str | `PL_1502_2026::0003` — unique within one config folder |
 | `filename` | str | source PDF |
 | `chunk_index` | int | position within the document |
-| `pages` | list[int] | source pages, from docling provenance |
-| `headings` | list[str] | section headings docling attached |
-| `text` | str | the chunk |
+| `pages` | list[int] | pages the chunk spans |
+| `heading` | str | `legal` splitter only; `""` otherwise |
+| `text` | str | |
 | `n_chars` | int | |
+| `size` | int | length in the config's `unit` |
+| `start`, `end` | int | char span in the parsed document text (used by `resolve.py`) |
 
 **queries.parquet** — 38 rows
 
-| column | type | notes |
-|---|---|---|
-| `query_id` | str | `q001` |
-| `question` | str | |
-| `type` | str | `single_chunk` or `multi_chunk` |
-| `expected_answer` | str | reference answer, for generation eval |
-| `filename` | str | document the answer lives in |
-| `title` | str | document title |
-| `n_anchors` | int | passages the answer needs |
+| column | type |
+|---|---|
+| `query_id` | str — `q001` |
+| `question` | str |
+| `filename` | str — document the answer lives in |
 
-**answers.parquet** — 78 rows, one per (query, relevant chunk)
+**answers.parquet** — one row per (query, answer passage, chunk)
 
 | column | type | notes |
 |---|---|---|
 | `query_id` | str | → `queries.query_id` |
-| `chunk_id` | str | → `corpus.chunk_id` |
-| `relevance` | int | always 1; graded relevance is not used yet |
-| `filename` | str | denormalized from corpus, so the file reads standalone |
-| `chunk_index` | int | idem |
-| `pages` | list[int] | idem |
+| `chunk_id` | str | → `corpus.chunk_id` in the same folder |
+| `part` | int | index into the question's `answer[]` |
+| `coverage` | float | share of that passage held by this chunk (0–1) |
 
 ## Ground truth
 
-`source/ground-truth.json` is hand-edited. It stores **anchors** — verbatim text
-lifted from the PDF — not chunk ids, because anchors survive a re-chunk and ids
-do not.
+`source/questions-and-answers.json`:
 
 ```json
 {
-  "query_id": "q039",
-  "type": "single_chunk",
-  "question": "...",
-  "expected_answer": "...",
-  "anchors": ["a verbatim sentence or two copied out of the PDF"]
+  "query_id": "q002",
+  "question": "Quais são as fontes de recursos do FNARC e como é composto o seu Comitê Gestor?",
+  "answer": [
+    "§ 1º São fontes de recursos do FNARC, sem prejuízo de outras previstas em lei: a) ...",
+    "§ 3º O FNARC será gerido por Comitê Gestor, órgão colegiado deliberativo, ..."
+  ]
 }
 ```
 
-One anchor per distinct passage the answer needs — not one per question. Shrink
-the chunk size later and a two-passage answer correctly resolves to two chunks.
+`answer` is a list of **verbatim** passages from the PDF — one per distinct
+place the answer lives. Whitespace, case and accents don't matter (the
+resolver normalizes both sides); paraphrase does.
 
-The resolver tolerates the ways docling output drifts: whitespace, accents,
-case, re-rendered list markers, and an anchor split across a chunk boundary
-(which resolves to both chunks). It will not tolerate a paraphrase — anchors
-must be verbatim.
+How a passage becomes qrels (`build/resolve.py`): the PDF is parsed with the
+same settings as the chunker; the passage is located in that text (exact
+match after normalization, fuzzy alignment as fallback for pypdf's occasional
+accent garbage); the chunks whose `[start, end)` intersect it are picked
+greedily until the passage is covered. A chunk only counts if it adds ≥ 20
+uncovered chars, so `overlap` never yields redundant qrels.
 
 ## Refreshing the corpus
 
 ```sh
-python3 build/download.py --year 2026 --topic "meio ambiente" --limit 20
+python3 source/download.py --year 2026 --topic "meio ambiente" --limit 20
 ```
 
-Writes into `source/pdfs/` and `source/metadata.csv`. New PDFs need new
-questions in `source/ground-truth.json` and a full rebuild.
+New PDFs need new entries in `questions-and-answers.json` and a rebuild of
+every config.

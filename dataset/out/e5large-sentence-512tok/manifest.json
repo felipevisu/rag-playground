@@ -1,0 +1,28 @@
+{
+  "built_at": "2026-08-31T01:56:06+00:00",
+  "config": {
+    "name": "e5large-sentence-512tok",
+    "splitter": "sentence",
+    "unit": "tokens",
+    "max": 512,
+    "min": 64,
+    "overlap": 0,
+    "tokenizer": "intfloat/multilingual-e5-large",
+    "strip_footer": true
+  },
+  "versions": {
+    "pypdf": "6.16.2",
+    "transformers": "5.8.1",
+    "pyarrow": "25.0.1"
+  },
+  "counts": {
+    "documents": 19,
+    "chunks": 84,
+    "size_min": 25,
+    "size_median": 482,
+    "size_max": 512,
+    "queries": 38,
+    "qrels": 120
+  },
+  "pdfs_sha256": "e37d20e0c5bc32c8b7826aa15a8637a78e37e74c103f6854994e32fa928afaf4"
+}

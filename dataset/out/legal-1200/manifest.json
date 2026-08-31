@@ -1,0 +1,28 @@
+{
+  "built_at": "2026-08-31T01:52:16+00:00",
+  "config": {
+    "name": "legal-1200",
+    "splitter": "legal",
+    "unit": "chars",
+    "max": 1200,
+    "min": 300,
+    "overlap": 0,
+    "tokenizer": "",
+    "strip_footer": true
+  },
+  "versions": {
+    "pypdf": "6.16.2",
+    "transformers": "5.8.1",
+    "pyarrow": "25.0.1"
+  },
+  "counts": {
+    "documents": 19,
+    "chunks": 241,
+    "size_min": 56,
+    "size_median": 537,
+    "size_max": 1199,
+    "queries": 38,
+    "qrels": 132
+  },
+  "pdfs_sha256": "e37d20e0c5bc32c8b7826aa15a8637a78e37e74c103f6854994e32fa928afaf4"
+}

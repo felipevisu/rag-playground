@@ -1,20 +1,20 @@
-# One-shot dataset build. Not part of week01's stack — run it by hand when the
-# corpus or the ground truth changes:
+# Dataset tooling. Run by hand when the PDFs, the questions or a chunker config change.
 #
-#   docker compose run --rm build                  # full, ~35 min on CPU
-#   docker compose run --rm build --reuse-corpus   # re-resolve only, seconds
+#   docker compose run --rm build configs/legal-1200.yaml   # one config -> out/<name>/
+#   docker compose up ui                                    # http://localhost:8765
 #
+# Or skip docker: cd build && python -m venv venv && venv/bin/pip install -r requirements.txt
 services:
   build:
-    build:
-      context: ./build
-      dockerfile: Dockerfile
-    environment:
-      HF_HOME: /root/.cache/huggingface
-      # docling's layout model calls torch.compile; inductor needs a C++
-      # compiler the slim image doesn't ship. Run eager instead of adding g++.
-      TORCH_COMPILE_DISABLE: "1"
+    build: ./build
+    volumes:
+      - .:/dataset
+      - ~/.cache/huggingface:/root/.cache/huggingface   # tokenizers, for unit=tokens
+  ui:
+    build: ./build
+    entrypoint: ["python", "build/serve.py"]
+    environment: { HOST: 0.0.0.0 }
+    ports: ["8765:8765"]
     volumes:
       - .:/dataset
       - ~/.cache/huggingface:/root/.cache/huggingface
-      - ~/.cache/docling:/root/.cache/docling
