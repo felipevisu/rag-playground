@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>buckets</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 14px/1.4 system-ui, sans-serif; margin: 0; display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
+  aside { padding: 16px; border-right: 1px solid #8884; overflow: auto; }
+  main { padding: 16px; overflow: auto; }
+  h1 { font-size: 16px; margin: 0 0 12px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; opacity: .6; margin: 20px 0 8px; }
+  label { display: block; margin: 8px 0 2px; font-size: 12px; opacity: .7; }
+  input, select { width: 100%; box-sizing: border-box; padding: 6px; font: inherit; }
+  button { padding: 8px 12px; font: inherit; cursor: pointer; }
+  button.danger { color: #c33; }
+  .hint { font-size: 11px; opacity: .6; margin-top: 4px; }
+  .err { color: #c33; }
+  .ok { color: #2a7; }
+  .mono { font-family: ui-monospace, monospace; font-size: 12px; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #8883; vertical-align: top; }
+  th { font-size: 12px; opacity: .7; position: sticky; top: 0; background: Canvas; }
+  td.text { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 12px; max-width: 900px; }
+  .buckets a { display: flex; gap: 6px; align-items: center; padding: 4px 0; cursor: pointer; text-decoration: none; color: inherit; }
+  .buckets a .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .buckets a .status { white-space: nowrap; }
+  .buckets a.sel { font-weight: 600; }
+  .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .toolbar select, .toolbar input[type=file] { width: auto; }
+  .status { font-size: 12px; padding: 2px 8px; border: 1px solid #8886; border-radius: 999px; }
+  .status.ready { border-color: #2a7; color: #2a7; }
+  .status.indexing { border-color: #e90; color: #e90; }
+  .status.error { border-color: #c33; color: #c33; }
+  code { font-size: 12px; user-select: all; }
+  #upload { border: 1px solid #8884; padding: 12px; margin-bottom: 16px; }
+  #upload form { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+  #upload form > div { flex: 1; min-width: 200px; }
+</style>
+</head>
+<body>
+<aside>
+  <h1>buckets</h1>
+  <form id="create">
+    <label>novo bucket</label>
+    <input name="name" required placeholder="nome (id é gerado)">
+    <button>criar</button>
+    <div id="createStatus" class="hint"></div>
+  </form>
+
+  <h2>buckets</h2>
+  <div class="buckets" id="buckets"></div>
+</aside>
+
+<main>
+  <div id="empty">Crie um bucket, ou selecione um à esquerda.</div>
+  <div id="view" hidden>
+    <div class="toolbar">
+      <b id="vname"></b>
+      <span class="mono" id="vid"></span>
+      <span class="status" id="vstatus"></span>
+      <span class="mono" id="vcounts"></span>
+      <button class="danger" id="del">excluir bucket</button>
+    </div>
+    <div class="toolbar">
+      <span class="hint">endpoints</span>
+      <code id="vurl"></code>
+      <code id="vaurl"></code>
+    </div>
+    <div id="verror" class="err hint"></div>
+
+    <div id="upload">
+      <form id="uploadForm">
+        <div><label>corpus.parquet</label><input name="file" type="file" accept=".parquet" required></div>
+        <div><label>answers.parquet (gabarito)</label><input name="answers" type="file" accept=".parquet" required></div>
+        <div><label>retriever</label><select name="retriever" id="retriever"></select><div class="hint" id="retHint"></div></div>
+        <button id="uploadBtn">upload</button>
+      </form>
+      <div id="uploadStatus" class="hint"></div>
+    </div>
+
+    <div class="toolbar" id="docbar" hidden>
+      <select id="fileFilter"></select>
+      <span class="hint" id="vechint"></span>
+    </div>
+    <table id="table" hidden>
+      <thead><tr><th>chunk_id</th><th>pages</th><th>heading</th><th>text</th><th>embedding</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</main>
+
+<script>
+// API host: same host as the page, port 8000 (docker compose maps it there).
+const API = new URLSearchParams(location.search).get('api') || `${location.protocol}//${location.hostname}:8000`;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+let retrievers = {}, buckets = [], current = null, docs = [], chunks = [], poll = null;
+
+async function api(path, opts) {
+  const r = await fetch(API + path, opts);
+  if (r.status === 204) return null;
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(`${r.status} ${j.detail ? (typeof j.detail === 'string' ? j.detail : JSON.stringify(j.detail)) : r.statusText}`);
+  return j;
+}
+
+async function loadHealth() {
+  const h = await api('/api/health');
+  retrievers = h.retrievers;
+  $('#retriever').innerHTML = Object.keys(retrievers).map(k => `<option value="${k}">${k}</option>`).join('');
+  $('#retriever').onchange = () => $('#retHint').textContent = retrievers[$('#retriever').value];
+  $('#retriever').onchange();
+}
+
+async function loadBuckets() {
+  buckets = await api('/api/buckets');
+  $('#buckets').innerHTML = buckets.map(b =>
+    `<a data-id="${b.id}" class="${b.id === current?.id ? 'sel' : ''}" title="${esc(b.name)}"><span class="name">${esc(b.name)}</span>
+       <span class="mono" style="opacity:.6">${b.id}</span>
+       <span class="status ${b.status}">${b.retriever ? esc(b.retriever) + ' · ' : ''}${b.status === 'indexing' ? `${b.embedded_count}/${b.chunk_count}` : b.status}</span></a>`
+  ).join('') || '<span style="opacity:.6">nenhum</span>';
+  if (current) {
+    const fresh = buckets.find(b => b.id === current.id);
+    if (!fresh) { current = null; $('#view').hidden = true; $('#empty').hidden = false; }
+    else {
+      const wasIndexing = current.status === 'indexing';
+      current = fresh; renderHeader();
+      if (wasIndexing && fresh.status === 'ready') loadChunks();
+    }
+  }
+  const indexing = buckets.some(b => b.status === 'indexing');
+  if (indexing && !poll) poll = setInterval(loadBuckets, 2000);
+  if (!indexing && poll) { clearInterval(poll); poll = null; }
+}
+
+function renderHeader() {
+  const b = current;
+  $('#vname').textContent = b.name;
+  $('#vid').textContent = b.id;
+  $('#vstatus').className = `status ${b.status}`;
+  $('#vstatus').textContent = (b.retriever ? b.retriever + ' · ' : '') + (b.status === 'indexing' ? `${b.embedded_count}/${b.chunk_count}` : b.status);
+  $('#vcounts').textContent = b.chunk_count ? `${b.chunk_count} chunks · ${docs.length} docs · ${b.qrels_count} qrels / ${b.queries_count} perguntas · sha ${b.parquet_sha.slice(0, 12)}` : '';
+  $('#vurl').textContent = `GET ${API}/api/buckets/${b.id}/search?q=...&k=5`;
+  $('#vaurl').textContent = `GET ${API}/api/buckets/${b.id}/answers`;
+  $('#verror').textContent = b.error || '';
+  // Write-once: the form only exists while the bucket is empty or a previous attempt failed.
+  $('#upload').hidden = !(b.status === 'empty' || b.status === 'error');
+  $('#uploadBtn').textContent = b.status === 'error' ? 'tentar de novo' : 'upload';
+  if (b.retriever) $('#retriever').value = b.retriever, $('#retriever').onchange();
+}
+
+async function show(id) {
+  current = buckets.find(b => b.id === id);
+  $('#empty').hidden = true; $('#view').hidden = false;
+  $('#uploadStatus').textContent = '';
+  await loadBuckets();
+  docs = current.chunk_count ? await api(`/api/buckets/${id}/documents`) : [];
+  renderHeader();
+  $('#docbar').hidden = $('#table').hidden = !docs.length;
+  $('#fileFilter').innerHTML = docs.map(d => `<option>${esc(d.filename)}</option>`).join('');
+  if (docs.length) loadChunks(); else $('#rows').innerHTML = '';
+}
+
+async function loadChunks() {
+  const f = $('#fileFilter').value;
+  if (!current || !f) return;
+  try {
+    chunks = await api(`/api/buckets/${current.id}/documents/${encodeURIComponent(f)}/chunks`);
+  } catch (err) {
+    $('#rows').innerHTML = `<tr><td colspan="5" class="err">API: ${esc(err.message)}</td></tr>`;
+    return;
+  }
+  const vec = current.retriever && current.retriever !== 'bm25';
+  $('#vechint').textContent = vec ? `vetores: ${retrievers[current.retriever]}` : (current.retriever ? 'bm25: sem vetor' : '');
+  $('#rows').innerHTML = chunks.map(c => `<tr>
+    <td class="mono">${esc(c.id)}</td>
+    <td class="mono">${(c.pages || []).join(',')}</td>
+    <td>${esc(c.heading)}</td>
+    <td class="text">${esc(c.text)}</td>
+    <td class="mono" title="${c.embedding ? c.embedding.length + 'd' : ''}">${c.embedding ? `${c.embedding.length}d [${c.embedding.slice(0, 4).map(v => v.toFixed(3)).join(', ')}, …]` : '—'}</td></tr>`).join('');
+}
+$('#fileFilter').onchange = loadChunks;
+// Delegated: the list is re-rendered while polling, per-anchor handlers would go stale.
+$('#buckets').onclick = e => { const a = e.target.closest('a[data-id]'); if (a) show(a.dataset.id); };
+
+$('#create').onsubmit = async e => {
+  e.preventDefault();
+  const st = $('#createStatus'); st.className = 'hint'; st.textContent = 'criando…';
+  try {
+    const b = await api('/api/buckets', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({ name: new FormData(e.target).get('name') }) });
+    e.target.reset(); st.textContent = `criado ${b.id}`;
+    await loadBuckets(); show(b.id);
+  } catch (err) { st.className = 'hint err'; st.textContent = err.message; }
+};
+
+$('#uploadForm').onsubmit = async e => {
+  e.preventDefault();
+  const st = $('#uploadStatus'); st.className = 'hint'; st.textContent = 'enviando…';
+  try {
+    const fd = new FormData(e.target);
+    const b = await api(`/api/buckets/${current.id}/upload`, { method: 'POST', body: fd });
+    e.target.querySelectorAll('input[type=file]').forEach(i => i.value = '');
+    st.className = 'hint ok'; st.textContent = `${b.chunk_count} chunks · ${b.status}`;
+    await show(b.id);
+  } catch (err) { st.className = 'hint err'; st.textContent = err.message; }
+};
+
+$('#del').onclick = async () => {
+  if (!current || !confirm(`Excluir bucket "${current.name}" (${current.id})?`)) return;
+  try { await api(`/api/buckets/${current.id}`, { method: 'DELETE' }); current = null; $('#view').hidden = true; $('#empty').hidden = false; loadBuckets(); }
+  catch (err) { alert(err.message); }
+};
+
+loadHealth().then(loadBuckets).catch(err => { $('#buckets').innerHTML = `<span class="err">API indisponível em ${API}: ${esc(err.message)}</span>`; });
+</script>
+</body>
+</html>

@@ -5,6 +5,9 @@ retriever. Create it, upload into it, search it at /api/buckets/{id}/search,
 read its gabarito at /api/buckets/{id}/answers. To compare retrievers, make two
 buckets from the same pair of files.
 
+retriever kinds: bm25 (in-RAM index), vector (pgvector cosine), hybrid
+(bm25 + vector, fused by Reciprocal Rank Fusion).
+
 /api/search keeps the response shape of week01/week03 so `eval/` runs
 unchanged; without `bucket=` it uses the most recently indexed bucket.
 """
@@ -46,6 +49,12 @@ RETRIEVERS = {
                    "query": "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery: "},
     "bm25": {"kind": "bm25", "model": "rank-bm25 (BM25Okapi)"},
 }
+# hybrid-<model>: BM25 top-N and vector top-N fused by Reciprocal Rank Fusion.
+# Rank-based, so BM25's unbounded scores and cosine never need normalising.
+RETRIEVERS |= {f"hybrid-{n}": {"kind": "hybrid", "vector": n, "model": f"RRF(bm25 + {s['model']})"}
+               for n, s in list(RETRIEVERS.items()) if s["kind"] == "vector"}
+RRF_K = 60      # the standard constant from Cormack et al. 2009
+RRF_DEPTH = 50  # candidates taken from each ranker before fusing
 REQUIRED_COLUMNS = {"chunk_id", "filename", "chunk_index", "pages", "text"}
 ANSWER_COLUMNS = {"query_id", "chunk_id"}
 
@@ -144,7 +153,13 @@ def init_schema() -> None:
         conn.commit()
 
 
+def vector_name(retriever: str) -> str:
+    """The vector model behind a retriever: itself, or the one a hybrid wraps."""
+    return RETRIEVERS[retriever].get("vector", retriever)
+
+
 def embedder(name: str):
+    name = vector_name(name)
     with _embed_lock:
         if name not in _embedders:
             import torch
@@ -243,7 +258,7 @@ def delete_bucket(bid: str):
 # ── upload + indexing ──────────────────────────────────────────────────────
 
 def embed_bucket(bid: str, retriever: str) -> None:
-    spec = RETRIEVERS[retriever]
+    spec = RETRIEVERS[vector_name(retriever)]
     try:
         with db() as conn, conn.cursor() as cur:
             cur.execute("SELECT chunk_id, text FROM chunks WHERE bucket_id = %s ORDER BY chunk_id", (bid,))
@@ -386,24 +401,45 @@ def bm25_index(cur, bid: str):
     return _bm25[bid]
 
 
-def rank(cur, b: dict, q: str, k: int) -> list[tuple[str, float]]:
-    spec = RETRIEVERS[b["retriever"]]
-    if spec["kind"] == "bm25":
-        bm25, ids = bm25_index(cur, b["id"])
-        tokens = tokenize(q)
-        if not tokens:
-            return []
-        scores = bm25.get_scores(tokens)
-        order = sorted(range(len(ids)), key=lambda i: scores[i], reverse=True)
-        # zero-score chunks share no term with the query: not a result
-        return [(ids[i], float(scores[i])) for i in order[:k] if scores[i] > 0]
-    vec = embedder(b["retriever"]).encode(spec["query"] + q, normalize_embeddings=True).tolist()
+def bm25_rank(cur, bid: str, q: str, k: int) -> list[tuple[str, float]]:
+    bm25, ids = bm25_index(cur, bid)
+    tokens = tokenize(q)
+    if not tokens:
+        return []
+    scores = bm25.get_scores(tokens)
+    order = sorted(range(len(ids)), key=lambda i: scores[i], reverse=True)
+    # zero-score chunks share no term with the query: not a result
+    return [(ids[i], float(scores[i])) for i in order[:k] if scores[i] > 0]
+
+
+def vector_rank(cur, bid: str, retriever: str, q: str, k: int) -> list[tuple[str, float]]:
+    spec = RETRIEVERS[vector_name(retriever)]
+    vec = embedder(retriever).encode(spec["query"] + q, normalize_embeddings=True).tolist()
     cur.execute("""
         SELECT chunk_id, (1 - (embedding <=> %s::vector))::float AS similarity
         FROM chunks WHERE bucket_id = %s AND embedding IS NOT NULL
         ORDER BY embedding <=> %s::vector LIMIT %s
-    """, (vec, b["id"], vec, k))
+    """, (vec, bid, vec, k))
     return [(r["chunk_id"], r["similarity"]) for r in cur.fetchall()]
+
+
+def rrf(*rankings: list[tuple[str, float]], k: int = RRF_K) -> list[tuple[str, float]]:
+    """Reciprocal Rank Fusion: score(d) = sum over rankers of 1 / (k + rank_d)."""
+    fused: dict[str, float] = {}
+    for ranking in rankings:
+        for pos, (cid, _) in enumerate(ranking, start=1):
+            fused[cid] = fused.get(cid, 0.0) + 1.0 / (k + pos)
+    return sorted(fused.items(), key=lambda x: x[1], reverse=True)
+
+
+def rank(cur, b: dict, q: str, k: int) -> list[tuple[str, float]]:
+    kind = RETRIEVERS[b["retriever"]]["kind"]
+    if kind == "bm25":
+        return bm25_rank(cur, b["id"], q, k)
+    if kind == "vector":
+        return vector_rank(cur, b["id"], b["retriever"], q, k)
+    return rrf(bm25_rank(cur, b["id"], q, RRF_DEPTH),
+               vector_rank(cur, b["id"], b["retriever"], q, RRF_DEPTH))[:k]
 
 
 def do_search(cur, b: dict, q: str, k: int) -> dict:
@@ -455,3 +491,13 @@ def health():
         "default_bucket": present(b) if b else None,
         "retrievers": {k: v["model"] for k, v in RETRIEVERS.items()},
     }
+
+
+if __name__ == "__main__":  # python main.py: self-check for the fusion, no DB needed
+    a = [("x", 9.0), ("y", 8.0), ("z", 1.0)]
+    v = [("y", 0.9), ("w", 0.8), ("x", 0.7)]
+    ids = [c for c, _ in rrf(a, v)]
+    assert ids[0] == "y" and set(ids[:2]) == {"x", "y"} and ids[-1] == "z", ids
+    assert rrf([], []) == [] and rrf(a, []) == rrf(a)
+    assert "hybrid-bge-m3" in RETRIEVERS and vector_name("hybrid-bge-m3") == "bge-m3"
+    print("ok")
