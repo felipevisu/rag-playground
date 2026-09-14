@@ -2,7 +2,7 @@
 """Run the retrieval eval and append the result to runs/.
 
 Questions come from dataset/out/queries.parquet (they don't depend on the
-chunker). Everything chunker-specific comes from one week04 bucket: retrieval
+chunker). Everything chunker-specific comes from one week05 bucket: retrieval
 at /api/buckets/<id>/search, the gabarito at /api/buckets/<id>/answers. The
 bucket was uploaded with both files from the same dataset/out/<config>/, so
 the chunk_ids agree by construction.
@@ -33,7 +33,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 RUNS = HERE / "runs"
 DATASET = Path(os.environ.get("DATASET_DIR", HERE.parent / "dataset" / "out"))
-API = os.environ.get("API_URL", "http://localhost:8000")  # week04 chunks-api
+API = os.environ.get("API_URL", "http://localhost:8000")  # week05 chunks-api
 
 METRICS = ("hit_rate", "recall", "precision", "mrr", "ndcg")
 
@@ -119,7 +119,7 @@ def get_json(url: str) -> dict:
     except urllib.error.HTTPError as e:
         sys.exit(f"{url} -> {e.code}: {e.read().decode(errors='replace')[:200]}")
     except urllib.error.URLError as e:
-        sys.exit(f"chunks-api unreachable at {url}: {e}\nIs week04 up?")
+        sys.exit(f"chunks-api unreachable at {url}: {e}\nIs week05 up?")
 
 
 def list_buckets(api: str) -> list[dict]:
@@ -330,7 +330,7 @@ if __name__ == "__main__":
     ap.add_argument("--note", default="", help="what you changed and why")
     ap.add_argument("--k", type=int, default=5, help="top-K to retrieve (default 5)")
     ap.add_argument("--api", default=API, help=f"chunks-api base URL (default {API})")
-    ap.add_argument("--bucket", help="week04 bucket id (search + gabarito)")
+    ap.add_argument("--bucket", help="week05 bucket id (search + gabarito)")
     ap.add_argument("--options", action="store_true", help="list ready buckets")
     ap.add_argument("--list", action="store_true", help="show run history")
     ap.add_argument("--reindex", action="store_true", help="rebuild index.json from run files")

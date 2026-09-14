@@ -4,7 +4,7 @@ Mede a qualidade do retrieval e guarda o histórico, para que "melhorei?" tenha
 resposta em número e não em impressão.
 
 Perguntas vêm de [`../dataset/out/queries.parquet`](../dataset) — não dependem
-de chunker. Tudo o que depende vem de um **bucket** do [`../week04`](../week04):
+de chunker. Tudo o que depende vem de um **bucket** do [`../week05`](../week05):
 a busca em `/api/buckets/<id>/search` e o gabarito em `/api/buckets/<id>/answers`.
 O bucket subiu `corpus.parquet` + `answers.parquet` da mesma pasta
 `dataset/out/<config>/`, então os chunk_ids batem por construção. Este diretório
@@ -27,7 +27,7 @@ lidos pelo `index.html` direto do navegador.
 
 ## Rodando
 
-O week04 precisa estar de pé (`cd ../week04 && docker compose up -d`), com pelo
+O week05 precisa estar de pé (`cd ../week05 && docker compose up -d`), com pelo
 menos um bucket `ready`.
 
 ### Pelo painel
@@ -45,7 +45,7 @@ painel recarrega sozinho já com o run novo selecionado. Log ao vivo em
 `docker compose logs -f ui`. Uma avaliação por vez — a segunda leva 409, porque
 o `run_id` tem resolução de segundo e duas gravariam por cima uma da outra.
 
-O `ui` fala com o `chunks-api`, então precisa da rede do week04 no ar.
+O `ui` fala com o `chunks-api`, então precisa da rede do week05 no ar.
 
 ### Pelo terminal
 
