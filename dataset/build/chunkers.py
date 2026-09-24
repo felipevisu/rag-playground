@@ -51,6 +51,8 @@ class Config:
     overlap: int = 0      # tail of previous chunk repeated at the start of the next
     tokenizer: str = ""   # HF model id; required when unit == "tokens"
     strip_footer: bool = True
+    context: bool = False              # contextual retrieval: LLM summaries prefixed to each chunk
+    context_model: str = "claude-opus-5"
 
     def validate(self) -> None:
         assert self.splitter in SPLITTERS, f"splitter must be one of {SPLITTERS}"

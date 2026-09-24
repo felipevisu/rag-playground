@@ -7,3 +7,5 @@ pyarrow==25.0.1
 transformers==5.8.1
 # only for source/download.py
 requests
+# only for context: true (contextual retrieval)
+anthropic==1.8.0

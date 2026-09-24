@@ -1,6 +1,170 @@
 {
   "runs": [
     {
+      "run_id": "2026-09-24T19-23-42",
+      "label": "hybrid-e5-large · hybrid4",
+      "notes": "",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "72b365ca",
+        "bucket_name": "hybrid4",
+        "retriever": "hybrid-e5-large",
+        "embedding_model": "hybrid-e5-large",
+        "corpus_sha256": "0372d81cb3405d093518aa0c1314192ca6f868a451c0e0da5a4062a72a81480f",
+        "n_queries": 38,
+        "n_chunks": 282,
+        "n_qrels": 122
+      },
+      "metrics": {
+        "hit_rate": 0.9211,
+        "recall": 0.8048,
+        "precision": 0.3263,
+        "mrr": 0.8026,
+        "ndcg": 0.7479
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 0.9231,
+          "recall": 0.9231,
+          "precision": 0.1846,
+          "mrr": 0.7436,
+          "ndcg": 0.7894
+        },
+        "multi_chunk": {
+          "hit_rate": 0.92,
+          "recall": 0.7433,
+          "precision": 0.4,
+          "mrr": 0.8333,
+          "ndcg": 0.7264
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-09-24T18-54-25",
+      "label": "hybrid-e5-large · hybrid3",
+      "notes": "",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "1fad60fa",
+        "bucket_name": "hybrid3",
+        "retriever": "hybrid-e5-large",
+        "embedding_model": "hybrid-e5-large",
+        "corpus_sha256": "1585db64adb79b48722d55f3471acfc839843d3db6181a01af7a9cb75bad34e2",
+        "n_queries": 38,
+        "n_chunks": 84,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 0.9737,
+        "recall": 0.9298,
+        "precision": 0.3158,
+        "mrr": 0.8311,
+        "ndcg": 0.8395
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 0.9474,
+          "recall": 0.9474,
+          "precision": 0.1895,
+          "mrr": 0.8684,
+          "ndcg": 0.8891
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.9123,
+          "precision": 0.4421,
+          "mrr": 0.7939,
+          "ndcg": 0.7899
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-09-24T18-51-18",
+      "label": "hybrid-e5-large · hybrid",
+      "notes": "",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "99be52b3",
+        "bucket_name": "hybrid",
+        "retriever": "hybrid-e5-large",
+        "embedding_model": "hybrid-e5-large",
+        "corpus_sha256": "1585db64adb79b48722d55f3471acfc839843d3db6181a01af7a9cb75bad34e2",
+        "n_queries": 38,
+        "n_chunks": 84,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 0.9737,
+        "recall": 0.9298,
+        "precision": 0.3158,
+        "mrr": 0.8311,
+        "ndcg": 0.8395
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 0.9474,
+          "recall": 0.9474,
+          "precision": 0.1895,
+          "mrr": 0.8684,
+          "ndcg": 0.8891
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.9123,
+          "precision": 0.4421,
+          "mrr": 0.7939,
+          "ndcg": 0.7899
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-09-24T18-50-29",
+      "label": "hybrid-e5-large · hybrid2",
+      "notes": "",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "048e6a35",
+        "bucket_name": "hybrid2",
+        "retriever": "hybrid-e5-large",
+        "embedding_model": "hybrid-e5-large",
+        "corpus_sha256": "0dcd64ffa9c62d6899be18520e20efcbfb7481d8171f6e3e2abbaf56ee4a17a4",
+        "n_queries": 38,
+        "n_chunks": 175,
+        "n_qrels": 126
+      },
+      "metrics": {
+        "hit_rate": 0.9474,
+        "recall": 0.7744,
+        "precision": 0.3316,
+        "mrr": 0.7566,
+        "ndcg": 0.71
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 0.8462,
+          "recall": 0.8462,
+          "precision": 0.1692,
+          "mrr": 0.7115,
+          "ndcg": 0.7456
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.7371,
+          "precision": 0.416,
+          "mrr": 0.78,
+          "ndcg": 0.6914
+        }
+      },
+      "failures": 0
+    },
+    {
       "run_id": "2026-09-11T16-53-12",
       "label": "hybrid-e5-large · hybrid",
       "notes": "",

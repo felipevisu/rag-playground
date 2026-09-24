@@ -87,26 +87,29 @@ docker compose up --build       # ui :3000 · api :8000/docs · postgres :5432
 `similarity` na resposta é o score RRF (máximo ≈ 0.03 com dois rankers).
 Só a ordem dentro de uma busca significa algo.
 
-## Próximo passo: BM25 em português
+## BM25 em português
 
-O BM25 não sabe de idioma; quem decide é o tokenizador, e o nosso é o mínimo:
-`re.findall(r"\w+", text.lower())`. Acentos ficam (`\w` é Unicode) e as
-stopwords o IDF já esmaga. O que falta:
+O BM25 não sabe de idioma; quem decide é o `tokenize`:
 
-- **Stemming.** `contrato`, `contratos`, `contratual`, `contratação` são
-  quatro termos sem relação. Pergunta com "pagamento" e chunk com "pagos"
-  = zero match. É o furo principal em português.
-- **Acento sem normalização.** Query `acao` não casa com `ação` no corpus.
+- **Stemming** (`PyStemmer`, Snowball `portuguese`): `contrato`, `contratos`,
+  `contratação` viram `contrat`.
+- **Acentos**: stem, tira acento, stem de novo. `decisão`, `decisões` e
+  `decisao` viram `decis`. Alguns pares ainda escapam
+  (`notificação`→`notific`, `notificacao`→`notificac`).
+- **Referências inteiras**: `Lei 8.666/93` vira `lei`, `8666/93` em vez de
+  `8`, `666`, `93`. Ponto de milhar sai; `/` e `-` entre dígitos seguram.
 
-Ordem de custo/benefício:
+No índice e na query:
 
-1. Stripar acentos com `unicodedata` (stdlib) em corpus e query.
-2. Stemmer português: `nltk` (RSLP ou Snowball `portuguese`) ou `PyStemmer`
-   (Snowball em C). Uma dependência e um `stem()` dentro de `tokenize`.
+- **Heading entra no índice** junto com o texto do chunk.
+- **Siglas** são mineradas do próprio bucket (`Código de Trânsito Brasileiro (CTB)`)
+  e a query expande nos dois sentidos: `CTB` ganha as palavras, as palavras
+  ganham `CTB`.
 
-Medir antes e depois com o `eval` no bucket `bm25`. O índice é montado na
-primeira busca, então trocar o `tokenize` vale sem re-upload: só reiniciar a
-API. O híbrido usa o mesmo BM25, então herda o ganho.
+Botões no `docker-compose.yml` (`BM25_VARIANT`, `BM25_K1`, `BM25_B`, `RRF_K`,
+`RRF_DEPTH`, `RRF_BM25_WEIGHT`), lidos no start. Mudou, `docker compose up -d`
+e roda o `eval` de novo. Mudar `tokenize` não pede re-upload: o índice BM25 é
+montado em RAM na primeira busca.
 
 ## Retrievers
 

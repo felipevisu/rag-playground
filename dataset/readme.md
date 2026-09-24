@@ -17,6 +17,7 @@ build/             tooling. No data.
   resolve.py         answer passages -> chunk ids
   build.py           CLI: one config -> out/<name>/
   serve.py, ui.html  local UI: pick a config, build, browse chunks, download
+  contextual.py      context: true -> LLM summaries prefixed to each chunk
   test_*.py          self-checks: python test_chunkers.py && python test_resolve.py
 out/               generated. Never edit by hand.
   queries.parquet    the questions (config-independent)
@@ -64,6 +65,8 @@ min: 300                  # merge neighbours until at least this big (0 = off)
 overlap: 0                # tail of the previous chunk repeated at the start of the next
 tokenizer: ""             # HF model id, required when unit == tokens
 strip_footer: true        # drop the Câmara page footer before chunking
+context: false            # contextual retrieval (below)
+context_model: claude-opus-5
 ```
 
 | splitter | cuts at | `min` | `overlap` | `heading` |
@@ -81,6 +84,31 @@ at 256 regardless of its config.
 The chunk count is a function of the config *and* of the pinned versions in
 `requirements.txt`. Diff two `manifest.json` to see what changed.
 
+## Contextual retrieval
+
+`context: true` (e.g. `configs/legal-1200-contextual.yaml`) runs after any
+splitter: Claude writes one line about each document and one about each chunk
+(where it sits, what it says), and both are prefixed to `text`:
+
+```
+Documento: PL 1502/2026, do Dep. X, institui a Política Nacional de ...
+Trecho: Art. 3º, dentro do capítulo dos objetivos; lista as metas de ...
+
+Art. 3º São objetivos da Política ...
+```
+
+`text` is what the retrievers index, so embeddings and BM25 both see the
+context with no change on their side. `start`/`end` still point at the raw
+chunk, so qrels are the same as without context. `size` is the raw chunk; the
+prefix adds ~50 words on top, so leave that headroom under a model's token limit.
+
+Needs `ANTHROPIC_API_KEY`: `cp .env.example .env` and fill it in (the shell
+env wins over the file; `.env` is gitignored). One call per
+document plus one per chunk (~250 for `legal-1200`), in parallel. Answers
+are cached in `cache/contextual.json` by (model, prompt, document, chunk):
+rebuilds only pay for what changed. Commit that file, since it's what makes
+`out/` reproducible.
+
 ## Schemas
 
 **corpus.parquet**
@@ -92,6 +120,7 @@ The chunk count is a function of the config *and* of the pinned versions in
 | `chunk_index` | int | position within the document |
 | `pages` | list[int] | pages the chunk spans |
 | `heading` | str | `legal` splitter only; `""` otherwise |
+| `doc_summary`, `chunk_summary` | str | `context: true` only; already prefixed to `text` |
 | `text` | str | |
 | `n_chars` | int | |
 | `size` | int | length in the config's `unit` |

@@ -14,15 +14,18 @@ unchanged; without `bucket=` it uses the most recently indexed bucket.
 
 import hashlib
 import io
+import itertools
 import os
 import re
 import threading
 import time
+import unicodedata
 import uuid
 from contextlib import contextmanager
 
 import pandas as pd
 import psycopg2
+import Stemmer
 import psycopg2.extras
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -47,20 +50,26 @@ RETRIEVERS = {
     "bge-m3": {"kind": "vector", "model": "BAAI/bge-m3", "dim": 1024, "passage": "", "query": ""},
     "qwen3-0.6b": {"kind": "vector", "model": "Qwen/Qwen3-Embedding-0.6B", "dim": 1024, "passage": "",
                    "query": "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery: "},
-    "bm25": {"kind": "bm25", "model": "rank-bm25 (BM25Okapi)"},
+    "bm25": {"kind": "bm25", "model": f"rank-bm25 (BM25{os.environ.get('BM25_VARIANT', 'Okapi')})"},
 }
 # hybrid-<model>: BM25 top-N and vector top-N fused by Reciprocal Rank Fusion.
 # Rank-based, so BM25's unbounded scores and cosine never need normalising.
 RETRIEVERS |= {f"hybrid-{n}": {"kind": "hybrid", "vector": n, "model": f"RRF(bm25 + {s['model']})"}
                for n, s in list(RETRIEVERS.items()) if s["kind"] == "vector"}
-RRF_K = 60      # the standard constant from Cormack et al. 2009
-RRF_DEPTH = 50  # candidates taken from each ranker before fusing
+# Tuning knobs, read once at startup: change them in docker-compose and
+# recreate the container, then re-run eval. Defaults are the textbook values.
+BM25_VARIANT = os.environ.get("BM25_VARIANT", "Okapi")    # Okapi | Plus | L
+BM25_K1 = float(os.environ.get("BM25_K1", "1.5"))         # term-frequency saturation
+BM25_B = float(os.environ.get("BM25_B", "0.75"))          # chunk-length penalty
+RRF_K = int(os.environ.get("RRF_K", "60"))                # Cormack et al. 2009
+RRF_DEPTH = int(os.environ.get("RRF_DEPTH", "50"))        # candidates per ranker before fusing
+RRF_BM25_WEIGHT = float(os.environ.get("RRF_BM25_WEIGHT", "1.0"))  # vector side is 1.0
 REQUIRED_COLUMNS = {"chunk_id", "filename", "chunk_index", "pages", "text"}
 ANSWER_COLUMNS = {"query_id", "chunk_id"}
 
 _embedders: dict[str, object] = {}
 _embed_lock = threading.Lock()
-_bm25: dict[str, tuple] = {}  # bucket_id -> (BM25Okapi, [chunk_id])
+_bm25: dict[str, tuple] = {}  # bucket_id -> (BM25 index, [chunk_id], {acronym: expansion})
 
 
 # ── infra ──────────────────────────────────────────────────────────────────
@@ -173,8 +182,61 @@ def embedder(name: str):
         return _embedders[name]
 
 
+_stemmer = Stemmer.Stemmer("portuguese")
+# Numbers joined by / or - stay one token ("8666/93", "12/03/2020"), so exact
+# references don't dissolve into "8", "666", "93". Thousand-separator dots
+# go first, so "8.666" == "8666"; other dots still split words.
+TOKEN_RE = re.compile(r"\d+(?:[/-]\d+)+|\w+")
+DIGIT_DOT_RE = re.compile(r"(?<=\d)\.(?=\d)")
+
+
+def strip_accents(text: str) -> str:
+    return "".join(c for c in unicodedata.normalize("NFD", text) if not unicodedata.combining(c))
+
+
 def tokenize(text: str) -> list[str]:
-    return re.findall(r"\w+", text.lower())
+    # Stem, strip accents, stem again: Snowball's rules need accents, but the
+    # second pass folds what's left so "decisão", "decisões" and "decisao" meet.
+    # ponytail: a few pairs still split (notificação→notific, notificacao→notificac).
+    words = _stemmer.stemWords(TOKEN_RE.findall(DIGIT_DOT_RE.sub("", text.lower())))
+    return _stemmer.stemWords([strip_accents(w) for w in words])
+
+
+ACRONYM_RE = re.compile(r"\(([A-ZÀ-Ý]{2,10})\)")
+CONNECTORS = {"de", "da", "do", "das", "dos", "e", "em", "para", "a", "o", "of", "the", "and"}
+
+
+def mine_acronyms(texts: list[str]) -> dict[str, list[str]]:
+    """{acronym token: expansion tokens} from "Junta Administrativa de Recursos (JAR)".
+
+    Walks back from each "(SIGLA)" matching initials of non-connector words.
+    First definition wins; a sigla with no matching words is ignored."""
+    found: dict[str, list[str]] = {}
+    for text in texts:
+        for m in ACRONYM_RE.finditer(text):
+            sigla = strip_accents(m.group(1))
+            words = re.findall(r"\w+", text[max(0, m.start() - 200):m.start()])
+            initials, start = "", len(words)
+            for i in range(len(words) - 1, -1, -1):
+                if words[i].lower() in CONNECTORS:
+                    continue
+                initials = strip_accents(words[i][0]).upper() + initials
+                if not sigla.endswith(initials):
+                    break
+                if initials == sigla:
+                    start = i
+                    break
+            key = tokenize(sigla)
+            if initials == sigla and len(key) == 1 and key[0] not in found.keys() | CONNECTORS:
+                found[key[0]] = tokenize(" ".join(words[start:]))
+    return found
+
+
+def expand_query(tokens: list[str], acronyms: dict[str, list[str]]) -> list[str]:
+    """Acronym in the query -> add its expansion; full expansion -> add the acronym."""
+    extra = [t for tok in tokens for t in acronyms.get(tok, [])]
+    extra += [a for a, exp in acronyms.items() if a not in tokens and set(exp) <= set(tokens)]
+    return tokens + extra
 
 
 app = FastAPI(on_startup=[wait_for_db, init_schema])
@@ -394,22 +456,28 @@ def document_chunks(bid: str, filename: str):
 
 def bm25_index(cur, bid: str):
     if bid not in _bm25:
-        from rank_bm25 import BM25Okapi
-        cur.execute("SELECT chunk_id, text FROM chunks WHERE bucket_id = %s ORDER BY chunk_id", (bid,))
+        import rank_bm25
+        cur.execute("SELECT chunk_id, heading, text FROM chunks WHERE bucket_id = %s ORDER BY chunk_id",
+                    (bid,))
         rows = cur.fetchall()
-        _bm25[bid] = (BM25Okapi([tokenize(r["text"]) for r in rows]), [r["chunk_id"] for r in rows])
+        # The heading goes in with the text: a section title naming the query term is strong evidence.
+        texts = [f"{r['heading'] or ''}\n{r['text']}" for r in rows]
+        index = getattr(rank_bm25, f"BM25{BM25_VARIANT}")([tokenize(t) for t in texts], k1=BM25_K1, b=BM25_B)
+        _bm25[bid] = (index, [r["chunk_id"] for r in rows], mine_acronyms(texts))
     return _bm25[bid]
 
 
 def bm25_rank(cur, bid: str, q: str, k: int) -> list[tuple[str, float]]:
-    bm25, ids = bm25_index(cur, bid)
-    tokens = tokenize(q)
+    bm25, ids, acronyms = bm25_index(cur, bid)
+    tokens = expand_query(tokenize(q), acronyms)
     if not tokens:
         return []
     scores = bm25.get_scores(tokens)
     order = sorted(range(len(ids)), key=lambda i: scores[i], reverse=True)
-    # zero-score chunks share no term with the query: not a result
-    return [(ids[i], float(scores[i])) for i in order[:k] if scores[i] > 0]
+    # a chunk sharing no term with the query is not a result (BM25Plus scores those > 0)
+    terms = set(tokens)
+    hits = (i for i in order if not terms.isdisjoint(bm25.doc_freqs[i]))
+    return [(ids[i], float(scores[i])) for i in itertools.islice(hits, k)]
 
 
 def vector_rank(cur, bid: str, retriever: str, q: str, k: int) -> list[tuple[str, float]]:
@@ -423,12 +491,14 @@ def vector_rank(cur, bid: str, retriever: str, q: str, k: int) -> list[tuple[str
     return [(r["chunk_id"], r["similarity"]) for r in cur.fetchall()]
 
 
-def rrf(*rankings: list[tuple[str, float]], k: int = RRF_K) -> list[tuple[str, float]]:
-    """Reciprocal Rank Fusion: score(d) = sum over rankers of 1 / (k + rank_d)."""
+def rrf(*rankings: list[tuple[str, float]], k: int = RRF_K,
+        weights: tuple[float, ...] = ()) -> list[tuple[str, float]]:
+    """Reciprocal Rank Fusion: score(d) = sum over rankers of w / (k + rank_d)."""
     fused: dict[str, float] = {}
-    for ranking in rankings:
+    for n, ranking in enumerate(rankings):
+        w = weights[n] if n < len(weights) else 1.0
         for pos, (cid, _) in enumerate(ranking, start=1):
-            fused[cid] = fused.get(cid, 0.0) + 1.0 / (k + pos)
+            fused[cid] = fused.get(cid, 0.0) + w / (k + pos)
     return sorted(fused.items(), key=lambda x: x[1], reverse=True)
 
 
@@ -439,7 +509,8 @@ def rank(cur, b: dict, q: str, k: int) -> list[tuple[str, float]]:
     if kind == "vector":
         return vector_rank(cur, b["id"], b["retriever"], q, k)
     return rrf(bm25_rank(cur, b["id"], q, RRF_DEPTH),
-               vector_rank(cur, b["id"], b["retriever"], q, RRF_DEPTH))[:k]
+               vector_rank(cur, b["id"], b["retriever"], q, RRF_DEPTH),
+               weights=(RRF_BM25_WEIGHT, 1.0))[:k]
 
 
 def do_search(cur, b: dict, q: str, k: int) -> dict:
@@ -500,4 +571,16 @@ if __name__ == "__main__":  # python main.py: self-check for the fusion, no DB n
     assert ids[0] == "y" and set(ids[:2]) == {"x", "y"} and ids[-1] == "z", ids
     assert rrf([], []) == [] and rrf(a, []) == rrf(a)
     assert "hybrid-bge-m3" in RETRIEVERS and vector_name("hybrid-bge-m3") == "bge-m3"
+    assert [c for c, _ in rrf(a, v, weights=(10.0, 1.0))][:3] == ["x", "y", "z"]  # bm25 order wins
+
+    # tokenizer: stems, accents, whole references
+    assert tokenize("Decisão decisões decisao") == ["decis"] * 3
+    assert tokenize("Lei 8.666/93") == tokenize("lei 8666/93") == ["lei", "8666/93"]
+    assert tokenize("o artigo.O prazo") == tokenize("o artigo. O prazo")
+
+    # acronyms: mined from the corpus, expanded both ways at query time
+    acr = mine_acronyms(["O Código de Trânsito Brasileiro (CTB) diz.", "Ver a (XYZ) e (ABC)."])
+    assert acr == {"ctb": tokenize("Código de Trânsito Brasileiro")}, acr
+    assert set(expand_query(tokenize("o que diz o CTB"), acr)) >= set(tokenize("codigo transito"))
+    assert "ctb" in expand_query(tokenize("código de trânsito brasileiro"), acr)
     print("ok")

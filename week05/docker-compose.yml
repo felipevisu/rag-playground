@@ -34,6 +34,13 @@ services:
       DATABASE_URL: postgresql://rag:rag@postgres:5432/rag
       HF_HOME: /root/.cache/huggingface
       WATCHFILES_FORCE_POLLING: "true"   # macOS bind mounts don't emit inotify events
+      # Retrieval knobs (defaults shown). Change, `docker compose up -d`, re-run eval.
+      BM25_VARIANT: Okapi                # Okapi | Plus | L
+      BM25_K1: "1.5"
+      BM25_B: "0.75"
+      RRF_K: "60"
+      RRF_DEPTH: "50"
+      RRF_BM25_WEIGHT: "1.0"             # vector side is 1.0
     volumes:
       - ~/.cache/huggingface:/root/.cache/huggingface   # models download once
       - ./services/chunks-api:/app                       # edit main.py without rebuild

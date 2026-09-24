@@ -42,6 +42,7 @@
     <div id="fMin"><label>min <span class="unitName"></span> — funde vizinhos até este tamanho</label><input name="min" type="number" value="0" min="0"></div>
     <div id="fOverlap"><label>overlap <span class="unitName"></span></label><input name="overlap" type="number" value="0" min="0"></div>
     <label><input name="strip_footer" type="checkbox" checked> strip_footer</label>
+    <label><input name="context" type="checkbox"> context — resumo do documento e do trecho (Claude) no início de cada chunk</label>
     <button>gerar</button>
     <div id="status"></div>
   </form>
@@ -169,7 +170,7 @@ $('#f').onsubmit = async e => {
     name: fd.get('name'), splitter: fd.get('splitter'), unit: fd.get('unit'),
     tokenizer: fd.get('unit') === 'tokens' ? fd.get('tokenizer') : '',
     max: +fd.get('max'), min: +fd.get('min'), overlap: +fd.get('overlap'),
-    strip_footer: fd.has('strip_footer'),
+    strip_footer: fd.has('strip_footer'), context: fd.has('context'),
   };
   const st = $('#status'); st.className = ''; st.textContent = 'gerando…';
   try {
