@@ -1,54 +1,22 @@
-# Upload a corpus.parquet from dataset/out/<config>/, build indexes on it with
-# different retrievers (MiniLM, multilingual-e5, BM25), search.
+# Dataset tooling. Run by hand when the PDFs, the questions or a chunker config change.
 #
-#   docker compose up --build
-#   UI  http://localhost:3000     API http://localhost:8000/docs
+#   docker compose run --rm build configs/legal-1200.yaml   # one config -> out/<name>/
+#   docker compose up ui                                    # http://localhost:8765
 #
-# Same ports as week01 — bring one stack up at a time.
-name: week05
-
+# Or skip docker: cd build && python -m venv venv && venv/bin/pip install -r requirements.txt
 services:
-
-  postgres:
-    image: pgvector/pgvector:pg16
-    environment:
-      POSTGRES_DB: rag
-      POSTGRES_USER: rag
-      POSTGRES_PASSWORD: rag
-    ports:
-      - "5432:5432"
+  build:
+    build: ./build
+    env_file: [{ path: .env, required: false }]           # ANTHROPIC_API_KEY, for context: true
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U rag -d rag"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
-  chunks-api:
-    build: ./services/chunks-api
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgresql://rag:rag@postgres:5432/rag
-      HF_HOME: /root/.cache/huggingface
-      WATCHFILES_FORCE_POLLING: "true"   # macOS bind mounts don't emit inotify events
+      - .:/dataset
+      - ~/.cache/huggingface:/root/.cache/huggingface   # tokenizers, for unit=tokens
+  ui:
+    build: ./build
+    entrypoint: ["python", "build/serve.py"]
+    environment: { HOST: 0.0.0.0 }
+    env_file: [{ path: .env, required: false }]
+    ports: ["8765:8765"]
     volumes:
-      - ~/.cache/huggingface:/root/.cache/huggingface   # models download once
-      - ./services/chunks-api:/app                       # edit main.py without rebuild
-    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
-    ports:
-      - "8000:8000"
-
-  chunks-ui:
-    build: ./services/chunks-ui
-    depends_on:
-      - chunks-api
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./services/chunks-ui:/app:ro   # edit index.html without rebuild
-
-volumes:
-  pgdata:
+      - .:/dataset
+      - ~/.cache/huggingface:/root/.cache/huggingface

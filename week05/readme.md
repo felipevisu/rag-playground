@@ -1,119 +1,179 @@
-# RAG v5 — busca híbrida (BM25 + embeddings)
+# dataset
 
-Mesmo stack de buckets do week04. A novidade é um tipo de retriever a mais:
-o **híbrido**, que junta a busca lexical (BM25) com a vetorial (embeddings)
-usando **Reciprocal Rank Fusion (RRF)**.
-
-## Por que juntar os dois
-
-Cada busca erra de um jeito diferente:
-
-- **BM25** acha o chunk que tem *a mesma palavra* da pergunta. Ótimo pra
-  número de artigo, sigla, nome próprio. Cego pra sinônimo e paráfrase.
-- **Embedding** acha o chunk que *fala da mesma coisa*, mesmo com outras
-  palavras. Ótimo pra pergunta em linguagem natural. Escorrega em termo
-  exato raro, que o modelo nunca viu direito.
-
-Um chunk que os dois acham é quase certo que é bom. Um chunk que só um acha
-ainda pode ser. O híbrido aproveita os dois sem escolher.
-
-## O problema: os scores não se somam
-
-BM25 devolve um número sem teto (3.2, 17.8, 41.0…). Cosseno devolve algo
-entre 0 e 1. Somar isso direto é somar metro com quilo. Dá pra normalizar
-(min-max, z-score), mas aí cada query precisa de ajuste e um outlier
-distorce tudo.
-
-## A solução: fundir por posição, não por score
-
-RRF ignora o score e usa só a **posição** de cada chunk em cada ranking:
+Evaluation dataset for the RAG playground: 19 Projetos de Lei (2026, meio
+ambiente), 38 questions with verbatim answer passages, and as many chunked
+corpora as you want to compare.
 
 ```
-score(chunk) = Σ  1 / (k + posição_no_ranking_r)     para cada ranker r onde o chunk aparece
-                r
+source/            inputs — hand-edited or downloaded. This is the work you lose.
+  pdfs/              the 19 PDFs
+  metadata.csv       written by download.py
+  download.py        pull fresh PDFs from the Câmara open-data API
+  questions-and-answers.json
+                     questions + verbatim answer passages. Source of truth.
+configs/           one YAML per chunker configuration (the UI writes these too)
+build/             tooling. No data.
+  chunkers.py        parse + split + pack -> chunks
+  resolve.py         answer passages -> chunk ids
+  build.py           CLI: one config -> out/<name>/
+  serve.py, ui.html  local UI: pick a config, build, browse chunks, download
+  contextual.py      context: true -> LLM summaries prefixed to each chunk
+  test_*.py          self-checks: python test_chunkers.py && python test_resolve.py
+out/               generated. Never edit by hand.
+  queries.parquet    the questions (config-independent)
+  <name>/            one folder per config
+    corpus.parquet     the chunks
+    answers.parquet    qrels — which chunks hold each answer passage
+    manifest.json      config, versions, counts, sha of the PDFs
+    config.yaml        copy of the config
 ```
 
-com `k = 60`. Exemplo com dois rankers:
+Rule: **`out/` is fully reproducible from `source/` + `configs/` + `build/`.**
 
-| chunk | posição BM25 | posição vetor | RRF |
-|---|---|---|---|
-| A | 1 | 3 | 1/61 + 1/63 = **0.0323** |
-| B | 2 | — | 1/62 = 0.0161 |
-| C | — | 1 | 1/61 = 0.0164 |
-| D | 7 | 9 | 1/67 + 1/69 = 0.0294 |
+## Setup
 
-A ganha por estar bem nos dois. D, mediano nos dois, passa na frente de B e
-C, que só um ranker viu — é o efeito de consenso. O `k=60` amortece: quem
-está em 1º não esmaga quem está em 5º, então o segundo ranker ainda tem voz.
-
-Sem normalização, sem peso pra calibrar, funciona com qualquer combinação de
-rankers. É o método de Cormack, Clarke & Büttcher (2009), e o padrão em
-Elasticsearch, Weaviate, OpenSearch etc.
-
-## Como está no código
-
-`services/chunks-api/main.py`:
-
-```python
-def rrf(*rankings, k=60):
-    fused = {}
-    for ranking in rankings:
-        for pos, (chunk_id, _) in enumerate(ranking, start=1):
-            fused[chunk_id] = fused.get(chunk_id, 0) + 1 / (k + pos)
-    return sorted(fused.items(), key=lambda x: x[1], reverse=True)
-
-# híbrido = top-50 do BM25 + top-50 do vetor, fundidos, corta em k
-rrf(bm25_rank(..., 50), vector_rank(..., 50))[:k]
+```sh
+cd build
+python3.12 -m venv venv            # 3.12 recommended; 3.14 lacks lzma on some pyenv builds
+venv/bin/pip install -r requirements.txt
 ```
 
-Cada modelo vetorial ganha automaticamente um `hybrid-<modelo>`
-(`hybrid-e5-base`, `hybrid-bge-m3`, …). O bucket híbrido embeda igual ao
-vetorial; o índice BM25 é montado em RAM na primeira busca.
+Or with docker: `docker compose run --rm build configs/legal-1200.yaml`,
+`docker compose up ui`.
 
-`python main.py` roda um self-check da fusão sem banco.
+## Building
 
-## Rodando
-
-```bash
-docker compose up --build       # ui :3000 · api :8000/docs · postgres :5432
+```sh
+venv/bin/python build.py ../configs/legal-1200.yaml    # -> out/legal-1200/
+venv/bin/python serve.py                              # UI at http://localhost:8765
 ```
 
-1. Crie um bucket, suba `corpus.parquet` + `answers.parquet` de `dataset/out/<config>/`
-   escolhendo o retriever `hybrid-<modelo>`.
-2. Espere `ready`.
-3. Meça com [`../eval`](../eval): o mesmo parquet em três buckets
-   (`bm25`, `<modelo>`, `hybrid-<modelo>`) mostra o que a fusão ganha.
+A build takes seconds (pypdf, no ML). `unit: tokens` downloads the tokenizer
+on first use (~1 MB, cached in `~/.cache/huggingface`).
 
-`similarity` na resposta é o score RRF (máximo ≈ 0.03 com dois rankers).
-Só a ordem dentro de uma busca significa algo.
+A passage from `questions-and-answers.json` that cannot be found in its PDF
+aborts the build and names the passage. Fix it (it must be verbatim) and re-run.
 
-## Próximo passo: BM25 em português
+## Chunker configuration
 
-O BM25 não sabe de idioma; quem decide é o tokenizador, e o nosso é o mínimo:
-`re.findall(r"\w+", text.lower())`. Acentos ficam (`\w` é Unicode) e as
-stopwords o IDF já esmaga. O que falta:
+```yaml
+name: legal-1200          # -> out/legal-1200/
+splitter: legal           # fixed | recursive | sentence | legal
+unit: chars               # chars | words | tokens
+max: 1200                 # hard ceiling per chunk, in `unit`
+min: 300                  # merge neighbours until at least this big (0 = off)
+overlap: 0                # tail of the previous chunk repeated at the start of the next
+tokenizer: ""             # HF model id, required when unit == tokens
+strip_footer: true        # drop the Câmara page footer before chunking
+context: false            # contextual retrieval (below)
+context_model: claude-opus-5
+```
 
-- **Stemming.** `contrato`, `contratos`, `contratual`, `contratação` são
-  quatro termos sem relação. Pergunta com "pagamento" e chunk com "pagos"
-  = zero match. É o furo principal em português.
-- **Acento sem normalização.** Query `acao` não casa com `ação` no corpus.
+| splitter | cuts at | `min` | `overlap` | `heading` |
+|---|---|---|---|---|
+| `fixed` | every `max` units, wherever that lands | — | ✓ | — |
+| `recursive` | `\n\n` → `\n` → `. ` → `; ` → space, coarsest that fits | ✓ | ✓ | — |
+| `sentence` | sentence ends, grouped up to `max` | ✓ | ✓ | — |
+| `legal` | `Art.`, `§`, `Parágrafo único`, `CAPÍTULO`, `JUSTIFICAÇÃO` | ✓ | ✗ | `Art. 3º` etc. |
 
-Ordem de custo/benefício:
+`unit: tokens` measures with the embedding model's own tokenizer, so `max`
+means what the model will actually see. Known limits are listed in
+`chunkers.TOKENIZERS` and shown in the UI; e.g. `all-MiniLM-L6-v2` truncates
+at 256 regardless of its config.
 
-1. Stripar acentos com `unicodedata` (stdlib) em corpus e query.
-2. Stemmer português: `nltk` (RSLP ou Snowball `portuguese`) ou `PyStemmer`
-   (Snowball em C). Uma dependência e um `stem()` dentro de `tokenize`.
+The chunk count is a function of the config *and* of the pinned versions in
+`requirements.txt`. Diff two `manifest.json` to see what changed.
 
-Medir antes e depois com o `eval` no bucket `bm25`. O índice é montado na
-primeira busca, então trocar o `tokenize` vale sem re-upload: só reiniciar a
-API. O híbrido usa o mesmo BM25, então herda o ganho.
+## Contextual retrieval
 
-## Retrievers
+`context: true` (e.g. `configs/legal-1200-contextual.yaml`) runs after any
+splitter: Claude writes one line about each document and one about each chunk
+(where it sits, what it says), and both are prefixed to `text`:
 
-| retriever | tipo |
+```
+Documento: PL 1502/2026, do Dep. X, institui a Política Nacional de ...
+Trecho: Art. 3º, dentro do capítulo dos objetivos; lista as metas de ...
+
+Art. 3º São objetivos da Política ...
+```
+
+`text` is what the retrievers index, so embeddings and BM25 both see the
+context with no change on their side. `start`/`end` still point at the raw
+chunk, so qrels are the same as without context. `size` is the raw chunk; the
+prefix adds ~50 words on top, so leave that headroom under a model's token limit.
+
+Needs `ANTHROPIC_API_KEY`: `cp .env.example .env` and fill it in (the shell
+env wins over the file; `.env` is gitignored). One call per
+document plus one per chunk (~250 for `legal-1200`), in parallel. Answers
+are cached in `cache/contextual.json` by (model, prompt, document, chunk):
+rebuilds only pay for what changed. Commit that file, since it's what makes
+`out/` reproducible.
+
+## Schemas
+
+**corpus.parquet**
+
+| column | type | notes |
+|---|---|---|
+| `chunk_id` | str | `PL_1502_2026::0003` — unique within one config folder |
+| `filename` | str | source PDF |
+| `chunk_index` | int | position within the document |
+| `pages` | list[int] | pages the chunk spans |
+| `heading` | str | `legal` splitter only; `""` otherwise |
+| `doc_summary`, `chunk_summary` | str | `context: true` only; already prefixed to `text` |
+| `text` | str | |
+| `n_chars` | int | |
+| `size` | int | length in the config's `unit` |
+| `start`, `end` | int | char span in the parsed document text (used by `resolve.py`) |
+
+**queries.parquet** — 38 rows
+
+| column | type |
 |---|---|
-| `bm25` | léxico, `rank-bm25` em RAM |
-| `minilm` `e5-base` `e5-large` `bge-m3` `qwen3-0.6b` | vetorial, pgvector cosseno |
-| `hybrid-<modelo>` | BM25 + vetorial, RRF |
+| `query_id` | str — `q001` |
+| `question` | str |
+| `filename` | str — document the answer lives in |
 
-Detalhes de bucket, API e schema: iguais ao [`../week04`](../week04).
+**answers.parquet** — one row per (query, answer passage, chunk)
+
+| column | type | notes |
+|---|---|---|
+| `query_id` | str | → `queries.query_id` |
+| `chunk_id` | str | → `corpus.chunk_id` in the same folder |
+| `part` | int | index into the question's `answer[]` |
+| `coverage` | float | share of that passage held by this chunk (0–1) |
+
+## Ground truth
+
+`source/questions-and-answers.json`:
+
+```json
+{
+  "query_id": "q002",
+  "question": "Quais são as fontes de recursos do FNARC e como é composto o seu Comitê Gestor?",
+  "answer": [
+    "§ 1º São fontes de recursos do FNARC, sem prejuízo de outras previstas em lei: a) ...",
+    "§ 3º O FNARC será gerido por Comitê Gestor, órgão colegiado deliberativo, ..."
+  ]
+}
+```
+
+`answer` is a list of **verbatim** passages from the PDF — one per distinct
+place the answer lives. Whitespace, case and accents don't matter (the
+resolver normalizes both sides); paraphrase does.
+
+How a passage becomes qrels (`build/resolve.py`): the PDF is parsed with the
+same settings as the chunker; the passage is located in that text (exact
+match after normalization, fuzzy alignment as fallback for pypdf's occasional
+accent garbage); the chunks whose `[start, end)` intersect it are picked
+greedily until the passage is covered. A chunk only counts if it adds ≥ 20
+uncovered chars, so `overlap` never yields redundant qrels.
+
+## Refreshing the corpus
+
+```sh
+python3 source/download.py --year 2026 --topic "meio ambiente" --limit 20
+```
+
+New PDFs need new entries in `questions-and-answers.json` and a rebuild of
+every config.

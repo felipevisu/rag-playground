@@ -1,0 +1,10 @@
+name: legal-1200-contextual-ok
+splitter: legal
+unit: tokens
+max: 450
+min: 0
+overlap: 0
+tokenizer: intfloat/multilingual-e5-large
+strip_footer: true
+context: true
+context_model: claude-opus-5

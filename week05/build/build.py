@@ -20,7 +20,8 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
-from chunkers import Config, chunk_dir
+from chunkers import Config, chunk_dir, parse_pdf
+from contextual import add_context
 from resolve import resolve
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -63,6 +64,9 @@ def build(cfg: Config) -> Path:
     corpus = chunk_dir(PDF_DIR, cfg)
     if not corpus:
         sys.exit(f"no PDFs in {PDF_DIR}")
+    if cfg.context:
+        docs = {p.name: parse_pdf(p, cfg.strip_footer)[0] for p in PDF_DIR.glob("*.pdf")}
+        add_context(corpus, docs, cfg.context_model)
     pd.DataFrame(corpus).to_parquet(out / "corpus.parquet", index=False)
 
     answers, unresolved = resolve(PDF_DIR, cfg, corpus, load_qa())
@@ -88,7 +92,7 @@ def build(cfg: Config) -> Path:
     manifest = {
         "built_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "config": asdict(cfg),
-        "versions": {p: ver(p) for p in ("pypdf", "transformers", "pyarrow")},
+        "versions": {p: ver(p) for p in ("pypdf", "transformers", "pyarrow", "anthropic")},
         "counts": {
             "documents": len({r["filename"] for r in corpus}),
             "chunks": len(corpus),

@@ -1,0 +1,31 @@
+{
+  "built_at": "2026-09-24T19:12:58+00:00",
+  "config": {
+    "name": "legal-1200-contextual",
+    "splitter": "legal",
+    "unit": "tokens",
+    "max": 512,
+    "min": 0,
+    "overlap": 0,
+    "tokenizer": "intfloat/multilingual-e5-large",
+    "strip_footer": true,
+    "context": false,
+    "context_model": "claude-opus-5"
+  },
+  "versions": {
+    "pypdf": "6.16.2",
+    "transformers": "5.8.1",
+    "pyarrow": "25.0.1",
+    "anthropic": "1.8.0"
+  },
+  "counts": {
+    "documents": 19,
+    "chunks": 278,
+    "size_min": 8,
+    "size_median": 84,
+    "size_max": 512,
+    "queries": 38,
+    "qrels": 120
+  },
+  "pdfs_sha256": "e37d20e0c5bc32c8b7826aa15a8637a78e37e74c103f6854994e32fa928afaf4"
+}

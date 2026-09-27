@@ -19,7 +19,7 @@ services:
       DATASET_DIR: /dataset
     volumes:
       - .:/eval
-      - ../dataset/out:/dataset:ro
+      - ../week05/out:/dataset:ro
     networks:
       - week05
 
@@ -40,7 +40,7 @@ services:
       - "8080:8080"
     volumes:
       - .:/eval
-      - ../dataset/out:/dataset:ro
+      - ../week05/out:/dataset:ro
     networks:
       - week05
 
