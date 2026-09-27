@@ -1,4 +1,3 @@
-name: e5large-sentence-512tok
 splitter: sentence
 unit: tokens
 max: 512

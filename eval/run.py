@@ -11,11 +11,12 @@ Each run is one JSON file in runs/, plus a regenerated runs/index.json holding
 the summaries. The files are the database: git-diffable, hand-editable, and
 readable by index.html without a database.
 
-  python run.py --bucket 59cb0095 --label "e5-base"
-  python run.py --bucket 59cb0095 --k 10 --label "top-10"
+  python run.py --bucket 59cb0095
+  python run.py --bucket 59cb0095 --k 10
+  python run.py --bucket 59cb0095 --rerank bge-reranker   # week07+: cross-encoder 2nd stage
   python run.py --options           # ready buckets
   python run.py --list          # history, newest first
-  python run.py --reindex       # rebuild index.json after editing notes by hand
+  python run.py --reindex       # rebuild index.json after editing run files by hand
   python run.py --self-check    # metric asserts, no API and no dataset needed
 """
 
@@ -24,6 +25,7 @@ import json
 import math
 import os
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -36,6 +38,11 @@ DATASET = Path(os.environ.get("DATASET_DIR", HERE.parent / "dataset" / "out"))
 API = os.environ.get("API_URL", "http://localhost:8000")  # week05 chunks-api
 
 METRICS = ("hit_rate", "recall", "precision", "mrr", "ndcg")
+
+# Where the current run is. server.py serves it at /api/progress and sets
+# `cancel` from /api/cancel; one run at a time (server.py's lock), so a module
+# global is enough.
+PROGRESS = {"done": 0, "total": 0, "query_id": None, "started": None, "cancel": False}
 
 
 # ── metrics ────────────────────────────────────────────────────────────────
@@ -106,8 +113,9 @@ def load_qrels(api: str, bucket: str) -> dict[str, list[str]]:
     return qrels
 
 
-def search(api: str, bucket: str, question: str, k: int) -> list[dict]:
-    url = f"{api}/api/buckets/{bucket}/search?" + urllib.parse.urlencode({"q": question, "k": k})
+def search(api: str, bucket: str, question: str, k: int, rerank: str = "") -> list[dict]:
+    params = {"q": question, "k": k} | ({"rerank": rerank} if rerank else {})
+    url = f"{api}/api/buckets/{bucket}/search?" + urllib.parse.urlencode(params)
     with urllib.request.urlopen(url, timeout=120) as r:
         return json.loads(r.read())["results"]
 
@@ -126,6 +134,11 @@ def list_buckets(api: str) -> list[dict]:
     return get_json(f"{api}/api/buckets")
 
 
+def list_rerankers(api: str) -> dict[str, str]:
+    """name -> model. Empty before week07: older APIs would ignore ?rerank= silently."""
+    return get_json(f"{api}/api/health").get("rerankers", {})
+
+
 def bucket_info(api: str, bucket: str) -> dict:
     b = get_json(f"{api}/api/buckets/{bucket}")
     if b["status"] != "ready":
@@ -135,9 +148,11 @@ def bucket_info(api: str, bucket: str) -> dict:
 
 # ── run ────────────────────────────────────────────────────────────────────
 
-def run(label: str, note: str, k: int, api: str, bucket: str) -> dict:
+def run(k: int, api: str, bucket: str, rerank: str = "") -> dict:
     api = api.rstrip("/")
     b = bucket_info(api, bucket)
+    if rerank and rerank not in (offered := list_rerankers(api)):
+        sys.exit(f"reranker {rerank!r} not offered by {api} (has: {list(offered) or 'none — week07+?'})")
     queries = load_queries()
     qrels = load_qrels(api, bucket)
     missing = [q["query_id"] for q in queries if q["query_id"] not in qrels]
@@ -145,12 +160,17 @@ def run(label: str, note: str, k: int, api: str, bucket: str) -> dict:
         print(f"warning: {len(missing)} question(s) have no gabarito in this bucket: {missing[:5]}",
               file=sys.stderr)
 
-    print(f"{len(queries)} queries · k={k} · bucket {bucket} ({b['name']}, {b['retriever']})")
+    print(f"{len(queries)} queries · k={k} · bucket {bucket} ({b['name']}, {b['retriever']})"
+          + (f" · rerank {rerank}" if rerank else ""))
     per_query, failures = [], 0
+    PROGRESS.update(done=0, total=len(queries), query_id=None, started=time.time(), cancel=False)
     for i, q in enumerate(queries, 1):
+        if PROGRESS["cancel"]:  # checked between questions: the one in flight finishes first
+            sys.exit(f"cancelado em {i - 1}/{len(queries)} — nada gravado")
+        PROGRESS.update(done=i - 1, query_id=q["query_id"])
         expected = qrels.get(q["query_id"], [])
         try:
-            results = search(api, bucket, q["question"], k)
+            results = search(api, bucket, q["question"], k, rerank)
         except (urllib.error.URLError, TimeoutError) as e:
             failures += 1
             print(f"  [{i}/{len(queries)}] {q['query_id']} FAILED: {e}")
@@ -174,7 +194,8 @@ def run(label: str, note: str, k: int, api: str, bucket: str) -> dict:
             **m,
         })
         print(f"  [{i}/{len(queries)}] {q['query_id']} {m['verdict']:<7} "
-              f"recall {m['recall']:.2f} ndcg {m['ndcg']:.2f}")
+              f"recall {m['recall']:.2f} ndcg {m['ndcg']:.2f}", flush=True)
+        PROGRESS["done"] = i
 
     if failures:
         print(f"\n{failures} query/queries failed against the API — "
@@ -186,14 +207,16 @@ def run(label: str, note: str, k: int, api: str, bucket: str) -> dict:
 
     payload = {
         "run_id": run_id,
-        "label": label or f"k={k}",
-        "notes": note,
+        # the bucket name is already "<chunker> · <retriever>"; the run adds what it chose
+        "label": b["name"] + (f" + {rerank}" if rerank else "") + f" · k={k}",
         "config": {
             "k": k,
             "api": api,
             "bucket": bucket,
             "bucket_name": b["name"],
             "retriever": b["retriever"],
+            "chunker": b.get("chunker"),
+            "rerank": rerank or None,
             "embedding_model": b["retriever"],
             "corpus_sha256": b["parquet_sha"],
             "n_queries": len(queries),
@@ -262,6 +285,9 @@ def show_options(api: str) -> int:
         if b["status"] == "ready" and b.get("qrels_count"):
             print(f"  {b['id']}  {b['name']:<32} {b['retriever']:<10} {b['chunk_count']:>4} chunks  "
                   f"{b['qrels_count']:>4} qrels  sha {b['parquet_sha'][:12]}")
+    print("rerankers (--rerank):")
+    for name, model in list_rerankers(api.rstrip("/")).items():
+        print(f"  {name:<14} {model}")
     return 0
 
 
@@ -270,14 +296,12 @@ def show_list() -> int:
     if not runs:
         print("No runs yet.")
         return 0
-    head = f"{'run_id':<21} {'label':<26} " + " ".join(f"{m:>9}" for m in METRICS)
+    head = f"{'run_id':<21} {'label':<48} " + " ".join(f"{m:>9}" for m in METRICS)
     print(head)
     print("-" * len(head))
     for r in runs:
-        print(f"{r['run_id']:<21} {r['label'][:26]:<26} "
+        print(f"{r['run_id']:<21} {r['label'][:48]:<48} "
               + " ".join(f"{r['metrics'][m]:>9.3f}" for m in METRICS))
-        if r.get("notes"):
-            print(f"{'':<21} ↳ {r['notes']}")
     return 0
 
 
@@ -326,11 +350,10 @@ def self_check() -> int:
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--label", default="", help="short name for this run")
-    ap.add_argument("--note", default="", help="what you changed and why")
     ap.add_argument("--k", type=int, default=5, help="top-K to retrieve (default 5)")
     ap.add_argument("--api", default=API, help=f"chunks-api base URL (default {API})")
     ap.add_argument("--bucket", help="week05 bucket id (search + gabarito)")
+    ap.add_argument("--rerank", default="", help="cross-encoder 2nd stage (see --options), week07+")
     ap.add_argument("--options", action="store_true", help="list ready buckets")
     ap.add_argument("--list", action="store_true", help="show run history")
     ap.add_argument("--reindex", action="store_true", help="rebuild index.json from run files")
@@ -347,4 +370,4 @@ if __name__ == "__main__":
         sys.exit(show_options(a.api))
     if not a.bucket:
         ap.error("--bucket is required (see --options)")
-    run(a.label, a.note, a.k, a.api, a.bucket)
+    run(a.k, a.api, a.bucket, a.rerank)

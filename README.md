@@ -23,7 +23,7 @@ week05 usa as mesmas portas do week01 — só um dos dois no ar por vez.
    ```sh
    cd eval
    docker compose run --rm eval --options                      # buckets prontos
-   docker compose run --rm eval --bucket <id> --label "bm25"   # roda
+   docker compose run --rm eval --bucket <id>                  # roda
    docker compose run --rm eval --list                         # histórico
    ```
 

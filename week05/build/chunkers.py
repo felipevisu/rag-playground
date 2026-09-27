@@ -43,7 +43,7 @@ LEGAL_HEAD = re.compile(
 
 @dataclass
 class Config:
-    name: str
+    name: str = ""        # blank = derived from the settings below (see auto_name)
     splitter: str = "recursive"
     unit: str = "chars"
     max: int = 1000
@@ -53,6 +53,17 @@ class Config:
     strip_footer: bool = True
     context: bool = False              # contextual retrieval: LLM summaries prefixed to each chunk
     context_model: str = "claude-opus-5"
+
+    def __post_init__(self):
+        self.name = self.name or self.auto_name()
+
+    def auto_name(self) -> str:
+        """legal-1200c-min300, sentence-256t-multilingual-e5-large-ctx: the settings, spelled out."""
+        parts = [self.splitter, f"{self.max}{ {'chars': 'c', 'words': 'w', 'tokens': 't'}.get(self.unit, self.unit)}"]
+        parts += [f"min{self.min}"] * bool(self.min) + [f"ov{self.overlap}"] * bool(self.overlap)
+        parts += [self.tokenizer.split("/")[-1]] * (self.unit == "tokens" and bool(self.tokenizer))
+        parts += ["footer"] * (not self.strip_footer) + ["ctx"] * self.context
+        return "-".join(parts)
 
     def validate(self) -> None:
         assert self.splitter in SPLITTERS, f"splitter must be one of {SPLITTERS}"

@@ -4,10 +4,12 @@
   python serve.py            # http://localhost:8765
 """
 
+import io
 import json
 import os
 import sys
 import traceback
+import zipfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
@@ -82,6 +84,18 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-Type", "application/jsonl")
                 self.send_header("Content-Disposition", f'attachment; filename="{name}-corpus.jsonl"')
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                return self.wfile.write(body)
+            if fname == "bucket.zip":  # what week07's POST /api/buckets/import takes, in one file
+                buf = io.BytesIO()
+                with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+                    for f in ("corpus.parquet", "answers.parquet", "manifest.json"):
+                        z.write(OUT / name / f, f)
+                body = buf.getvalue()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/zip")
+                self.send_header("Content-Disposition", f'attachment; filename="{name}.zip"')
                 self.send_header("Content-Length", str(len(body)))
                 self.end_headers()
                 return self.wfile.write(body)

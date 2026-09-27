@@ -20,6 +20,12 @@ def run(**kw):
     return pack(pieces_for(DOC, cfg, m), cfg, m, PAGES)
 
 
+# name: derived from the settings when not given
+assert Config(splitter="legal", max=1200, min=300).name == "legal-1200c-min300"
+assert Config(splitter="sentence", unit="tokens", max=256, tokenizer="intfloat/multilingual-e5-large",
+              context=True).name == "sentence-256t-multilingual-e5-large-ctx"
+assert Config(name="mine").name == "mine"
+
 # legal: headings tracked, incisos stay with their article
 legal = run(splitter="legal", max=200)
 assert [c.heading for c in legal] == ["Art. 1º", "Parágrafo único", "Art. 2º", "JUSTIFICAÇÃO"], legal

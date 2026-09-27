@@ -55,8 +55,9 @@ normalmente.
 
 ```sh
 docker compose run --rm eval --options     # buckets prontos com gabarito
-docker compose run --rm eval --bucket d556057b --label "bm25 · legal-1200"
-docker compose run --rm eval --bucket d556057b --k 10 --label "top-10"
+docker compose run --rm eval --bucket d556057b
+docker compose run --rm eval --bucket d556057b --k 10
+docker compose run --rm eval --bucket d556057b --rerank bge-reranker   # week07+: cross-encoder no top-50
 docker compose run --rm eval --list        # histórico no terminal
 docker compose run --rm eval --self-check  # asserts das métricas, sem API
 ```
@@ -69,11 +70,13 @@ vs 2026-08-28T12-22-43 (baseline minilm k=5):
   precision  0.158 ↓ 0.097  (-0.061)
 ```
 
-## Notas
+## O que cada run registra
 
-`notes` é campo livre em cada `runs/<run_id>.json`. Passe `--note` na hora de
-rodar, ou edite o arquivo depois e rode `--reindex` para o `index.json` e o
-relatório acompanharem.
+Sem rótulo nem nota: o run descreve a si mesmo. `label` é gerado
+(`<chunker> · <retriever> [+ rerank] · k=N`, o nome do bucket já vem do
+chunker e do retriever) e `config` guarda bucket, retriever, rerank, k e a
+config do chunker (`config.chunker`, do `manifest.json` importado no week07).
+A tabela do painel mostra essas colunas.
 
 ## Métricas
 
