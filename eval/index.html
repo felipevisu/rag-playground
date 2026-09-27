@@ -57,13 +57,19 @@ button:disabled { opacity: .55; cursor: progress; }
                 background: var(--surface-2); border: 1px solid var(--border-strong);
                 border-radius: 8px; min-width: 0; }
 .runbar input::placeholder { color: var(--faint); }
-#label { width: 148px; } #note { width: 168px; } #k { width: 64px; font-family: var(--mono); }
+#k { width: 64px; font-family: var(--mono); }
 .runbar select { font-family: inherit; font-size: 13px; padding: 7px 8px; color: var(--text);
                  background: var(--surface-2); border: 1px solid var(--border-strong);
                  border-radius: 8px; max-width: 260px; }
 #go { border-color: var(--accent-2); color: var(--accent); font-weight: 600; }
 #runmsg { font-size: 12px; color: var(--muted); }
 #runmsg.err { color: var(--err); }
+#progress-sec { display: flex; align-items: center; gap: 12px; background: var(--surface);
+                border: 1px solid var(--border); border-radius: 11px; box-shadow: var(--shadow);
+                padding: 12px 14px; }
+#runbar-progress { flex: 1; min-width: 0; height: 10px; accent-color: var(--accent); }
+#progmsg { font-family: var(--mono); font-size: 12px; color: var(--text-2); white-space: nowrap; }
+#progress-sec[hidden] { display: none; }
 
 main { max-width: 1180px; margin: 0 auto; padding: 24px 28px 80px; }
 section { margin-bottom: 34px; }
@@ -98,8 +104,7 @@ tr.run-row:hover td { background: var(--surface-hover); }
 tr.run-row.sel td { background: var(--accent-soft); }
 .num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
 .rid { font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; }
-.note { color: var(--text-2); font-size: 12px; max-width: 320px; }
-.note:empty::before { content: '—'; color: var(--faint); }
+.dim { color: var(--faint); }
 
 .pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px;
         border-radius: 5px; font-family: var(--mono); }
@@ -132,8 +137,7 @@ code { font-family: var(--mono); font-size: 12px; background: var(--surface-2);
     </div>
     <form class="runbar" id="runf">
       <select id="bucket" required title="bucket do week04 (corpus + gabarito + retriever)"><option value="">bucket…</option></select>
-      <input id="label" placeholder="rótulo" />
-      <input id="note" placeholder="nota (opcional)" />
+      <select id="rerank" title="2º estágio: cross-encoder reordena o top-50 (week07+)"><option value="">sem rerank</option></select>
       <input id="k" type="number" min="1" max="50" value="5" title="top-K" />
       <button id="go" type="submit">▶ Rodar</button>
     </form>
@@ -143,6 +147,12 @@ code { font-family: var(--mono); font-size: 12px; background: var(--surface-2);
 </header>
 
 <main>
+  <section id="progress-sec" hidden>
+    <progress id="runbar-progress"></progress>
+    <span id="progmsg"></span>
+    <button id="cancel" type="button">✕ Cancelar</button>
+  </section>
+
   <section id="trend-sec" hidden>
     <h2>Progresso</h2>
     <div class="sparks" id="sparks"></div>
@@ -252,17 +262,19 @@ function renderSparks(runs) {
 function renderRuns(runs) {
   $('runs').innerHTML = `
     <thead><tr>
-      <th>Execução</th><th>Rótulo</th>
+      <th>Execução</th><th>Chunker</th><th>Retriever</th><th>Rerank</th><th class="num">k</th><th class="num">Chunks</th>
       ${METRICS.map(m => `<th class="num">${LABELS[m]}</th>`).join('')}
-      <th>Notas</th>
     </tr></thead>
-    <tbody>${runs.map(r => `
-      <tr class="run-row" data-run="${esc(r.run_id)}">
-        <td class="rid">${esc(r.run_id)}</td>
-        <td>${esc(r.label)}${r.failures ? ` <span class="pill fail">${r.failures} erro(s)</span>` : ''}</td>
+    <tbody>${runs.map(r => { const c = r.config || {}; return `
+      <tr class="run-row" data-run="${esc(r.run_id)}" title="${esc(c.bucket_name)} (${esc(c.bucket)})">
+        <td class="rid">${esc(r.run_id)}${r.failures ? ` <span class="pill fail">${r.failures} erro(s)</span>` : ''}</td>
+        <td class="rid">${c.chunker ? esc(c.chunker.name) : `<span class="dim">${esc(c.bucket_name || '—')}</span>`}</td>
+        <td class="rid">${esc(c.retriever || c.embedding_model)}</td>
+        <td class="rid">${c.rerank ? esc(c.rerank) : '<span class="dim">—</span>'}</td>
+        <td class="num">${c.k ?? ''}</td>
+        <td class="num">${c.n_chunks ?? ''}</td>
         ${METRICS.map(m => `<td class="num">${fmt(r.metrics[m])}</td>`).join('')}
-        <td class="note">${esc(r.notes)}</td>
-      </tr>`).join('')}
+      </tr>` }).join('')}
     </tbody>`
   $('runs').querySelectorAll('.run-row').forEach(tr => {
     // sem scroll: a tabela é a navegação, pular pro detalhe tira ela da vista
@@ -282,6 +294,9 @@ async function showDetail(runId, scroll = true) {
     ['k', c.k],
     ['bucket', c.bucket ? `${c.bucket_name} (${c.bucket})` : '—'],
     ['retriever', c.retriever || c.embedding_model],
+    ['rerank', c.rerank || '—'],
+    ...(c.chunker ? Object.entries(c.chunker).filter(([k, v]) => k !== 'name' && v !== '' && v !== 0 && v !== false)
+                      .map(([k, v]) => [k, v]) : []),
     ['chunks', c.n_chunks ?? '?'],
     ['qrels', c.n_qrels ?? (c.dataset ? c.dataset : '?')],
     ['perguntas', c.n_queries],
@@ -353,7 +368,7 @@ load().catch(e => {
 // Sem streaming de progresso: a resposta só volta no fim. As perguntas levam
 // ~1 min, e o log ao vivo está no `docker compose logs -f ui`.
 // Buckets come from week04: only `ready` ones that carry a gabarito.
-// Label defaults to "<retriever> · <bucket name>" so a run says what it measured.
+// The run's label is set server-side: bucket name (<chunker> · <retriever>) + rerank + k.
 async function loadOptions() {
   try {
     const r = await fetch('api/options', { cache: 'no-store' })
@@ -361,44 +376,80 @@ async function loadOptions() {
     if (!r.ok) throw new Error(o.error || `HTTP ${r.status}`)
     $('bucket').innerHTML = '<option value="">bucket…</option>' + o.buckets.map(b =>
       `<option value="${esc(b.id)}" data-ret="${esc(b.retriever)}" data-name="${esc(b.name)}">${esc(b.name)} · ${esc(b.retriever)} · ${b.chunk_count} chunks · ${b.qrels_count} qrels</option>`).join('')
+    $('rerank').innerHTML = '<option value="">sem rerank</option>' + Object.entries(o.rerankers || {}).map(([n, m]) =>
+      `<option value="${esc(n)}" title="${esc(m)}">${esc(n)}</option>`).join('')
   } catch (err) {
     $('runmsg').className = 'err'
     $('runmsg').textContent = `opções indisponíveis: ${err.message} (week04 de pé?)`
   }
 }
 loadOptions()
-const suggestLabel = () => {
-  const b = $('bucket').selectedOptions[0]
-  if (b?.value && !$('label').value) $('label').placeholder = `${b.dataset.ret} · ${b.dataset.name}`
+// Progress comes from the server (GET api/progress), so a reload or a second
+// tab picks up a run already in flight. ownRun: this tab's POST is still open.
+let poll = null, ownRun = false
+function watch() {
+  $('go').disabled = true
+  $('go').textContent = '⏳ rodando…'
+  $('runmsg').className = ''
+  $('runmsg').textContent = ''
+  $('progmsg').textContent = 'avaliando…'
+  $('progress-sec').hidden = false
+  $('runbar-progress').removeAttribute('value')  // indeterminate until the first answer
+  $('cancel').disabled = false
+  if (!poll) poll = setInterval(tick, 1000)
 }
-$('bucket').onchange = suggestLabel
+function unwatch() {
+  clearInterval(poll); poll = null
+  $('progress-sec').hidden = true
+  $('go').disabled = false
+  $('go').textContent = '▶ Rodar'
+}
+async function tick() {
+  let p
+  try { p = await (await fetch('api/progress', { cache: 'no-store' })).json() } catch { return }
+  if (!p.running) {
+    if (!ownRun) { unwatch(); load() }  // someone else's run ended
+    return
+  }
+  if (!poll) watch()
+  if (!p.total) return
+  const bar = $('runbar-progress')
+  bar.max = p.total; bar.value = p.done
+  const s = Math.round(Date.now() / 1000 - p.started)
+  const eta = p.done ? Math.round(s / p.done * (p.total - p.done)) : null
+  $('progmsg').textContent = p.cancel ? `cancelando… termina a pergunta ${p.query_id}`
+    : `${p.done}/${p.total} · ${p.query_id ?? ''} · ${s}s${eta !== null ? ` · faltam ~${eta}s` : ''}`
+}
+tick()  // a run already going when the page opens
+
+$('cancel').onclick = async () => {
+  $('cancel').disabled = true
+  await fetch('api/cancel', { method: 'POST' }).catch(() => {})
+  tick()
+}
 
 $('runf').onsubmit = async e => {
   e.preventDefault()
   const msg = $('runmsg')
-  $('go').disabled = true
-  $('go').textContent = '⏳ rodando…'
-  msg.className = ''
-  msg.textContent = 'avaliando… leva ~1 min'
+  ownRun = true
+  watch()
   try {
     const r = await fetch('api/run', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bucket: $('bucket').value,
-                             label: $('label').value || $('label').placeholder.replace('rótulo', ''),
-                             note: $('note').value, k: Number($('k').value) }),
+      body: JSON.stringify({ bucket: $('bucket').value, rerank: $('rerank').value, k: Number($('k').value) }),
     })
     const d = await r.json()
     if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`)
     msg.textContent = `ok · ${d.run_id}`
-    $('label').value = $('note').value = ''
     await load(d.run_id)
   } catch (err) {
-    msg.className = 'err'
-    msg.textContent = `falhou: ${err.message}`
+    const cancelled = err.message.startsWith('cancelado')
+    msg.className = cancelled ? '' : 'err'
+    msg.textContent = cancelled ? err.message : `falhou: ${err.message}`
   } finally {
-    $('go').disabled = false
-    $('go').textContent = '▶ Rodar'
+    ownRun = false
+    unwatch()
   }
 }
 </script>

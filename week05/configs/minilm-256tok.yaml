@@ -1,4 +1,3 @@
-name: minilm-256tok
 splitter: legal
 unit: tokens
 tokenizer: sentence-transformers/all-MiniLM-L6-v2

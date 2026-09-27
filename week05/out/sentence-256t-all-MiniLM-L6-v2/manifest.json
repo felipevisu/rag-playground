@@ -1,0 +1,31 @@
+{
+  "built_at": "2026-09-27T23:01:56+00:00",
+  "config": {
+    "name": "sentence-256t-all-MiniLM-L6-v2",
+    "splitter": "sentence",
+    "unit": "tokens",
+    "max": 256,
+    "min": 0,
+    "overlap": 0,
+    "tokenizer": "sentence-transformers/all-MiniLM-L6-v2",
+    "strip_footer": true,
+    "context": false,
+    "context_model": "claude-opus-5"
+  },
+  "versions": {
+    "pypdf": "6.16.2",
+    "transformers": "5.8.1",
+    "pyarrow": "25.0.1",
+    "anthropic": "1.8.0"
+  },
+  "counts": {
+    "documents": 19,
+    "chunks": 265,
+    "size_min": 51,
+    "size_median": 221,
+    "size_max": 256,
+    "queries": 38,
+    "qrels": 138
+  },
+  "pdfs_sha256": "e37d20e0c5bc32c8b7826aa15a8637a78e37e74c103f6854994e32fa928afaf4"
+}

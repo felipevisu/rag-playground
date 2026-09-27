@@ -1,18 +1,18 @@
-# Everything in one stack: week06 (postgres, chunks-api, chunks-ui), the eval
+# Everything in one stack: week07 (postgres, chunks-api, chunks-ui), the eval
 # panel and the dataset UI (week05).
 #
 #   docker compose up --build
-#   week06 UI :3000   API :8000/docs   eval :8080   dataset :8765
+#   week07 UI :3000   API :8000/docs   eval :8080   dataset :8765
 #
 #   docker compose run --rm dataset-build configs/legal-1200.yaml
 #   docker compose run --rm eval --bucket 59cb0095 --dataset legal-1200
 #
-# Project named week05 (as week06/docker-compose.yml is) to reuse its pgdata volume.
-# Bring the standalone week05/week06/eval stacks down first — same ports.
+# Project named week05 (as week07/docker-compose.yml is) to reuse its pgdata volume.
+# Bring the standalone week05/week06/week07/eval stacks down first — same ports.
 name: week05
 
 include:
-  - week06/docker-compose.yml
+  - week07/docker-compose.yml
 
 services:
   # Renamed via extends: dataset and eval both call their UI `ui`.

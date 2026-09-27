@@ -33,7 +33,6 @@
 <aside>
   <h1>chunker</h1>
   <form id="f">
-    <label>name</label><input name="name" required placeholder="legal-1200">
     <label>splitter</label><select name="splitter" id="splitter"></select>
     <div class="hint" id="splitterHint"></div>
     <label>unit</label><select name="unit" id="unit"></select>
@@ -58,6 +57,7 @@
       <b id="vname"></b>
       <span id="vcounts" class="mono"></span>
       <select id="fileFilter"></select>
+      <a id="dlZip"><b>↓ bucket.zip</b></a>
       <a id="dlParquet">↓ corpus.parquet</a>
       <a id="dlJsonl">↓ corpus.jsonl</a>
       <a id="dlAnswers">↓ answers.parquet</a>
@@ -141,6 +141,7 @@ async function show(name) {
   $('#vname').textContent = name;
   $('#vcounts').textContent = `${m.counts.documents} docs · ${m.counts.chunks} chunks · size ${m.counts.size_min}/${m.counts.size_median}/${m.counts.size_max} ${m.config.unit} · ${m.counts.qrels} qrels / ${m.counts.queries} queries`;
   $('#vconfig').textContent = JSON.stringify(m.config, null, 2);
+  $('#dlZip').href = `/out/${name}/bucket.zip`;
   $('#dlParquet').href = `/out/${name}/corpus.parquet`;
   $('#dlJsonl').href = `/out/${name}/corpus.jsonl`;
   $('#dlAnswers').href = `/out/${name}/answers.parquet`;
@@ -167,7 +168,7 @@ $('#f').onsubmit = async e => {
   e.preventDefault();
   const fd = new FormData(e.target);
   const cfg = {
-    name: fd.get('name'), splitter: fd.get('splitter'), unit: fd.get('unit'),
+    splitter: fd.get('splitter'), unit: fd.get('unit'),  // name: derived server-side
     tokenizer: fd.get('unit') === 'tokens' ? fd.get('tokenizer') : '',
     max: +fd.get('max'), min: +fd.get('min'), overlap: +fd.get('overlap'),
     strip_footer: fd.has('strip_footer'), context: fd.has('context'),
@@ -175,8 +176,8 @@ $('#f').onsubmit = async e => {
   const st = $('#status'); st.className = ''; st.textContent = 'gerando…';
   try {
     const m = await api('/api/build', { method: 'POST', body: JSON.stringify(cfg) });
-    st.textContent = `ok: ${m.counts.chunks} chunks`;
-    await show(cfg.name);
+    st.textContent = `ok: ${m.config.name} · ${m.counts.chunks} chunks`;
+    await show(m.config.name);
   } catch (err) { st.className = 'err'; st.textContent = err.message; }
 };
 

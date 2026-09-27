@@ -1,0 +1,10 @@
+name: sentence-256t-all-MiniLM-L6-v2
+splitter: sentence
+unit: tokens
+max: 256
+min: 0
+overlap: 0
+tokenizer: sentence-transformers/all-MiniLM-L6-v2
+strip_footer: true
+context: false
+context_model: claude-opus-5

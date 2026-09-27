@@ -21,7 +21,7 @@ build/             tooling. No data.
   test_*.py          self-checks: python test_chunkers.py && python test_resolve.py
 out/               generated. Never edit by hand.
   queries.parquet    the questions (config-independent)
-  <name>/            one folder per config
+  <name>/            one folder per config (name derived from the settings)
     corpus.parquet     the chunks
     answers.parquet    qrels — which chunks hold each answer passage
     manifest.json      config, versions, counts, sha of the PDFs
@@ -44,7 +44,7 @@ Or with docker: `docker compose run --rm build configs/legal-1200.yaml`,
 ## Building
 
 ```sh
-venv/bin/python build.py ../configs/legal-1200.yaml    # -> out/legal-1200/
+venv/bin/python build.py ../configs/legal-1200.yaml    # -> out/legal-1200c-min300/
 venv/bin/python serve.py                              # UI at http://localhost:8765
 ```
 
@@ -57,7 +57,7 @@ aborts the build and names the passage. Fix it (it must be verbatim) and re-run.
 ## Chunker configuration
 
 ```yaml
-name: legal-1200          # -> out/legal-1200/
+name: legal-1200c-min300  # optional: derived from the settings -> out/legal-1200c-min300/
 splitter: legal           # fixed | recursive | sentence | legal
 unit: chars               # chars | words | tokens
 max: 1200                 # hard ceiling per chunk, in `unit`
