@@ -14,6 +14,7 @@ readable by index.html without a database.
   python run.py --bucket 59cb0095
   python run.py --bucket 59cb0095 --k 10
   python run.py --bucket 59cb0095 --rerank bge-reranker   # week07+: cross-encoder 2nd stage
+  python run.py --bucket 59cb0095 --variants 4            # week08+: Claude rewrites the query 4 ways, RRF
   python run.py --options           # ready buckets
   python run.py --list          # history, newest first
   python run.py --reindex       # rebuild index.json after editing run files by hand
@@ -113,11 +114,12 @@ def load_qrels(api: str, bucket: str) -> dict[str, list[str]]:
     return qrels
 
 
-def search(api: str, bucket: str, question: str, k: int, rerank: str = "") -> list[dict]:
-    params = {"q": question, "k": k} | ({"rerank": rerank} if rerank else {})
+def search(api: str, bucket: str, question: str, k: int, rerank: str = "", variants: int = 0) -> dict:
+    params = ({"q": question, "k": k} | ({"rerank": rerank} if rerank else {})
+              | ({"variants": variants} if variants else {}))
     url = f"{api}/api/buckets/{bucket}/search?" + urllib.parse.urlencode(params)
     with urllib.request.urlopen(url, timeout=120) as r:
-        return json.loads(r.read())["results"]
+        return json.loads(r.read())
 
 
 def get_json(url: str) -> dict:
@@ -139,6 +141,11 @@ def list_rerankers(api: str) -> dict[str, str]:
     return get_json(f"{api}/api/health").get("rerankers", {})
 
 
+def transform_info(api: str) -> dict | None:
+    """{"model", "max_variants"}. None before week08: older APIs would ignore ?variants= silently."""
+    return get_json(f"{api}/api/health").get("transform")
+
+
 def bucket_info(api: str, bucket: str) -> dict:
     b = get_json(f"{api}/api/buckets/{bucket}")
     if b["status"] != "ready":
@@ -148,11 +155,14 @@ def bucket_info(api: str, bucket: str) -> dict:
 
 # ── run ────────────────────────────────────────────────────────────────────
 
-def run(k: int, api: str, bucket: str, rerank: str = "") -> dict:
+def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0) -> dict:
     api = api.rstrip("/")
     b = bucket_info(api, bucket)
     if rerank and rerank not in (offered := list_rerankers(api)):
         sys.exit(f"reranker {rerank!r} not offered by {api} (has: {list(offered) or 'none — week07+?'})")
+    transform = transform_info(api) if variants else None
+    if variants and not (transform and 1 <= variants <= transform["max_variants"]):
+        sys.exit(f"--variants {variants} not offered by {api} (transform: {transform or 'none — week08+?'})")
     queries = load_queries()
     qrels = load_qrels(api, bucket)
     missing = [q["query_id"] for q in queries if q["query_id"] not in qrels]
@@ -161,7 +171,8 @@ def run(k: int, api: str, bucket: str, rerank: str = "") -> dict:
               file=sys.stderr)
 
     print(f"{len(queries)} queries · k={k} · bucket {bucket} ({b['name']}, {b['retriever']})"
-          + (f" · rerank {rerank}" if rerank else ""))
+          + (f" · rerank {rerank}" if rerank else "")
+          + (f" · {variants} variantes ({transform['model']})" if variants else ""))
     per_query, failures = [], 0
     PROGRESS.update(done=0, total=len(queries), query_id=None, started=time.time(), cancel=False)
     for i, q in enumerate(queries, 1):
@@ -170,11 +181,14 @@ def run(k: int, api: str, bucket: str, rerank: str = "") -> dict:
         PROGRESS.update(done=i - 1, query_id=q["query_id"])
         expected = qrels.get(q["query_id"], [])
         try:
-            results = search(api, bucket, q["question"], k, rerank)
+            found = search(api, bucket, q["question"], k, rerank, variants)
+        except urllib.error.HTTPError as e:  # the API answered and said no: every question would fail the same way
+            sys.exit(f"{q['query_id']}: search -> {e.code}: {e.read().decode(errors='replace')[:300]} — nada gravado")
         except (urllib.error.URLError, TimeoutError) as e:
             failures += 1
             print(f"  [{i}/{len(queries)}] {q['query_id']} FAILED: {e}")
-            results = []
+            found = {}
+        results = found.get("results", [])
         retrieved = [r["id"] for r in results]
         m = score(expected, retrieved, k)
         per_query.append({
@@ -184,6 +198,7 @@ def run(k: int, api: str, bucket: str, rerank: str = "") -> dict:
             # answer in two makes that question multi_chunk for this dataset
             "type": "multi_chunk" if len(expected) > 1 else "single_chunk",
             "filename": q["filename"],
+            **({"rewrites": found.get("queries", [])[1:]} if variants else {}),
             "expected": expected,
             "retrieved": [
                 {"chunk_id": r["id"], "rank": n, "filename": r["filename"],
@@ -208,7 +223,8 @@ def run(k: int, api: str, bucket: str, rerank: str = "") -> dict:
     payload = {
         "run_id": run_id,
         # the bucket name is already "<chunker> · <retriever>"; the run adds what it chose
-        "label": b["name"] + (f" + {rerank}" if rerank else "") + f" · k={k}",
+        "label": b["name"] + (f" + {variants} variantes" if variants else "")
+                 + (f" + {rerank}" if rerank else "") + f" · k={k}",
         "config": {
             "k": k,
             "api": api,
@@ -217,6 +233,8 @@ def run(k: int, api: str, bucket: str, rerank: str = "") -> dict:
             "retriever": b["retriever"],
             "chunker": b.get("chunker"),
             "rerank": rerank or None,
+            "variants": variants,
+            "transform_model": transform["model"] if variants else None,
             "embedding_model": b["retriever"],
             "corpus_sha256": b["parquet_sha"],
             "n_queries": len(queries),
@@ -288,6 +306,8 @@ def show_options(api: str) -> int:
     print("rerankers (--rerank):")
     for name, model in list_rerankers(api.rstrip("/")).items():
         print(f"  {name:<14} {model}")
+    if t := transform_info(api.rstrip("/")):
+        print(f"query transform (--variants 1..{t['max_variants']}): {t['model']}")
     return 0
 
 
@@ -354,6 +374,7 @@ if __name__ == "__main__":
     ap.add_argument("--api", default=API, help=f"chunks-api base URL (default {API})")
     ap.add_argument("--bucket", help="week05 bucket id (search + gabarito)")
     ap.add_argument("--rerank", default="", help="cross-encoder 2nd stage (see --options), week07+")
+    ap.add_argument("--variants", type=int, default=0, help="Claude query rewrites fused by RRF, week08+")
     ap.add_argument("--options", action="store_true", help="list ready buckets")
     ap.add_argument("--list", action="store_true", help="show run history")
     ap.add_argument("--reindex", action="store_true", help="rebuild index.json from run files")
@@ -370,4 +391,4 @@ if __name__ == "__main__":
         sys.exit(show_options(a.api))
     if not a.bucket:
         ap.error("--bucket is required (see --options)")
-    run(a.k, a.api, a.bucket, a.rerank)
+    run(a.k, a.api, a.bucket, a.rerank, a.variants)
