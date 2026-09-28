@@ -1,125 +1,44 @@
 # eval
 
-Mede a qualidade do retrieval e guarda o histórico, para que "melhorei?" tenha
-resposta em número e não em impressão.
+Mede cada versão do RAG com as mesmas 38 perguntas e guarda o histórico.
+Nasceu no [week02](../week02); cada semana depois só ganhou um seletor novo.
 
-Perguntas vêm de [`../dataset/out/queries.parquet`](../dataset) — não dependem
-de chunker. Tudo o que depende vem de um **bucket** do [`../week05`](../week05):
-a busca em `/api/buckets/<id>/search` e o gabarito em `/api/buckets/<id>/answers`.
-O bucket subiu `corpus.parquet` + `answers.parquet` da mesma pasta
-`dataset/out/<config>/`, então os chunk_ids batem por construção. Este diretório
-não tem opinião sobre o que é um chunk certo — isso mora no dataset.
-
-Cada run escolhe **um bucket**. Só aparecem buckets `ready` com gabarito.
-
-```
-run.py            roda a avaliação e grava em runs/
-server.py         serve o painel e atende POST /api/run
-index.html        painel: botão de rodar, histórico, detalhe por pergunta
-runs/
-  <run_id>.json   uma execução completa (config, métricas, por pergunta)
-  index.json      resumo de todas, regerado a cada run
-```
-
-Os arquivos JSON **são** o banco: versionados no git (a métrica muda no mesmo
-diff do commit que causou a mudança), editáveis à mão para adicionar notas, e
-lidos pelo `index.html` direto do navegador.
+| semana | o painel ganhou |
+|---|---|
+| week04 | escolher o **chunks bucket** (corpus + gabarito + retriever) |
+| week07 | **rerank** |
+| week08 | **variantes** da pergunta |
+| week09 | **descrições** (camada 1) + quais PDFs foram escolhidos por pergunta |
 
 ## Rodando
 
-O week05 precisa estar de pé (`cd ../week05 && docker compose up -d`), com pelo
-menos um bucket `ready`.
+```sh
+docker compose up -d ui          # painel em http://localhost:8080
+```
 
-### Pelo painel
+Escolha os seletores, ▶ Rodar. A API (week09) precisa estar de pé.
+
+Pelo terminal:
 
 ```sh
-docker compose up -d ui
+docker compose run --rm eval --options                                   # buckets disponíveis
+docker compose run --rm eval --bucket 59cb0095
+docker compose run --rm eval --bucket 59cb0095 --rerank mminilm-rerank --variants 4 --docs 3fa1c2d4
+docker compose run --rm eval --list                                      # histórico
 ```
 
-→ **http://localhost:8080/**
-
-Escolha o bucket, preencha rótulo (opcional — o padrão é
-`<retriever> · <nome do bucket>`), nota e `k`, clique **▶ Rodar**. O `server.py` importa o
-`run.py` e executa no próprio processo; a resposta só volta no fim (~1 min), e o
-painel recarrega sozinho já com o run novo selecionado. Log ao vivo em
-`docker compose logs -f ui`. Uma avaliação por vez — a segunda leva 409, porque
-o `run_id` tem resolução de segundo e duas gravariam por cima uma da outra.
-
-O `ui` fala com o `chunks-api`, então precisa da rede do week05 no ar.
-
-### Pelo terminal
-
-O serviço `eval` fica atrás de um profile de propósito: sem isso, um
-`docker compose up` dispararia uma avaliação inteira sem querer. `run` funciona
-normalmente.
-
-```sh
-docker compose run --rm eval --options     # buckets prontos com gabarito
-docker compose run --rm eval --bucket d556057b
-docker compose run --rm eval --bucket d556057b --k 10
-docker compose run --rm eval --bucket d556057b --rerank bge-reranker   # week07+: cross-encoder no top-50
-docker compose run --rm eval --list        # histórico no terminal
-docker compose run --rm eval --self-check  # asserts das métricas, sem API
-```
-
-Cada run imprime o delta contra o anterior:
+Cada run imprime a diferença contra o anterior:
 
 ```
-vs 2026-08-28T12-22-43 (baseline minilm k=5):
   hit_rate   0.684 ↑ 0.737  (+0.053)
   precision  0.158 ↓ 0.097  (-0.061)
 ```
 
-## O que cada run registra
+## Onde fica
 
-Sem rótulo nem nota: o run descreve a si mesmo. `label` é gerado
-(`<chunker> · <retriever> [+ rerank] · k=N`, o nome do bucket já vem do
-chunker e do retriever) e `config` guarda bucket, retriever, rerank, k e a
-config do chunker (`config.chunker`, do `manifest.json` importado no week07).
-A tabela do painel mostra essas colunas.
+`runs/<run_id>.json`: config completa, as 5 métricas (explicadas no
+[week02](../week02)), separadas em perguntas de 1 chunk e de vários, e o
+detalhe por pergunta. Os JSON **são** o banco: versionados, a métrica muda no
+mesmo commit que a causou.
 
-## Métricas
-
-Todas macro-médias sobre as 38 perguntas — cada pergunta pesa igual,
-independente de quantos chunks ela precisa.
-
-| Métrica | Pergunta que responde |
-|---|---|
-| Hit Rate | trouxe **pelo menos um** chunk certo? |
-| Recall | trouxe **quantos %** dos chunks certos? |
-| Precision | dos que trouxe, **quantos %** prestavam? |
-| MRR | o chunk certo veio **no topo** ou lá embaixo? |
-| nDCG | combina "achou" + "posição" numa nota só |
-
-`--self-check` roda os dois exemplos documentados em
-[`../week02/readme.md`](../week02/readme.md) com os números publicados lá, mais
-os casos de borda: nada encontrado, tudo no topo, IDCG limitado por k, e
-resultado vazio (divisão por zero).
-
-Cada run também quebra as métricas por tipo de pergunta (`single_chunk` /
-`multi_chunk`) — as duas costumam se mover em direções diferentes, e a média
-sozinha esconde isso.
-
-## O que fica registrado
-
-Cada run grava a configuração que o produziu, para que uma métrica diferente
-possa ser atribuída em vez de adivinhada:
-
-```json
-"config": {
-  "k": 5,
-  "bucket": "d556057b",
-  "bucket_name": "legal-1200 bm25",
-  "retriever": "bm25",
-  "corpus_sha256": "9b09baec3732…",
-  "n_queries": 38,
-  "n_chunks": 241,
-  "n_qrels": 132
-}
-```
-
-Tudo vem do bucket. `type` (`single_chunk`/`multi_chunk`) é derivado do
-gabarito — quantos chunks a resposta ocupa **neste** chunker — não declarado na
-pergunta. Comparar dois runs cujo `corpus_sha256` difere compara chunker e
-retriever ao mesmo tempo; o nome do bucket é o que diz qual config de chunker
-foi.
+`python run.py --self-check` confere as métricas com os exemplos do week02.

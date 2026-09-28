@@ -8,7 +8,8 @@ endpoint:
     GET  /api/options                          ->  {"buckets": [...], "descriptions": [...], "rerankers": {...}, "transform": {...}}
     GET  /api/progress                         ->  {"running", "done", "total", "query_id", "started"}
     POST /api/cancel                           ->  stops the run before its next question
-    POST /api/run  {"bucket", "k", "rerank", "variants", "docs"}  ->  {"run_id": ...}
+    POST /api/run  {"bucket", "k", "rerank", "variants", "docs", "doc_top"}  ->  {"run_id": ...}
+    DELETE /api/runs/<run_id>                  ->  removes runs/<run_id>.json, regenerates index.json
 
 run.py is imported, not shelled out to: same process, same runs/ directory, and
 the exit-with-a-message paths (API down, dataset missing) come back as SystemExit
@@ -17,6 +18,7 @@ and turn into the error the browser shows.
 
 import json
 import os
+import re
 import threading
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -29,6 +31,7 @@ PORT = int(os.environ.get("PORT", 8080))
 # One eval at a time: run_id is a second-resolution timestamp, so two concurrent
 # runs would race for the same filename, and they would race for the API too.
 busy = threading.Lock()
+RUN_ID = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}")  # also keeps the path inside runs/
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -46,6 +49,7 @@ class Handler(SimpleHTTPRequestHandler):
             descriptions = [b for b in everything if b["status"] == "ready" and b.get("kind") == "descriptions"] \
                 if evaluation.two_layer_info(evaluation.API) else None  # null before week09
             self.reply(200, {"buckets": buckets, "descriptions": descriptions,
+                             "two_layer": evaluation.two_layer_info(evaluation.API),
                              "rerankers": evaluation.list_rerankers(evaluation.API),
                              "transform": evaluation.transform_info(evaluation.API)})
         except SystemExit as e:
@@ -73,6 +77,7 @@ class Handler(SimpleHTTPRequestHandler):
                 str(body.get("rerank") or ""),
                 int(body.get("variants") or 0),
                 str(body.get("docs") or ""),
+                max(0, min(50, int(body.get("doc_top") or 0))),
             )
             self.reply(200, {"run_id": payload["run_id"], "metrics": payload["metrics"]})
         except SystemExit as e:  # run.py's sys.exit("chunks-api unreachable…", sha mismatch…)
@@ -81,6 +86,17 @@ class Handler(SimpleHTTPRequestHandler):
             self.reply(500, {"error": f"{type(e).__name__}: {e}"})
         finally:
             busy.release()
+
+    def do_DELETE(self):
+        run_id = self.path.rstrip("/").removeprefix("/api/runs/")
+        if not self.path.startswith("/api/runs/") or not RUN_ID.fullmatch(run_id):
+            return self.reply(404, {"error": "not found"})
+        path = evaluation.RUNS / f"{run_id}.json"
+        if not path.exists():
+            return self.reply(404, {"error": f"execução {run_id} não existe"})
+        path.unlink()
+        evaluation.reindex()
+        self.reply(200, {"deleted": run_id})
 
     def reply(self, code: int, obj: dict):
         body = json.dumps(obj, ensure_ascii=False).encode()

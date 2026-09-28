@@ -51,19 +51,44 @@ button { font-family: inherit; cursor: pointer; border: 1px solid var(--border-s
 button:hover:not(:disabled) { background: var(--surface-hover); }
 button:disabled { opacity: .55; cursor: progress; }
 
-/* ── Barra de execução ────────────────────────────────── */
-.runbar { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-.runbar input { font-family: inherit; font-size: 13px; padding: 7px 10px; color: var(--text);
-                background: var(--surface-2); border: 1px solid var(--border-strong);
-                border-radius: 8px; min-width: 0; }
-.runbar input::placeholder { color: var(--faint); }
-#k { width: 64px; font-family: var(--mono); }
-.runbar select { font-family: inherit; font-size: 13px; padding: 7px 8px; color: var(--text);
-                 background: var(--surface-2); border: 1px solid var(--border-strong);
-                 border-radius: 8px; max-width: 260px; }
-#go { border-color: var(--accent-2); color: var(--accent); font-weight: 600; }
-#runmsg { font-size: 12px; color: var(--muted); }
+/* ── Nova execução: os estágios da busca, na ordem em que rodam ── */
+.runpanel { background: var(--surface); border: 1px solid var(--border); border-radius: 11px;
+            box-shadow: var(--shadow); padding: 18px 20px 16px; margin-bottom: 18px; }
+.stages { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+.stage { position: relative; padding: 0 18px; min-width: 0; }
+.stage:first-child { padding-left: 0; }
+.stage:last-child { padding-right: 0; }
+.stage + .stage { border-left: 1px solid var(--border); }
+/* the arrow sits on the divider: this stage feeds the next */
+.stage + .stage::before { content: '›'; position: absolute; left: -10px; top: 3px;
+  width: 19px; height: 19px; line-height: 17px; text-align: center; font-size: 14px;
+  color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 50%; }
+.stage[hidden] { display: none; }
+/* title + the step's quantity on one line, so every select stays on the same row */
+.stage-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 26px; }
+.stage-name { font-size: 13.5px; font-weight: 600; }
+.stage-hint { font-size: 12px; color: var(--muted); margin: 2px 0 12px; line-height: 1.4;
+              min-height: 2.8em; }  /* two lines everywhere: the selects line up */
+.stage select, .stage input { font-family: inherit; font-size: 13px; color: var(--text);
+  background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 8px;
+  padding: 7px 8px; width: 100%; }
+.stage select:disabled, .stage input:disabled { opacity: .5; }
+.count { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.stage .count input { width: 50px; padding: 3px 6px; font-family: var(--mono); font-size: 12.5px; text-align: right; }
+.run-foot { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding-top: 14px;
+            border-top: 1px solid var(--border); }
+#go { background: var(--accent); border-color: var(--accent); color: var(--surface); font-weight: 600; padding: 8px 16px; }
+#go:hover:not(:disabled) { background: var(--accent-2); border-color: var(--accent-2); }
+#runmsg { font-size: 12.5px; color: var(--muted); }
 #runmsg.err { color: var(--err); }
+@media (max-width: 760px) {
+  .stages { grid-auto-flow: row; }
+  .stage, .stage:first-child, .stage:last-child { padding: 14px 0 0; }
+  .stage + .stage { border-left: 0; border-top: 1px solid var(--border); margin-top: 14px; }
+  .stage + .stage::before { display: none; }
+  .stage-hint { min-height: 0; }
+  header, main { padding-left: 16px; padding-right: 16px; }
+}
 #progress-sec { display: flex; align-items: center; gap: 12px; background: var(--surface);
                 border: 1px solid var(--border); border-radius: 11px; box-shadow: var(--shadow);
                 padding: 12px 14px; }
@@ -112,6 +137,9 @@ tr.run-row.sel td { background: var(--accent-soft); }
 .partial { background: var(--warn-soft); color: var(--warn); }
 .fail { background: var(--err-soft); color: var(--err); }
 
+.detail-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+button.danger { color: var(--err); border-color: var(--border-strong); font-size: 12.5px; padding: 5px 10px; }
+button.danger:hover:not(:disabled) { background: var(--err-soft); border-color: var(--err); }
 .cfg { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .chip { font-family: var(--mono); font-size: 11.5px; background: var(--surface-2);
         border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; color: var(--text-2); }
@@ -122,6 +150,7 @@ tr.run-row.sel td { background: var(--accent-soft); }
 .chunks .hit { color: var(--ok); font-weight: 600; }
 .chunks .miss { color: var(--faint); }
 .state-msg { color: var(--muted); font-size: 13px; padding: 26px; text-align: center; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 code { font-family: var(--mono); font-size: 12px; background: var(--surface-2);
        padding: 2px 5px; border-radius: 4px; }
 </style>
@@ -135,20 +164,43 @@ code { font-family: var(--mono); font-size: 12px; background: var(--surface-2);
       Histórico de avaliação
       <small id="sub">carregando…</small>
     </div>
-    <form class="runbar" id="runf">
-      <select id="bucket" required title="chunks bucket (corpus + gabarito + retriever)"><option value="">chunks bucket…</option></select>
-      <select id="docs" title="camada 1: um bucket de descrições escolhe os documentos, a busca de chunks fica só neles (week09+)" hidden><option value="">sem descrições</option></select>
-      <select id="rerank" title="2º estágio: cross-encoder reordena o top-50 (week07+)"><option value="">sem rerank</option></select>
-      <select id="variants" title="query transformation: Claude reescreve a pergunta N vezes, busca cada uma, funde por RRF (week08+)" hidden><option value="0">sem variantes</option></select>
-      <input id="k" type="number" min="1" max="50" value="5" title="top-K" />
-      <button id="go" type="submit">▶ Rodar</button>
-    </form>
-    <span id="runmsg"></span>
     <button id="theme" type="button">◐ Tema</button>
   </div>
 </header>
 
 <main>
+  <form class="runpanel" id="runf" aria-labelledby="run-title">
+    <h2 id="run-title">Nova execução</h2>
+    <div class="stages">
+      <div class="stage" id="stage-q" role="group" aria-labelledby="sn-q" hidden>
+        <div class="stage-head"><span class="stage-name" id="sn-q">Pergunta</span></div>
+        <p class="stage-hint">Reescritas buscadas junto com a original.</p>
+        <select id="variants" aria-label="variantes"><option value="0">só a original</option></select>
+      </div>
+      <div class="stage" id="stage-docs" role="group" aria-labelledby="sn-docs" hidden>
+        <div class="stage-head"><span class="stage-name" id="sn-docs">Documentos</span>
+          <label class="count" title="quantos PDFs passam pra busca de chunks">top <input id="doc_top" type="number" min="1" max="50" value="5" disabled aria-label="top documentos" /></label></div>
+        <p class="stage-hint">Os resumos escolhem os PDFs antes dos chunks.</p>
+        <select id="docs" aria-label="bucket de descrições"><option value="">todos os PDFs</option></select>
+      </div>
+      <div class="stage" role="group" aria-labelledby="sn-chunks">
+        <div class="stage-head"><span class="stage-name" id="sn-chunks">Chunks</span>
+          <label class="count" title="quantos chunks a busca devolve (k)">top <input id="k" type="number" min="1" max="50" value="5" aria-label="top chunks" /></label></div>
+        <p class="stage-hint">Corpus, gabarito e retriever.</p>
+        <select id="bucket" required aria-label="chunks bucket"><option value="">escolha o chunks bucket</option></select>
+      </div>
+      <div class="stage" role="group" aria-labelledby="sn-rerank">
+        <div class="stage-head"><span class="stage-name" id="sn-rerank">Rerank</span></div>
+        <p class="stage-hint">Um cross-encoder relê os 30 primeiros.</p>
+        <select id="rerank" aria-label="reranker"><option value="">sem rerank</option></select>
+      </div>
+    </div>
+    <div class="run-foot">
+      <button id="go" type="submit">▶ Rodar</button>
+      <span id="runmsg" role="status"></span>
+    </div>
+  </form>
+
   <section id="progress-sec" hidden>
     <progress id="runbar-progress"></progress>
     <span id="progmsg"></span>
@@ -166,7 +218,10 @@ code { font-family: var(--mono); font-size: 12px; background: var(--surface-2);
   </section>
 
   <section id="detail-sec" hidden>
-    <h2 id="detail-title">Detalhe</h2>
+    <div class="detail-head">
+      <h2 id="detail-title">Detalhe</h2>
+      <button id="del-run" type="button" class="danger">Excluir execução</button>
+    </div>
     <div class="cfg" id="detail-cfg"></div>
     <div class="table-wrap"><table id="detail"></table></div>
   </section>
@@ -272,7 +327,7 @@ function renderRuns(runs) {
         <td class="rid">${esc(r.run_id)}${r.failures ? ` <span class="pill fail">${r.failures} erro(s)</span>` : ''}</td>
         <td class="rid">${c.chunker ? esc(c.chunker.name) : `<span class="dim">${esc(c.bucket_name || '—')}</span>`}</td>
         <td class="rid">${esc(c.retriever || c.embedding_model)}</td>
-        <td class="rid">${c.docs ? `${esc(c.docs_retriever)} · top-${c.doc_top}` : '<span class="dim">—</span>'}</td>
+        <td class="rid">${c.docs ? `${esc(c.docs_retriever)} · top-${c.doc_top} docs` : '<span class="dim">—</span>'}</td>
         <td class="rid">${c.rerank ? esc(c.rerank) : '<span class="dim">—</span>'}</td>
         <td class="num">${c.variants || '<span class="dim">—</span>'}</td>
         <td class="num">${c.k ?? ''}</td>
@@ -291,8 +346,9 @@ async function showDetail(runId, scroll = true) {
   $('runs').querySelectorAll('.run-row').forEach(tr =>
     tr.classList.toggle('sel', tr.dataset.run === runId))
 
-  const run = await (await fetch(`runs/${runId}.json`)).json()
+  const run = await (await fetch(`runs/${runId}.json`, { cache: 'no-store' })).json()
   const c = run.config
+  $('del-run').dataset.run = runId
   $('detail-title').textContent = `Detalhe — ${run.label}`
   $('detail-cfg').innerHTML = [
     ['k', c.k],
@@ -353,6 +409,7 @@ async function load(select) {
     $('sub').textContent = ''
     $('empty').hidden = false
     $('empty').innerHTML = 'Nenhuma execução ainda. Use o botão <b>Rodar</b> aí em cima.'
+    $('trend-sec').hidden = $('runs-sec').hidden = $('detail-sec').hidden = true
     return
   }
   $('empty').hidden = true
@@ -372,6 +429,14 @@ load().catch(e => {
   console.error(e)
 })
 
+$('del-run').onclick = async () => {
+  const id = $('del-run').dataset.run
+  if (!id || !confirm(`Excluir a execução ${id}? O arquivo runs/${id}.json é apagado.`)) return
+  const r = await fetch(`api/runs/${id}`, { method: 'DELETE' })
+  if (!r.ok) return alert((await r.json()).error || `HTTP ${r.status}`)
+  load()
+}
+
 // ── Rodar ──────────────────────────────────────────────
 // Sem streaming de progresso: a resposta só volta no fim. As perguntas levam
 // ~1 min, e o log ao vivo está no `docker compose logs -f ui`.
@@ -382,16 +447,19 @@ async function loadOptions() {
     const r = await fetch('api/options', { cache: 'no-store' })
     const o = await r.json()
     if (!r.ok) throw new Error(o.error || `HTTP ${r.status}`)
-    $('bucket').innerHTML = '<option value="">chunks bucket…</option>' + o.buckets.map(b =>
+    $('bucket').innerHTML = '<option value="">escolha o chunks bucket</option>' + o.buckets.map(b =>
       `<option value="${esc(b.id)}" data-ret="${esc(b.retriever)}" data-name="${esc(b.name)}">${esc(b.name)} · ${esc(b.retriever)} · ${b.chunk_count} chunks · ${b.qrels_count} qrels</option>`).join('')
     $('rerank').innerHTML = '<option value="">sem rerank</option>' + Object.entries(o.rerankers || {}).map(([n, m]) =>
       `<option value="${esc(n)}" title="${esc(m)}">${esc(n)}</option>`).join('')
-    $('docs').hidden = !o.descriptions  // null before week09
-    if (o.descriptions) $('docs').innerHTML = '<option value="">sem descrições</option>' + o.descriptions.map(b =>
+    $('stage-docs').hidden = !o.descriptions  // null before week09
+    if (o.two_layer) $('doc_top').value = o.two_layer.doc_top
+    $('docs').onchange = () => { $('doc_top').disabled = !$('docs').value }
+    $('docs').onchange()
+    if (o.descriptions) $('docs').innerHTML = '<option value="">todos os PDFs</option>' + o.descriptions.map(b =>
       `<option value="${esc(b.id)}">${esc(b.name)} · ${b.doc_count} docs · ${esc(b.id)}</option>`).join('')
     const t = o.transform  // null before week08
-    $('variants').hidden = !t
-    if (t) $('variants').innerHTML = '<option value="0">sem variantes</option>' +
+    $('stage-q').hidden = !t
+    if (t) $('variants').innerHTML = '<option value="0">só a original</option>' +
       Array.from({ length: t.max_variants }, (_, i) => `<option value="${i + 1}" title="${esc(t.model)}">${i + 1} variante${i ? 's' : ''}</option>`).join('')
   } catch (err) {
     $('runmsg').className = 'err'
@@ -452,7 +520,7 @@ $('runf').onsubmit = async e => {
     const r = await fetch('api/run', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bucket: $('bucket').value, rerank: $('rerank').value, variants: Number($('variants').value), docs: $('docs').value, k: Number($('k').value) }),
+      body: JSON.stringify({ bucket: $('bucket').value, rerank: $('rerank').value, variants: Number($('variants').value), docs: $('docs').value, doc_top: Number($('doc_top').value), k: Number($('k').value) }),
     })
     const d = await r.json()
     if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`)
