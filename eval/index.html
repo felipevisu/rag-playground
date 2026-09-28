@@ -136,7 +136,8 @@ code { font-family: var(--mono); font-size: 12px; background: var(--surface-2);
       <small id="sub">carregando…</small>
     </div>
     <form class="runbar" id="runf">
-      <select id="bucket" required title="bucket do week04 (corpus + gabarito + retriever)"><option value="">bucket…</option></select>
+      <select id="bucket" required title="chunks bucket (corpus + gabarito + retriever)"><option value="">chunks bucket…</option></select>
+      <select id="docs" title="camada 1: um bucket de descrições escolhe os documentos, a busca de chunks fica só neles (week09+)" hidden><option value="">sem descrições</option></select>
       <select id="rerank" title="2º estágio: cross-encoder reordena o top-50 (week07+)"><option value="">sem rerank</option></select>
       <select id="variants" title="query transformation: Claude reescreve a pergunta N vezes, busca cada uma, funde por RRF (week08+)" hidden><option value="0">sem variantes</option></select>
       <input id="k" type="number" min="1" max="50" value="5" title="top-K" />
@@ -263,7 +264,7 @@ function renderSparks(runs) {
 function renderRuns(runs) {
   $('runs').innerHTML = `
     <thead><tr>
-      <th>Execução</th><th>Chunker</th><th>Retriever</th><th>Rerank</th><th class="num">Variantes</th><th class="num">k</th><th class="num">Chunks</th>
+      <th>Execução</th><th>Chunker</th><th>Retriever</th><th>Descrições</th><th>Rerank</th><th class="num">Variantes</th><th class="num">k</th><th class="num">Chunks</th>
       ${METRICS.map(m => `<th class="num">${LABELS[m]}</th>`).join('')}
     </tr></thead>
     <tbody>${runs.map(r => { const c = r.config || {}; return `
@@ -271,6 +272,7 @@ function renderRuns(runs) {
         <td class="rid">${esc(r.run_id)}${r.failures ? ` <span class="pill fail">${r.failures} erro(s)</span>` : ''}</td>
         <td class="rid">${c.chunker ? esc(c.chunker.name) : `<span class="dim">${esc(c.bucket_name || '—')}</span>`}</td>
         <td class="rid">${esc(c.retriever || c.embedding_model)}</td>
+        <td class="rid">${c.docs ? `${esc(c.docs_retriever)} · top-${c.doc_top}` : '<span class="dim">—</span>'}</td>
         <td class="rid">${c.rerank ? esc(c.rerank) : '<span class="dim">—</span>'}</td>
         <td class="num">${c.variants || '<span class="dim">—</span>'}</td>
         <td class="num">${c.k ?? ''}</td>
@@ -296,6 +298,7 @@ async function showDetail(runId, scroll = true) {
     ['k', c.k],
     ['bucket', c.bucket ? `${c.bucket_name} (${c.bucket})` : '—'],
     ['retriever', c.retriever || c.embedding_model],
+    ['descrições', c.docs ? `${c.docs_name} (${c.docs}) · top-${c.doc_top}` : '—'],
     ['rerank', c.rerank || '—'],
     ['variantes', c.variants ? `${c.variants} (${c.transform_model})` : '—'],
     ...(c.chunker ? Object.entries(c.chunker).filter(([k, v]) => k !== 'name' && v !== '' && v !== 0 && v !== false)
@@ -318,7 +321,8 @@ async function showDetail(runId, scroll = true) {
         <td class="rid">${esc(q.query_id)}</td>
         <td class="qtext">${esc(q.question)}
             <span class="pill ${q.verdict}">${q.verdict}</span>
-            ${(q.rewrites || []).map(v => `<div class="dim">↳ ${esc(v)}</div>`).join('')}</td>
+            ${(q.rewrites || []).map(v => `<div class="dim">↳ ${esc(v)}</div>`).join('')}
+            ${q.documents ? `<div class="dim">camada 1: ${q.documents.map(f => f === q.filename ? `<b>${esc(f)}</b>` : esc(f)).join(', ')}${q.documents.includes(q.filename) ? '' : ' · <span class="err">documento certo fora</span>'}</div>` : ''}</td>
         <td class="rid">${q.type === 'multi_chunk' ? 'multi' : 'single'}</td>
         <td class="num">${fmt(q.recall)}</td>
         <td class="num">${fmt(q.ndcg)}</td>
@@ -378,10 +382,13 @@ async function loadOptions() {
     const r = await fetch('api/options', { cache: 'no-store' })
     const o = await r.json()
     if (!r.ok) throw new Error(o.error || `HTTP ${r.status}`)
-    $('bucket').innerHTML = '<option value="">bucket…</option>' + o.buckets.map(b =>
+    $('bucket').innerHTML = '<option value="">chunks bucket…</option>' + o.buckets.map(b =>
       `<option value="${esc(b.id)}" data-ret="${esc(b.retriever)}" data-name="${esc(b.name)}">${esc(b.name)} · ${esc(b.retriever)} · ${b.chunk_count} chunks · ${b.qrels_count} qrels</option>`).join('')
     $('rerank').innerHTML = '<option value="">sem rerank</option>' + Object.entries(o.rerankers || {}).map(([n, m]) =>
       `<option value="${esc(n)}" title="${esc(m)}">${esc(n)}</option>`).join('')
+    $('docs').hidden = !o.descriptions  // null before week09
+    if (o.descriptions) $('docs').innerHTML = '<option value="">sem descrições</option>' + o.descriptions.map(b =>
+      `<option value="${esc(b.id)}">${esc(b.name)} · ${b.doc_count} docs · ${esc(b.id)}</option>`).join('')
     const t = o.transform  // null before week08
     $('variants').hidden = !t
     if (t) $('variants').innerHTML = '<option value="0">sem variantes</option>' +
@@ -445,7 +452,7 @@ $('runf').onsubmit = async e => {
     const r = await fetch('api/run', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bucket: $('bucket').value, rerank: $('rerank').value, variants: Number($('variants').value), k: Number($('k').value) }),
+      body: JSON.stringify({ bucket: $('bucket').value, rerank: $('rerank').value, variants: Number($('variants').value), docs: $('docs').value, k: Number($('k').value) }),
     })
     const d = await r.json()
     if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`)

@@ -5,10 +5,10 @@
 needed something that answers POST. This is that same static server plus one
 endpoint:
 
-    GET  /api/options                          ->  {"buckets": [...], "rerankers": {...}, "transform": {...}}
+    GET  /api/options                          ->  {"buckets": [...], "descriptions": [...], "rerankers": {...}, "transform": {...}}
     GET  /api/progress                         ->  {"running", "done", "total", "query_id", "started"}
     POST /api/cancel                           ->  stops the run before its next question
-    POST /api/run  {"bucket", "k", "rerank", "variants"}  ->  {"run_id": ...}
+    POST /api/run  {"bucket", "k", "rerank", "variants", "docs"}  ->  {"run_id": ...}
 
 run.py is imported, not shelled out to: same process, same runs/ directory, and
 the exit-with-a-message paths (API down, dataset missing) come back as SystemExit
@@ -41,9 +41,11 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path.rstrip("/") != "/api/options":
             return super().do_GET()
         try:
-            buckets = [b for b in evaluation.list_buckets(evaluation.API)
-                       if b["status"] == "ready" and b.get("qrels_count")]
-            self.reply(200, {"buckets": buckets,
+            everything = evaluation.list_buckets(evaluation.API)
+            buckets = [b for b in everything if b["status"] == "ready" and b.get("qrels_count")]
+            descriptions = [b for b in everything if b["status"] == "ready" and b.get("kind") == "descriptions"] \
+                if evaluation.two_layer_info(evaluation.API) else None  # null before week09
+            self.reply(200, {"buckets": buckets, "descriptions": descriptions,
                              "rerankers": evaluation.list_rerankers(evaluation.API),
                              "transform": evaluation.transform_info(evaluation.API)})
         except SystemExit as e:
@@ -70,6 +72,7 @@ class Handler(SimpleHTTPRequestHandler):
                 str(body["bucket"]),
                 str(body.get("rerank") or ""),
                 int(body.get("variants") or 0),
+                str(body.get("docs") or ""),
             )
             self.reply(200, {"run_id": payload["run_id"], "metrics": payload["metrics"]})
         except SystemExit as e:  # run.py's sys.exit("chunks-api unreachable…", sha mismatch…)
