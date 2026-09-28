@@ -1,10 +1,10 @@
 {
-  "built_at": "2026-09-28T00:28:39+00:00",
+  "built_at": "2026-09-28T00:29:11+00:00",
   "config": {
-    "name": "sentence-512t-multilingual-e5-large",
+    "name": "sentence-450t-multilingual-e5-large",
     "splitter": "sentence",
     "unit": "tokens",
-    "max": 512,
+    "max": 450,
     "min": 0,
     "overlap": 0,
     "tokenizer": "intfloat/multilingual-e5-large",
@@ -20,12 +20,12 @@
   },
   "counts": {
     "documents": 57,
-    "chunks": 279,
-    "size_min": 15,
-    "size_median": 482,
-    "size_max": 512,
+    "chunks": 324,
+    "size_min": 20,
+    "size_median": 417,
+    "size_max": 450,
     "queries": 38,
-    "qrels": 120
+    "qrels": 118
   },
   "pdfs_sha256": "0703b86009cfd2c45c34521189e88d1215892da1309fa7590e553626335f4ec8"
 }
