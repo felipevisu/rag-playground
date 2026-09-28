@@ -5,10 +5,10 @@
 needed something that answers POST. This is that same static server plus one
 endpoint:
 
-    GET  /api/options                          ->  {"buckets": [...], "rerankers": {...}}
+    GET  /api/options                          ->  {"buckets": [...], "rerankers": {...}, "transform": {...}}
     GET  /api/progress                         ->  {"running", "done", "total", "query_id", "started"}
     POST /api/cancel                           ->  stops the run before its next question
-    POST /api/run  {"bucket", "k", "rerank"}  ->  {"run_id": ...}
+    POST /api/run  {"bucket", "k", "rerank", "variants"}  ->  {"run_id": ...}
 
 run.py is imported, not shelled out to: same process, same runs/ directory, and
 the exit-with-a-message paths (API down, dataset missing) come back as SystemExit
@@ -44,7 +44,8 @@ class Handler(SimpleHTTPRequestHandler):
             buckets = [b for b in evaluation.list_buckets(evaluation.API)
                        if b["status"] == "ready" and b.get("qrels_count")]
             self.reply(200, {"buckets": buckets,
-                             "rerankers": evaluation.list_rerankers(evaluation.API)})
+                             "rerankers": evaluation.list_rerankers(evaluation.API),
+                             "transform": evaluation.transform_info(evaluation.API)})
         except SystemExit as e:
             self.reply(502, {"error": str(e.code)})
         except Exception as e:
@@ -68,6 +69,7 @@ class Handler(SimpleHTTPRequestHandler):
                 evaluation.API,
                 str(body["bucket"]),
                 str(body.get("rerank") or ""),
+                int(body.get("variants") or 0),
             )
             self.reply(200, {"run_id": payload["run_id"], "metrics": payload["metrics"]})
         except SystemExit as e:  # run.py's sys.exit("chunks-api unreachable…", sha mismatch…)

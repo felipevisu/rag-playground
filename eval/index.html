@@ -138,6 +138,7 @@ code { font-family: var(--mono); font-size: 12px; background: var(--surface-2);
     <form class="runbar" id="runf">
       <select id="bucket" required title="bucket do week04 (corpus + gabarito + retriever)"><option value="">bucket…</option></select>
       <select id="rerank" title="2º estágio: cross-encoder reordena o top-50 (week07+)"><option value="">sem rerank</option></select>
+      <select id="variants" title="query transformation: Claude reescreve a pergunta N vezes, busca cada uma, funde por RRF (week08+)" hidden><option value="0">sem variantes</option></select>
       <input id="k" type="number" min="1" max="50" value="5" title="top-K" />
       <button id="go" type="submit">▶ Rodar</button>
     </form>
@@ -262,7 +263,7 @@ function renderSparks(runs) {
 function renderRuns(runs) {
   $('runs').innerHTML = `
     <thead><tr>
-      <th>Execução</th><th>Chunker</th><th>Retriever</th><th>Rerank</th><th class="num">k</th><th class="num">Chunks</th>
+      <th>Execução</th><th>Chunker</th><th>Retriever</th><th>Rerank</th><th class="num">Variantes</th><th class="num">k</th><th class="num">Chunks</th>
       ${METRICS.map(m => `<th class="num">${LABELS[m]}</th>`).join('')}
     </tr></thead>
     <tbody>${runs.map(r => { const c = r.config || {}; return `
@@ -271,6 +272,7 @@ function renderRuns(runs) {
         <td class="rid">${c.chunker ? esc(c.chunker.name) : `<span class="dim">${esc(c.bucket_name || '—')}</span>`}</td>
         <td class="rid">${esc(c.retriever || c.embedding_model)}</td>
         <td class="rid">${c.rerank ? esc(c.rerank) : '<span class="dim">—</span>'}</td>
+        <td class="num">${c.variants || '<span class="dim">—</span>'}</td>
         <td class="num">${c.k ?? ''}</td>
         <td class="num">${c.n_chunks ?? ''}</td>
         ${METRICS.map(m => `<td class="num">${fmt(r.metrics[m])}</td>`).join('')}
@@ -295,6 +297,7 @@ async function showDetail(runId, scroll = true) {
     ['bucket', c.bucket ? `${c.bucket_name} (${c.bucket})` : '—'],
     ['retriever', c.retriever || c.embedding_model],
     ['rerank', c.rerank || '—'],
+    ['variantes', c.variants ? `${c.variants} (${c.transform_model})` : '—'],
     ...(c.chunker ? Object.entries(c.chunker).filter(([k, v]) => k !== 'name' && v !== '' && v !== 0 && v !== false)
                       .map(([k, v]) => [k, v]) : []),
     ['chunks', c.n_chunks ?? '?'],
@@ -314,7 +317,8 @@ async function showDetail(runId, scroll = true) {
       <tr>
         <td class="rid">${esc(q.query_id)}</td>
         <td class="qtext">${esc(q.question)}
-            <span class="pill ${q.verdict}">${q.verdict}</span></td>
+            <span class="pill ${q.verdict}">${q.verdict}</span>
+            ${(q.rewrites || []).map(v => `<div class="dim">↳ ${esc(v)}</div>`).join('')}</td>
         <td class="rid">${q.type === 'multi_chunk' ? 'multi' : 'single'}</td>
         <td class="num">${fmt(q.recall)}</td>
         <td class="num">${fmt(q.ndcg)}</td>
@@ -378,6 +382,10 @@ async function loadOptions() {
       `<option value="${esc(b.id)}" data-ret="${esc(b.retriever)}" data-name="${esc(b.name)}">${esc(b.name)} · ${esc(b.retriever)} · ${b.chunk_count} chunks · ${b.qrels_count} qrels</option>`).join('')
     $('rerank').innerHTML = '<option value="">sem rerank</option>' + Object.entries(o.rerankers || {}).map(([n, m]) =>
       `<option value="${esc(n)}" title="${esc(m)}">${esc(n)}</option>`).join('')
+    const t = o.transform  // null before week08
+    $('variants').hidden = !t
+    if (t) $('variants').innerHTML = '<option value="0">sem variantes</option>' +
+      Array.from({ length: t.max_variants }, (_, i) => `<option value="${i + 1}" title="${esc(t.model)}">${i + 1} variante${i ? 's' : ''}</option>`).join('')
   } catch (err) {
     $('runmsg').className = 'err'
     $('runmsg').textContent = `opções indisponíveis: ${err.message} (week04 de pé?)`
@@ -437,7 +445,7 @@ $('runf').onsubmit = async e => {
     const r = await fetch('api/run', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bucket: $('bucket').value, rerank: $('rerank').value, k: Number($('k').value) }),
+      body: JSON.stringify({ bucket: $('bucket').value, rerank: $('rerank').value, variants: Number($('variants').value), k: Number($('k').value) }),
     })
     const d = await r.json()
     if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`)

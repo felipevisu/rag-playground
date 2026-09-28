@@ -1,6 +1,171 @@
 {
   "runs": [
     {
+      "run_id": "2026-09-28T00-02-39",
+      "label": "sentence-512t-multilingual-e5-large · hybrid-e5-large + 3 variantes · k=5",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "f1ad58d9",
+        "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-e5-large",
+        "retriever": "hybrid-e5-large",
+        "chunker": {
+          "max": 512,
+          "min": 0,
+          "name": "sentence-512t-multilingual-e5-large",
+          "unit": "tokens",
+          "context": false,
+          "overlap": 0,
+          "splitter": "sentence",
+          "tokenizer": "intfloat/multilingual-e5-large",
+          "strip_footer": true,
+          "context_model": "claude-opus-5"
+        },
+        "rerank": null,
+        "variants": 3,
+        "transform_model": "claude-haiku-4-5",
+        "embedding_model": "hybrid-e5-large",
+        "corpus_sha256": "1585db64adb79b48722d55f3471acfc839843d3db6181a01af7a9cb75bad34e2",
+        "n_queries": 38,
+        "n_chunks": 84,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 0.9737,
+        "recall": 0.8904,
+        "precision": 0.3,
+        "mrr": 0.8408,
+        "ndcg": 0.8048
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 0.9474,
+          "recall": 0.9474,
+          "precision": 0.1895,
+          "mrr": 0.8026,
+          "ndcg": 0.8397
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.8333,
+          "precision": 0.4105,
+          "mrr": 0.8789,
+          "ndcg": 0.7699
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-09-28T00-02-03",
+      "label": "sentence-512t-multilingual-e5-large · hybrid-e5-large + 5 variantes · k=5",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "f1ad58d9",
+        "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-e5-large",
+        "retriever": "hybrid-e5-large",
+        "chunker": {
+          "max": 512,
+          "min": 0,
+          "name": "sentence-512t-multilingual-e5-large",
+          "unit": "tokens",
+          "context": false,
+          "overlap": 0,
+          "splitter": "sentence",
+          "tokenizer": "intfloat/multilingual-e5-large",
+          "strip_footer": true,
+          "context_model": "claude-opus-5"
+        },
+        "rerank": null,
+        "variants": 5,
+        "transform_model": "claude-haiku-4-5",
+        "embedding_model": "hybrid-e5-large",
+        "corpus_sha256": "1585db64adb79b48722d55f3471acfc839843d3db6181a01af7a9cb75bad34e2",
+        "n_queries": 38,
+        "n_chunks": 84,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 0.9474,
+        "recall": 0.8904,
+        "precision": 0.3053,
+        "mrr": 0.7969,
+        "ndcg": 0.7885
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 0.8947,
+          "recall": 0.8947,
+          "precision": 0.1789,
+          "mrr": 0.75,
+          "ndcg": 0.7871
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.886,
+          "precision": 0.4316,
+          "mrr": 0.8439,
+          "ndcg": 0.79
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-09-27T23-55-46",
+      "label": "sentence-512t-multilingual-e5-large · hybrid-e5-large + 3 variantes · k=5",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "f1ad58d9",
+        "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-e5-large",
+        "retriever": "hybrid-e5-large",
+        "chunker": {
+          "max": 512,
+          "min": 0,
+          "name": "sentence-512t-multilingual-e5-large",
+          "unit": "tokens",
+          "context": false,
+          "overlap": 0,
+          "splitter": "sentence",
+          "tokenizer": "intfloat/multilingual-e5-large",
+          "strip_footer": true,
+          "context_model": "claude-opus-5"
+        },
+        "rerank": null,
+        "variants": 3,
+        "transform_model": "claude-opus-5",
+        "embedding_model": "hybrid-e5-large",
+        "corpus_sha256": "1585db64adb79b48722d55f3471acfc839843d3db6181a01af7a9cb75bad34e2",
+        "n_queries": 38,
+        "n_chunks": 84,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 1.0,
+        "recall": 0.9377,
+        "precision": 0.3105,
+        "mrr": 0.8781,
+        "ndcg": 0.861
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.8702,
+          "ndcg": 0.9026
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.8754,
+          "precision": 0.4211,
+          "mrr": 0.886,
+          "ndcg": 0.8194
+        }
+      },
+      "failures": 0
+    },
+    {
       "run_id": "2026-09-27T23-38-32",
       "label": "sentence-512t-multilingual-e5-large · hybrid-e5-large + mminilm-rerank · k=5",
       "config": {
