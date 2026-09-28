@@ -1,0 +1,10 @@
+name: sentence-450t-multilingual-e5-large
+splitter: sentence
+unit: tokens
+max: 450
+min: 0
+overlap: 0
+tokenizer: intfloat/multilingual-e5-large
+strip_footer: true
+context: false
+context_model: claude-opus-5
