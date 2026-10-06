@@ -41,7 +41,7 @@ header {
   position: sticky; top: 0; z-index: 10;
   background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 28px;
 }
-.head-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 14px; max-width: 1180px; margin: 0 auto; }
+.head-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 14px; }
 .title { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-right: auto; }
 .title-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-2); }
 .title small { font-weight: 400; color: var(--muted); font-size: 12.5px; }
@@ -74,6 +74,8 @@ button:disabled { opacity: .55; cursor: progress; }
   padding: 7px 8px; width: 100%; }
 .stage select:disabled, .stage input:disabled { opacity: .5; }
 .count { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.counts { display: flex; gap: 10px; }
+.counts[hidden] { display: none; }
 .stage .count input { width: 50px; padding: 3px 6px; font-family: var(--mono); font-size: 12.5px; text-align: right; }
 .run-foot { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding-top: 14px;
             border-top: 1px solid var(--border); }
@@ -96,7 +98,7 @@ button:disabled { opacity: .55; cursor: progress; }
 #progmsg { font-family: var(--mono); font-size: 12px; color: var(--text-2); white-space: nowrap; }
 #progress-sec[hidden] { display: none; }
 
-main { max-width: 1180px; margin: 0 auto; padding: 24px 28px 80px; }
+main { padding: 24px 28px 80px; }
 section { margin-bottom: 34px; }
 h2 { font-size: 13px; font-weight: 600; color: var(--text-2); text-transform: uppercase;
      letter-spacing: .06em; margin-bottom: 14px; }
@@ -190,8 +192,12 @@ code { font-family: var(--mono); font-size: 12px; background: var(--surface-2);
         <select id="bucket" required aria-label="chunks bucket"><option value="">escolha o chunks bucket</option></select>
       </div>
       <div class="stage" role="group" aria-labelledby="sn-rerank">
-        <div class="stage-head"><span class="stage-name" id="sn-rerank">Rerank</span></div>
-        <p class="stage-hint">Um cross-encoder relê os 30 primeiros.</p>
+        <div class="stage-head"><span class="stage-name" id="sn-rerank">Rerank</span>
+          <span class="counts" id="rerank-tuning" hidden>
+            <label class="count" title="quantos candidatos o reranker relê (depth)">top <input id="rerank_depth" type="number" min="1" max="100" value="30" disabled aria-label="candidatos do rerank" /></label>
+            <label class="count" title="peso da ordem da busca contra o reranker (1.0); 0 = só o reranker">keep <input id="rerank_keep" type="number" min="0" max="10" step="0.1" value="1" disabled aria-label="peso da busca no rerank" /></label>
+          </span></div>
+        <p class="stage-hint" id="rerank-hint">Um cross-encoder relê os 30 primeiros.</p>
         <select id="rerank" aria-label="reranker"><option value="">sem rerank</option></select>
       </div>
     </div>
@@ -328,7 +334,7 @@ function renderRuns(runs) {
         <td class="rid">${c.chunker ? esc(c.chunker.name) : `<span class="dim">${esc(c.bucket_name || '—')}</span>`}</td>
         <td class="rid">${esc(c.retriever || c.embedding_model)}</td>
         <td class="rid">${c.docs ? `${esc(c.docs_retriever)} · top-${c.doc_top} docs` : '<span class="dim">—</span>'}</td>
-        <td class="rid">${c.rerank ? esc(c.rerank) : '<span class="dim">—</span>'}</td>
+        <td class="rid">${c.rerank ? esc(c.rerank) + (c.rerank_depth != null ? ` · top-${c.rerank_depth} · keep ${c.rerank_keep}` : '') : '<span class="dim">—</span>'}</td>
         <td class="num">${c.variants || '<span class="dim">—</span>'}</td>
         <td class="num">${c.k ?? ''}</td>
         <td class="num">${c.n_chunks ?? ''}</td>
@@ -355,7 +361,7 @@ async function showDetail(runId, scroll = true) {
     ['bucket', c.bucket ? `${c.bucket_name} (${c.bucket})` : '—'],
     ['retriever', c.retriever || c.embedding_model],
     ['descrições', c.docs ? `${c.docs_name} (${c.docs}) · top-${c.doc_top}` : '—'],
-    ['rerank', c.rerank || '—'],
+    ['rerank', c.rerank ? c.rerank + (c.rerank_depth != null ? ` · top-${c.rerank_depth} · keep ${c.rerank_keep}` : '') : '—'],
     ['variantes', c.variants ? `${c.variants} (${c.transform_model})` : '—'],
     ...(c.chunker ? Object.entries(c.chunker).filter(([k, v]) => k !== 'name' && v !== '' && v !== 0 && v !== false)
                       .map(([k, v]) => [k, v]) : []),
@@ -451,6 +457,15 @@ async function loadOptions() {
       `<option value="${esc(b.id)}" data-ret="${esc(b.retriever)}" data-name="${esc(b.name)}">${esc(b.name)} · ${esc(b.retriever)} · ${b.chunk_count} chunks · ${b.qrels_count} qrels</option>`).join('')
     $('rerank').innerHTML = '<option value="">sem rerank</option>' + Object.entries(o.rerankers || {}).map(([n, m]) =>
       `<option value="${esc(n)}" title="${esc(m)}">${esc(n)}</option>`).join('')
+    const rt = o.rerank_tuning  // null before week10
+    $('rerank-tuning').hidden = !rt
+    if (rt) {
+      $('rerank_depth').value = rt.depth
+      $('rerank_keep').value = rt.keep
+      $('rerank-hint').textContent = 'Um cross-encoder relê os primeiros e vota junto com a busca.'
+    }
+    $('rerank').onchange = () => { $('rerank_depth').disabled = $('rerank_keep').disabled = !$('rerank').value }
+    $('rerank').onchange()
     $('stage-docs').hidden = !o.descriptions  // null before week09
     if (o.two_layer) $('doc_top').value = o.two_layer.doc_top
     $('docs').onchange = () => { $('doc_top').disabled = !$('docs').value }
@@ -520,7 +535,8 @@ $('runf').onsubmit = async e => {
     const r = await fetch('api/run', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bucket: $('bucket').value, rerank: $('rerank').value, variants: Number($('variants').value), docs: $('docs').value, doc_top: Number($('doc_top').value), k: Number($('k').value) }),
+      body: JSON.stringify({ bucket: $('bucket').value, rerank: $('rerank').value, variants: Number($('variants').value), docs: $('docs').value, doc_top: Number($('doc_top').value), k: Number($('k').value),
+        ...(!$('rerank-tuning').hidden && $('rerank').value ? { rerank_depth: Number($('rerank_depth').value), rerank_keep: Number($('rerank_keep').value) } : {}) }),
     })
     const d = await r.json()
     if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`)

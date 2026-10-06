@@ -17,6 +17,7 @@ readable by index.html without a database.
   python run.py --bucket 59cb0095 --variants 4            # week08+: Claude rewrites the query 4 ways, RRF
   python run.py --bucket 59cb0095 --docs 3fa1c2d4          # week09+: layer 1 = a descriptions bucket
   python run.py --bucket 59cb0095 --docs 3fa1c2d4 --doc-top 10 --k 5   # top-5 chunks of the top-10 documents
+  python run.py --bucket 59cb0095 --rerank qwen3-rerank --rerank-depth 15 --rerank-keep 0   # week10+
   python run.py --options           # ready buckets
   python run.py --list          # history, newest first
   python run.py --reindex       # rebuild index.json after editing run files by hand
@@ -117,8 +118,10 @@ def load_qrels(api: str, bucket: str) -> dict[str, list[str]]:
 
 
 def search(api: str, bucket: str, question: str, k: int, rerank: str = "", variants: int = 0,
-           docs: str = "", doc_top: int = 0) -> dict:
+           docs: str = "", doc_top: int = 0, rerank_depth: int = 0, rerank_keep: float | None = None) -> dict:
     params = ({"q": question, "k": k} | ({"rerank": rerank} if rerank else {})
+              | ({"rerank_depth": rerank_depth} if rerank and rerank_depth else {})
+              | ({"rerank_keep": rerank_keep} if rerank and rerank_keep is not None else {})
               | ({"variants": variants} if variants else {})
               | ({"docs": docs, "doc_top": doc_top} if docs else {}))
     url = f"{api}/api/buckets/{bucket}/search?" + urllib.parse.urlencode(params)
@@ -155,6 +158,11 @@ def two_layer_info(api: str) -> dict | None:
     return get_json(f"{api}/api/health").get("two_layer")
 
 
+def rerank_tuning_info(api: str) -> dict | None:
+    """{"depth", "keep"}. None before week10: older APIs would ignore ?rerank_depth=/?rerank_keep= silently."""
+    return get_json(f"{api}/api/health").get("rerank_tuning")
+
+
 def bucket_info(api: str, bucket: str) -> dict:
     b = get_json(f"{api}/api/buckets/{bucket}")
     if b["status"] != "ready":
@@ -165,8 +173,9 @@ def bucket_info(api: str, bucket: str) -> dict:
 # ── run ────────────────────────────────────────────────────────────────────
 
 def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0, docs: str = "",
-        doc_top: int = 0) -> dict:
-    """doc_top: documents layer 1 keeps (0 = the API's DOC_TOP). k: chunks returned."""
+        doc_top: int = 0, rerank_depth: int = 0, rerank_keep: float | None = None) -> dict:
+    """doc_top: documents layer 1 keeps (0 = the API's DOC_TOP). k: chunks returned.
+    rerank_depth / rerank_keep: candidates the reranker reads / first stage's vote (0 / None = the API's)."""
     api = api.rstrip("/")
     b = bucket_info(api, bucket)
     if rerank and rerank not in (offered := list_rerankers(api)):
@@ -181,6 +190,12 @@ def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0, docs
     if d and d.get("kind") != "descriptions":
         sys.exit(f"--docs {docs} ({d['name']}) is not a descriptions bucket")
     doc_top = doc_top or (two_layer["doc_top"] if two_layer else 0)
+    tuning = rerank_tuning_info(api) if rerank else None
+    if rerank and (rerank_depth or rerank_keep is not None) and not tuning:
+        sys.exit(f"--rerank-depth/--rerank-keep not offered by {api} (week10+?)")
+    if tuning:  # recorded either way, so runs at different settings never look alike
+        rerank_depth = rerank_depth or tuning["depth"]
+        rerank_keep = tuning["keep"] if rerank_keep is None else rerank_keep
     queries = load_queries()
     qrels = load_qrels(api, bucket)
     missing = [q["query_id"] for q in queries if q["query_id"] not in qrels]
@@ -190,6 +205,7 @@ def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0, docs
 
     print(f"{len(queries)} queries · k={k} · bucket {bucket} ({b['name']}, {b['retriever']})"
           + (f" · rerank {rerank}" if rerank else "")
+          + (f" depth={rerank_depth} keep={rerank_keep:g}" if tuning else "")
           + (f" · {variants} variantes ({transform['model']})" if variants else "")
           + (f" · camada 1 {d['name']} ({docs}), top-{doc_top} docs" if d else ""))
     per_query, failures = [], 0
@@ -200,7 +216,8 @@ def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0, docs
         PROGRESS.update(done=i - 1, query_id=q["query_id"])
         expected = qrels.get(q["query_id"], [])
         try:
-            found = search(api, bucket, q["question"], k, rerank, variants, docs, doc_top)
+            found = search(api, bucket, q["question"], k, rerank, variants, docs, doc_top,
+                           rerank_depth if tuning else 0, rerank_keep if tuning else None)
         except urllib.error.HTTPError as e:  # the API answered and said no: every question would fail the same way
             sys.exit(f"{q['query_id']}: search -> {e.code}: {e.read().decode(errors='replace')[:300]} — nada gravado")
         except (urllib.error.URLError, TimeoutError) as e:
@@ -245,7 +262,8 @@ def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0, docs
         # the bucket name is already "<chunker> · <retriever>"; the run adds what it chose
         "label": b["name"] + (f" + {d['name']} top-{doc_top} docs" if d else "")
                  + (f" + {variants} variantes" if variants else "")
-                 + (f" + {rerank}" if rerank else "") + f" · k={k}",
+                 + (f" + {rerank}" if rerank else "")
+                 + (f" depth={rerank_depth} keep={rerank_keep:g}" if tuning else "") + f" · k={k}",
         "config": {
             "k": k,
             "api": api,
@@ -254,6 +272,8 @@ def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0, docs
             "retriever": b["retriever"],
             "chunker": b.get("chunker"),
             "rerank": rerank or None,
+            "rerank_depth": rerank_depth if tuning else None,
+            "rerank_keep": rerank_keep if tuning else None,
             "variants": variants,
             "transform_model": transform["model"] if variants else None,
             "docs": docs or None,
@@ -407,6 +427,8 @@ if __name__ == "__main__":
     ap.add_argument("--variants", type=int, default=0, help="Claude query rewrites fused by RRF, week08+")
     ap.add_argument("--docs", default="", help="descriptions bucket as layer 1 (see --options), week09+")
     ap.add_argument("--doc-top", type=int, default=0, help="documents layer 1 keeps (default: the API's DOC_TOP)")
+    ap.add_argument("--rerank-depth", type=int, default=0, help="candidates the reranker reads (default: the API's RERANK_DEPTH), week10+")
+    ap.add_argument("--rerank-keep", type=float, default=None, help="first stage's vote vs the reranker's 1.0; 0 = reranker alone (default: the API's RERANK_KEEP), week10+")
     ap.add_argument("--options", action="store_true", help="list ready buckets")
     ap.add_argument("--list", action="store_true", help="show run history")
     ap.add_argument("--reindex", action="store_true", help="rebuild index.json from run files")
@@ -423,4 +445,4 @@ if __name__ == "__main__":
         sys.exit(show_options(a.api))
     if not a.bucket:
         ap.error("--bucket is required (see --options)")
-    run(a.k, a.api, a.bucket, a.rerank, a.variants, a.docs, a.doc_top)
+    run(a.k, a.api, a.bucket, a.rerank, a.variants, a.docs, a.doc_top, a.rerank_depth, a.rerank_keep)

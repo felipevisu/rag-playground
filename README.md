@@ -5,7 +5,7 @@ Cada semana muda **uma** coisa e mede se ficou melhor.
 
 ```
 pergunta → [camada 1: documentos] → [busca de chunks] → [rerank] → top-5
-            week09                   week01·03·06        week07
+            week09                   week01·03·06        week07·10
             + reescritas da pergunta (week08) em todas as etapas
 ```
 
@@ -22,6 +22,7 @@ pergunta → [camada 1: documentos] → [busca de chunks] → [rerank] → top-5
 | [07](week07) | **Rerank**: top-30 relido por um cross-encoder junto com a pergunta | `?rerank=mminilm-rerank` |
 | [08](week08) | **Multi-query**: a pergunta vira 5 versões (Claude), cada uma busca, RRF | "a quais órgãos são encaminhadas?" → também "destinatários administrativos" |
 | [09](week09) | **Duas camadas**: um resumo por documento escolhe os PDFs, depois os chunks só deles | `?docs=<descrições>` → top-5 PDFs → chunks |
+| [10](week10) | **Rerank melhor**: reranker vê o nome do PL, vota com o 1º estágio (RRF), + Qwen3-Reranker | `?rerank=qwen3-rerank`, `RERANK_KEEP=1.0` |
 
 O que cada semana resolve da anterior:
 
@@ -33,6 +34,7 @@ O que cada semana resolve da anterior:
 - **06 → 07**: o primeiro estágio acha, o segundo ordena.
 - **07 → 08**: o usuário não fala como a lei; várias formulações cobrem mais vocabulário.
 - **08 → 09**: chunk não sabe de que lei ele é; o resumo do documento sabe.
+- **09 → 10**: o reranker sozinho reembaralhava um top-5 que já era bom; agora sabe o PL e só vota.
 
 ## Rodando
 
@@ -42,7 +44,7 @@ docker compose up --build
 
 | | URL |
 |---|---|
-| buckets (week09) | http://localhost:3000 |
+| buckets (week10) | http://localhost:3000 |
 | API | http://localhost:8000/docs |
 | eval | http://localhost:8080 |
 | dataset / chunkers | http://localhost:8765 |

@@ -1,6 +1,492 @@
 {
   "runs": [
     {
+      "run_id": "2026-10-06T03-56-02",
+      "label": "sentence-512t-multilingual-e5-large · hybrid-voyage-4-large + descrições · hybrid-voyage-4-large top-5 docs + 5 variantes + voyage-rerank depth=30 keep=1 · k=5",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "bf0ac21d",
+        "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-voyage-4-large",
+        "retriever": "hybrid-voyage-4-large",
+        "chunker": {
+          "max": 512,
+          "min": 0,
+          "name": "sentence-512t-multilingual-e5-large",
+          "unit": "tokens",
+          "context": false,
+          "overlap": 0,
+          "splitter": "sentence",
+          "tokenizer": "intfloat/multilingual-e5-large",
+          "strip_footer": true,
+          "context_model": "claude-opus-5"
+        },
+        "rerank": "voyage-rerank",
+        "rerank_depth": 30,
+        "rerank_keep": 1.0,
+        "variants": 5,
+        "transform_model": "claude-haiku-4-5",
+        "docs": "090cfcec",
+        "docs_name": "descrições · hybrid-voyage-4-large",
+        "docs_retriever": "hybrid-voyage-4-large",
+        "doc_top": 5,
+        "embedding_model": "hybrid-voyage-4-large",
+        "corpus_sha256": "908700b6f856f4e2509dbf00caf61026dc7aca3553040eda035c0680e3271086",
+        "n_queries": 38,
+        "n_chunks": 279,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 1.0,
+        "recall": 0.9781,
+        "precision": 0.3316,
+        "mrr": 0.9211,
+        "ndcg": 0.9241
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.9211,
+          "ndcg": 0.9417
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.9561,
+          "precision": 0.4632,
+          "mrr": 0.9211,
+          "ndcg": 0.9064
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-10-06T03-50-08",
+      "label": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs + descrições · hybrid-qwen3-0.6b top-4 docs + 5 variantes + voyage-rerank depth=30 keep=1 · k=5",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "835d6935",
+        "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs",
+        "retriever": "hybrid-qwen3-0.6b",
+        "chunker": {
+          "max": 512,
+          "min": 0,
+          "name": "sentence-512t-multilingual-e5-large",
+          "unit": "tokens",
+          "context": false,
+          "overlap": 0,
+          "splitter": "sentence",
+          "tokenizer": "intfloat/multilingual-e5-large",
+          "strip_footer": true,
+          "context_model": "claude-opus-5"
+        },
+        "rerank": "voyage-rerank",
+        "rerank_depth": 30,
+        "rerank_keep": 1.0,
+        "variants": 5,
+        "transform_model": "claude-haiku-4-5",
+        "docs": "e882648b",
+        "docs_name": "descrições · hybrid-qwen3-0.6b",
+        "docs_retriever": "hybrid-qwen3-0.6b",
+        "doc_top": 4,
+        "embedding_model": "hybrid-qwen3-0.6b",
+        "corpus_sha256": "908700b6f856f4e2509dbf00caf61026dc7aca3553040eda035c0680e3271086",
+        "n_queries": 38,
+        "n_chunks": 279,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 1.0,
+        "recall": 0.9781,
+        "precision": 0.3316,
+        "mrr": 0.8947,
+        "ndcg": 0.9018
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.8684,
+          "ndcg": 0.9029
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.9561,
+          "precision": 0.4632,
+          "mrr": 0.9211,
+          "ndcg": 0.9008
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-10-06T03-48-16",
+      "label": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs + descrições · hybrid-qwen3-0.6b top-4 docs + 5 variantes + voyage-rerank depth=20 keep=1 · k=5",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "835d6935",
+        "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs",
+        "retriever": "hybrid-qwen3-0.6b",
+        "chunker": {
+          "max": 512,
+          "min": 0,
+          "name": "sentence-512t-multilingual-e5-large",
+          "unit": "tokens",
+          "context": false,
+          "overlap": 0,
+          "splitter": "sentence",
+          "tokenizer": "intfloat/multilingual-e5-large",
+          "strip_footer": true,
+          "context_model": "claude-opus-5"
+        },
+        "rerank": "voyage-rerank",
+        "rerank_depth": 20,
+        "rerank_keep": 1.0,
+        "variants": 5,
+        "transform_model": "claude-haiku-4-5",
+        "docs": "e882648b",
+        "docs_name": "descrições · hybrid-qwen3-0.6b",
+        "docs_retriever": "hybrid-qwen3-0.6b",
+        "doc_top": 4,
+        "embedding_model": "hybrid-qwen3-0.6b",
+        "corpus_sha256": "908700b6f856f4e2509dbf00caf61026dc7aca3553040eda035c0680e3271086",
+        "n_queries": 38,
+        "n_chunks": 279,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 1.0,
+        "recall": 0.9781,
+        "precision": 0.3316,
+        "mrr": 0.8947,
+        "ndcg": 0.9018
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.8684,
+          "ndcg": 0.9029
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.9561,
+          "precision": 0.4632,
+          "mrr": 0.9211,
+          "ndcg": 0.9008
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-10-06T03-47-14",
+      "label": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs + descrições · hybrid-qwen3-0.6b top-5 docs + 5 variantes + voyage-rerank-lite depth=15 keep=1 · k=5",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "835d6935",
+        "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs",
+        "retriever": "hybrid-qwen3-0.6b",
+        "chunker": {
+          "max": 512,
+          "min": 0,
+          "name": "sentence-512t-multilingual-e5-large",
+          "unit": "tokens",
+          "context": false,
+          "overlap": 0,
+          "splitter": "sentence",
+          "tokenizer": "intfloat/multilingual-e5-large",
+          "strip_footer": true,
+          "context_model": "claude-opus-5"
+        },
+        "rerank": "voyage-rerank-lite",
+        "rerank_depth": 15,
+        "rerank_keep": 1.0,
+        "variants": 5,
+        "transform_model": "claude-haiku-4-5",
+        "docs": "e882648b",
+        "docs_name": "descrições · hybrid-qwen3-0.6b",
+        "docs_retriever": "hybrid-qwen3-0.6b",
+        "doc_top": 5,
+        "embedding_model": "hybrid-qwen3-0.6b",
+        "corpus_sha256": "908700b6f856f4e2509dbf00caf61026dc7aca3553040eda035c0680e3271086",
+        "n_queries": 38,
+        "n_chunks": 279,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 1.0,
+        "recall": 0.9693,
+        "precision": 0.3263,
+        "mrr": 0.886,
+        "ndcg": 0.8906
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.8596,
+          "ndcg": 0.896
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.9386,
+          "precision": 0.4526,
+          "mrr": 0.9123,
+          "ndcg": 0.8853
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-10-06T03-07-38",
+      "label": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs + descrições · hybrid-qwen3-0.6b top-4 docs + 5 variantes + bge-reranker depth=30 keep=1 · k=5",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "835d6935",
+        "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs",
+        "retriever": "hybrid-qwen3-0.6b",
+        "chunker": {
+          "max": 512,
+          "min": 0,
+          "name": "sentence-512t-multilingual-e5-large",
+          "unit": "tokens",
+          "context": false,
+          "overlap": 0,
+          "splitter": "sentence",
+          "tokenizer": "intfloat/multilingual-e5-large",
+          "strip_footer": true,
+          "context_model": "claude-opus-5"
+        },
+        "rerank": "bge-reranker",
+        "rerank_depth": 30,
+        "rerank_keep": 1.0,
+        "variants": 5,
+        "transform_model": "claude-haiku-4-5",
+        "docs": "e882648b",
+        "docs_name": "descrições · hybrid-qwen3-0.6b",
+        "docs_retriever": "hybrid-qwen3-0.6b",
+        "doc_top": 4,
+        "embedding_model": "hybrid-qwen3-0.6b",
+        "corpus_sha256": "908700b6f856f4e2509dbf00caf61026dc7aca3553040eda035c0680e3271086",
+        "n_queries": 38,
+        "n_chunks": 279,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 1.0,
+        "recall": 0.9781,
+        "precision": 0.3316,
+        "mrr": 0.8561,
+        "ndcg": 0.8697
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.8263,
+          "ndcg": 0.8706
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.9561,
+          "precision": 0.4632,
+          "mrr": 0.886,
+          "ndcg": 0.8687
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-10-06T03-02-42",
+      "label": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs + descrições · hybrid-qwen3-0.6b top-4 docs + 5 variantes + mminilm-rerank depth=30 keep=0 · k=5",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "835d6935",
+        "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs",
+        "retriever": "hybrid-qwen3-0.6b",
+        "chunker": {
+          "max": 512,
+          "min": 0,
+          "name": "sentence-512t-multilingual-e5-large",
+          "unit": "tokens",
+          "context": false,
+          "overlap": 0,
+          "splitter": "sentence",
+          "tokenizer": "intfloat/multilingual-e5-large",
+          "strip_footer": true,
+          "context_model": "claude-opus-5"
+        },
+        "rerank": "mminilm-rerank",
+        "rerank_depth": 30,
+        "rerank_keep": 0.0,
+        "variants": 5,
+        "transform_model": "claude-haiku-4-5",
+        "docs": "e882648b",
+        "docs_name": "descrições · hybrid-qwen3-0.6b",
+        "docs_retriever": "hybrid-qwen3-0.6b",
+        "doc_top": 4,
+        "embedding_model": "hybrid-qwen3-0.6b",
+        "corpus_sha256": "908700b6f856f4e2509dbf00caf61026dc7aca3553040eda035c0680e3271086",
+        "n_queries": 38,
+        "n_chunks": 279,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 1.0,
+        "recall": 0.9715,
+        "precision": 0.3263,
+        "mrr": 0.8684,
+        "ndcg": 0.8727
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.8421,
+          "ndcg": 0.8835
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.943,
+          "precision": 0.4526,
+          "mrr": 0.8947,
+          "ndcg": 0.8619
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-10-06T02-49-57",
+      "label": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs + descrições · hybrid-qwen3-0.6b top-4 docs + 5 variantes + mminilm-rerank depth=30 keep=1 · k=5",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "835d6935",
+        "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs",
+        "retriever": "hybrid-qwen3-0.6b",
+        "chunker": {
+          "max": 512,
+          "min": 0,
+          "name": "sentence-512t-multilingual-e5-large",
+          "unit": "tokens",
+          "context": false,
+          "overlap": 0,
+          "splitter": "sentence",
+          "tokenizer": "intfloat/multilingual-e5-large",
+          "strip_footer": true,
+          "context_model": "claude-opus-5"
+        },
+        "rerank": "mminilm-rerank",
+        "rerank_depth": 30,
+        "rerank_keep": 1.0,
+        "variants": 5,
+        "transform_model": "claude-haiku-4-5",
+        "docs": "e882648b",
+        "docs_name": "descrições · hybrid-qwen3-0.6b",
+        "docs_retriever": "hybrid-qwen3-0.6b",
+        "doc_top": 4,
+        "embedding_model": "hybrid-qwen3-0.6b",
+        "corpus_sha256": "908700b6f856f4e2509dbf00caf61026dc7aca3553040eda035c0680e3271086",
+        "n_queries": 38,
+        "n_chunks": 279,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 1.0,
+        "recall": 0.9803,
+        "precision": 0.3316,
+        "mrr": 0.8728,
+        "ndcg": 0.8867
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.886,
+          "ndcg": 0.9154
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.9605,
+          "precision": 0.4632,
+          "mrr": 0.8596,
+          "ndcg": 0.858
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-10-06T02-41-14",
+      "label": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs + descrições · hybrid-qwen3-0.6b top-4 docs + 5 variantes · k=5",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "835d6935",
+        "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs",
+        "retriever": "hybrid-qwen3-0.6b",
+        "chunker": {
+          "max": 512,
+          "min": 0,
+          "name": "sentence-512t-multilingual-e5-large",
+          "unit": "tokens",
+          "context": false,
+          "overlap": 0,
+          "splitter": "sentence",
+          "tokenizer": "intfloat/multilingual-e5-large",
+          "strip_footer": true,
+          "context_model": "claude-opus-5"
+        },
+        "rerank": null,
+        "variants": 5,
+        "transform_model": "claude-haiku-4-5",
+        "docs": "e882648b",
+        "docs_name": "descrições · hybrid-qwen3-0.6b",
+        "docs_retriever": "hybrid-qwen3-0.6b",
+        "doc_top": 4,
+        "embedding_model": "hybrid-qwen3-0.6b",
+        "corpus_sha256": "908700b6f856f4e2509dbf00caf61026dc7aca3553040eda035c0680e3271086",
+        "n_queries": 38,
+        "n_chunks": 279,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 0.9737,
+        "recall": 0.9605,
+        "precision": 0.3316,
+        "mrr": 0.8355,
+        "ndcg": 0.8567
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 0.9474,
+          "recall": 0.9474,
+          "precision": 0.1895,
+          "mrr": 0.8158,
+          "ndcg": 0.8502
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.9737,
+          "precision": 0.4737,
+          "mrr": 0.8553,
+          "ndcg": 0.8631
+        }
+      },
+      "failures": 0
+    },
+    {
       "run_id": "2026-09-28T14-51-04",
       "label": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs + descrições · hybrid-qwen3-0.6b top-4 docs + 5 variantes + mminilm-rerank · k=7",
       "config": {

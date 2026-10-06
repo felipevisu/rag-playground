@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-28T00:28:39+00:00",
+  "built_at": "2026-10-06T03:34:30+00:00",
   "config": {
     "name": "sentence-512t-multilingual-e5-large",
     "splitter": "sentence",

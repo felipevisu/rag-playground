@@ -1,0 +1,2978 @@
+{
+  "run_id": "2026-10-06T03-50-08",
+  "label": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs + descrições · hybrid-qwen3-0.6b top-4 docs + 5 variantes + voyage-rerank depth=30 keep=1 · k=5",
+  "config": {
+    "k": 5,
+    "api": "http://chunks-api:8000",
+    "bucket": "835d6935",
+    "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs",
+    "retriever": "hybrid-qwen3-0.6b",
+    "chunker": {
+      "max": 512,
+      "min": 0,
+      "name": "sentence-512t-multilingual-e5-large",
+      "unit": "tokens",
+      "context": false,
+      "overlap": 0,
+      "splitter": "sentence",
+      "tokenizer": "intfloat/multilingual-e5-large",
+      "strip_footer": true,
+      "context_model": "claude-opus-5"
+    },
+    "rerank": "voyage-rerank",
+    "rerank_depth": 30,
+    "rerank_keep": 1.0,
+    "variants": 5,
+    "transform_model": "claude-haiku-4-5",
+    "docs": "e882648b",
+    "docs_name": "descrições · hybrid-qwen3-0.6b",
+    "docs_retriever": "hybrid-qwen3-0.6b",
+    "doc_top": 4,
+    "embedding_model": "hybrid-qwen3-0.6b",
+    "corpus_sha256": "908700b6f856f4e2509dbf00caf61026dc7aca3553040eda035c0680e3271086",
+    "n_queries": 38,
+    "n_chunks": 279,
+    "n_qrels": 120
+  },
+  "metrics": {
+    "hit_rate": 1.0,
+    "recall": 0.9781,
+    "precision": 0.3316,
+    "mrr": 0.8947,
+    "ndcg": 0.9018
+  },
+  "metrics_by_type": {
+    "single_chunk": {
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.8684,
+      "ndcg": 0.9029
+    },
+    "multi_chunk": {
+      "hit_rate": 1.0,
+      "recall": 0.9561,
+      "precision": 0.4632,
+      "mrr": 0.9211,
+      "ndcg": 0.9008
+    }
+  },
+  "failures": 0,
+  "per_query": [
+    {
+      "query_id": "q001",
+      "question": "O que o PL 1502/2026 define como racismo ambiental?",
+      "type": "single_chunk",
+      "filename": "PL_1502_2026.pdf",
+      "rewrites": [
+        "Qual é a definição de racismo ambiental no PL 1502/2026?",
+        "Como o PL 1502/2026 conceitua racismo ambiental?",
+        "PL 1502/2026 racismo ambiental conceituação legal",
+        "De que forma o PL 1502/2026 caracteriza e especifica o racismo ambiental em seus artigos?",
+        "O PL 1502/2026 trata de questões ambientais e discriminação"
+      ],
+      "documents": [
+        "PL_1502_2026.pdf",
+        "PL_276_2025.pdf",
+        "PL_4290_2026.pdf",
+        "PL_3002_2026.pdf"
+      ],
+      "expected": [
+        "PL_1502_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_1502_2026::0000",
+          "rank": 1,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0325,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0001",
+          "rank": 2,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0315,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1502_2026::0011",
+          "rank": 3,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 11,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0009",
+          "rank": 4,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 9,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0010",
+          "rank": 5,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 10,
+          "similarity": 0.0315,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575,
+      "dcg": 0.6309297535714575,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q002",
+      "question": "Quais são as fontes de recursos do Fundo Nacional de Adaptação e Reparação Climática (FNARC) e como é composto o seu Comitê Gestor?",
+      "type": "single_chunk",
+      "filename": "PL_1502_2026.pdf",
+      "rewrites": [
+        "Qual é a composição do Comitê Gestor do FNARC e quais são suas receitas orçamentárias?",
+        "Como se estrutura o órgão administrativo do Fundo Nacional de Adaptação e Reparação Climática e quais arrecadações o financiam?",
+        "Origem dos créditos e formação da administração do FNARC",
+        "Quem integra e qual a estrutura de governança do FNARC?",
+        "Recursos financeiros e constituição da administração do Fundo Nacional de Adaptação e Reparação Climática"
+      ],
+      "documents": [
+        "PL_1502_2026.pdf",
+        "PL_993_2026.pdf",
+        "PL_752_2026.pdf",
+        "PL_359_2025.pdf"
+      ],
+      "expected": [
+        "PL_1502_2026::0002"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_1502_2026::0002",
+          "rank": 1,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1502_2026::0001",
+          "rank": 2,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0008",
+          "rank": 3,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 8,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0006",
+          "rank": 4,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 6,
+          "similarity": 0.0312,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0007",
+          "rank": 5,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 7,
+          "similarity": 0.0304,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q003",
+      "question": "Qual ato do Poder Executivo o PL 182/2026 pretende sustar e o que esse ato institui?",
+      "type": "single_chunk",
+      "filename": "PL_182_2026.pdf",
+      "rewrites": [
+        "Qual ato do Poder Executivo o PL 182/2026 busca anular e qual é o seu conteúdo?",
+        "Que medida executiva o PL 182/2026 objetiva revogar e que normas ou procedimentos ela estabelece?",
+        "O PL 182/2026 procura suspender qual decreto ou resolução do Poder Executivo e quais são suas disposições específicas?",
+        "Qual é o ato normativo do Executivo que o PL 182/2026 almeja cassar e quais institutos ou regulamentações ele cria?",
+        "O que o PL 182/2026 quer derrogar no Poder Executivo e qual regulamentação esse ato implementa?"
+      ],
+      "documents": [
+        "PL_182_2026.pdf",
+        "PL_4943_2026.pdf",
+        "PL_684_2026.pdf",
+        "PL_561_2026.pdf"
+      ],
+      "expected": [
+        "PL_182_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_182_2026::0001",
+          "rank": 1,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0325,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_182_2026::0000",
+          "rank": 2,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_684_2026::0000",
+          "rank": 3,
+          "filename": "PL_684_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_684_2026::0003",
+          "rank": 4,
+          "filename": "PL_684_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0295,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_566_2026::0000",
+          "rank": 5,
+          "filename": "PL_566_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0292,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575,
+      "dcg": 0.6309297535714575,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q004",
+      "question": "Quais dispositivos constitucionais e quais princípios da Administração Pública o PL 182/2026 alega terem sido violados pela portaria que pretende sustar?",
+      "type": "multi_chunk",
+      "filename": "PL_182_2026.pdf",
+      "rewrites": [
+        "Quais normas da Constituição Federal e quais diretrizes da Administração Pública o PL 182/2026 argumenta terem sido infringidas pela portaria objeto de sustação?",
+        "Quais artigos constitucionais e princípios administrativos o PL 182/2026 invoca como fundamentação legal contra a portaria que busca revogar?",
+        "Quais preceitos constitucionais e princípios da Administração Pública estão alegadamente desrespeitados pela portaria mencionada no PL 182/2026?",
+        "O PL 182/2026 identifica violações constitucionais e administrativas na portaria?",
+        "Quais dispositivos da Constituição Federal e quais regras de funcionamento da Administração Pública o PL 182/2026 sustenta terem sido transpostos pela portaria que almeja suspender?"
+      ],
+      "documents": [
+        "PL_182_2026.pdf",
+        "PL_68_2025.pdf",
+        "PL_568_2026.pdf",
+        "PL_684_2026.pdf"
+      ],
+      "expected": [
+        "PL_182_2026::0000",
+        "PL_182_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_182_2026::0000",
+          "rank": 1,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_182_2026::0001",
+          "rank": 2,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_68_2025::0016",
+          "rank": 3,
+          "filename": "PL_68_2025.pdf",
+          "chunk_index": 16,
+          "similarity": 0.0313,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_68_2025::0000",
+          "rank": 4,
+          "filename": "PL_68_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0287,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_68_2025::0001",
+          "rank": 5,
+          "filename": "PL_68_2025.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0286,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q005",
+      "question": "Em que hipóteses NÃO se aplica o perdimento do meio de transporte segundo o PL 1928/2026?",
+      "type": "multi_chunk",
+      "filename": "PL_1928_2026.pdf",
+      "rewrites": [
+        "Quais são as exceções ao perdimento do meio de transporte conforme PL 1928/2026?",
+        "Quando não ocorre a perda do veículo conforme o PL 1928/2026?",
+        "Casos de inaplicabilidade da perda do meio de transporte segundo PL 1928/2026",
+        "Em quais situações está excluída a confiscação do meio de transporte de acordo com PL 1928/2026?",
+        "Que circunstâncias afastam o perdimento do meio de transporte no PL 1928/2026?"
+      ],
+      "documents": [
+        "PL_1928_2026.pdf",
+        "PL_742_2026.pdf",
+        "PL_3977_2026.pdf",
+        "PL_255_2026.pdf"
+      ],
+      "expected": [
+        "PL_1928_2026::0001",
+        "PL_1928_2026::0002"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_1928_2026::0004",
+          "rank": 1,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0325,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1928_2026::0001",
+          "rank": 2,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.032,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1928_2026::0000",
+          "rank": 3,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1928_2026::0003",
+          "rank": 4,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1928_2026::0002",
+          "rank": 5,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0313,
+          "expected": true
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 0.5,
+      "ndcg": 0.6240505200038379,
+      "dcg": 1.0177825608059992,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q006",
+      "question": "Quais situações autorizam a apreensão de bens e, uma vez declarado o perdimento em favor da União, quais destinações esses bens podem receber?",
+      "type": "multi_chunk",
+      "filename": "PL_1928_2026.pdf",
+      "rewrites": [
+        "Quais são as hipóteses legais que permitem a confiscação de patrimônio e qual destino será dado aos bens após a sentença de perda para a União?",
+        "Em quais circunstâncias é cabível a apreensão de bens móveis e imóveis, e quais são as formas de utilização ou alienação desses bens uma vez transitada em julgado a sentença condenatória com perda em favor da União?",
+        "Que requisitos devem ser satisfeitos para que ocorra a apreensão de bens e qual é o procedimento de destinação dos bens após o decreto de perdimento em benefício da União?",
+        "Quando autoriza-se a apreensão de bens?",
+        "Que disposições legais regulam a apreensão e o perdimento de bens em favor da União e de que forma esses bens podem ser aplicados ou distribuídos após a decisão judicial?"
+      ],
+      "documents": [
+        "PL_1928_2026.pdf",
+        "PL_2670_2026.pdf",
+        "PL_1001_2026.pdf",
+        "PL_627_2025.pdf"
+      ],
+      "expected": [
+        "PL_1928_2026::0000",
+        "PL_1928_2026::0001",
+        "PL_1928_2026::0002"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_1928_2026::0002",
+          "rank": 1,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1928_2026::0003",
+          "rank": 2,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1928_2026::0004",
+          "rank": 3,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_2670_2026::0001",
+          "rank": 4,
+          "filename": "PL_2670_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0313,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1928_2026::0000",
+          "rank": 5,
+          "filename": "PL_1928_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0308,
+          "expected": true
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 3,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 0.6666666666666666,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 0.6508205185601091,
+      "dcg": 1.3868528072345416,
+      "idcg": 2.1309297535714578,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q007",
+      "question": "Quantos nomes cada parlamentar membro da Comissão pode indicar ao Prêmio Câmara Ambiental e Desenvolvimento Sustentável, e até quando as indicações devem ser apresentadas?",
+      "type": "single_chunk",
+      "filename": "PL_21_2026.pdf",
+      "rewrites": [
+        "Qual é o número máximo de candidatos que cada integrante da Comissão Câmara Ambiental e Desenvolvimento Sustentável pode propor ao prêmio, e qual é o prazo para apresentação das propostas?",
+        "De quantas indicações dispõe cada membro da Comissão para o Prêmio Câmara Ambiental e Desenvolvimento Sustentável, e em que período deve ocorrer a submissão?",
+        "Limite de nomeações por deputado à Comissão Câmara Ambiental e Desenvolvimento Sustentável e cronograma de recebimento das indicações",
+        "Quantas pessoas cada parlamentar pode indicar ao Prêmio Câmara Ambiental e Desenvolvimento Sustentável?",
+        "Regulamentação das indicações ao Prêmio Câmara Ambiental e Desenvolvimento Sustentável: número de nomes por membro e data limite para apresentação"
+      ],
+      "documents": [
+        "PL_21_2026.pdf",
+        "PL_41_2026.pdf",
+        "PL_627_2025.pdf",
+        "PL_276_2025.pdf"
+      ],
+      "expected": [
+        "PL_21_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_21_2026::0000",
+          "rank": 1,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_21_2026::0001",
+          "rank": 2,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_21_2026::0002",
+          "rank": 3,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_41_2026::0000",
+          "rank": 4,
+          "filename": "PL_41_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.031,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_276_2025::0000",
+          "rank": 5,
+          "filename": "PL_276_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0301,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q008",
+      "question": "Quais são todas as vedações à indicação de candidatos ao Prêmio e quando e onde ocorre a cerimônia de premiação?",
+      "type": "multi_chunk",
+      "filename": "PL_21_2026.pdf",
+      "rewrites": [
+        "Quais são os impedimentos e proibições para indicação de candidatos ao Prêmio e datas e local da cerimônia de premiação?",
+        "Quais são as restrições legais à candidatura ao Prêmio e informações sobre data e local do evento de premiação?",
+        "Que vedações existem para indicar candidatos ao Prêmio e quando e onde é realizada a solenidade de entrega do Prêmio?",
+        "Quais são todas as limitações e vedações relativas à indicação de candidatos e detalhes sobre cronograma e local da cerimônia?",
+        "Que proibições incidem sobre a indicação de candidatos ao Prêmio e qual é o calendário e endereço da cerimônia de premiação?"
+      ],
+      "documents": [
+        "PL_21_2026.pdf",
+        "PL_4943_2026.pdf",
+        "PL_3336_2026.pdf",
+        "PL_171_2026.pdf"
+      ],
+      "expected": [
+        "PL_21_2026::0000",
+        "PL_21_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_21_2026::0001",
+          "rank": 1,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_21_2026::0000",
+          "rank": 2,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_21_2026::0002",
+          "rank": 3,
+          "filename": "PL_21_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0313,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_171_2026::0002",
+          "rank": 4,
+          "filename": "PL_171_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0295,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_3424_2026::0005",
+          "rank": 5,
+          "filename": "PL_3424_2026.pdf",
+          "chunk_index": 5,
+          "similarity": 0.029,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q009",
+      "question": "Qual decreto o PL 253/2026 susta e em quais municípios fica a unidade de conservação criada por ele?",
+      "type": "single_chunk",
+      "filename": "PL_253_2026.pdf",
+      "rewrites": [
+        "Que decreto é suspenso pelo PL 253/2026 e em quais municípios localiza-se a área protegida instituída por ele?",
+        "PL 253/2026 revoga qual decreto e quais são os municípios onde está situada a unidade de conservação estabelecida por este projeto?",
+        "Decreto revogado pelo PL 253/2026 e localização geográfica da unidade de conservação criada",
+        "PL 253/2026 suspensão decreto municípios unidade conservação",
+        "PL 253/2026 qual ato normativo anterior é revogado e em que circunscrições municipais encontra-se a unidade de conservação criada por este diploma legal?"
+      ],
+      "documents": [
+        "PL_253_2026.pdf",
+        "PL_261_2026.pdf",
+        "PL_1001_2026.pdf",
+        "PL_263_2026.pdf"
+      ],
+      "expected": [
+        "PL_253_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_253_2026::0000",
+          "rank": 1,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_253_2026::0001",
+          "rank": 2,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_261_2026::0000",
+          "rank": 3,
+          "filename": "PL_261_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_261_2026::0001",
+          "rank": 4,
+          "filename": "PL_261_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0308,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_263_2026::0000",
+          "rank": 5,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0299,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q010",
+      "question": "Quais vícios o PL 253/2026 aponta no Decreto nº 12.888/2026 e em quais normas se apoia para pedir sua sustação?",
+      "type": "multi_chunk",
+      "filename": "PL_253_2026.pdf",
+      "rewrites": [
+        "Quais são as irregularidades identificadas no Decreto nº 12.888/2026 conforme o PL 253/2026 e quais dispositivos legais fundamentam o pedido de sustação?",
+        "Que deficiências o PL 253/2026 detecta no Decreto nº 12.888/2026 e em quais leis se baseia para solicitar a cassação?",
+        "PL 253/2026 Decreto nº 12.888/2026 fundamentos jurídicos sustação decreto inconstitucionalidade ilegalidade",
+        "Quais os motivos pelos quais o PL 253/2026 propõe a sustação do Decreto nº 12.888/2026?",
+        "PL 253/2026 críticas Decreto 12.888/2026 violação dispositivos legais argumentos sustação"
+      ],
+      "documents": [
+        "PL_253_2026.pdf",
+        "PL_182_2026.pdf",
+        "PL_3336_2026.pdf",
+        "PL_2586_2026.pdf"
+      ],
+      "expected": [
+        "PL_253_2026::0000",
+        "PL_253_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_253_2026::0000",
+          "rank": 1,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_253_2026::0001",
+          "rank": 2,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_182_2026::0001",
+          "rank": 3,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0312,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_263_2026::0003",
+          "rank": 4,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0306,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_263_2026::0002",
+          "rank": 5,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0303,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q011",
+      "question": "Qual é a definição de animal comunitário adotada pelo PL 255/2026 e que proteção lhe é conferida?",
+      "type": "single_chunk",
+      "filename": "PL_255_2026.pdf",
+      "rewrites": [
+        "Qual é o conceito de animal comunitário estabelecido pelo PL 255/2026 e quais salvaguardas ele recebe?",
+        "Como o PL 255/2026 define animal comunitário e que direitos são assegurados a este animal?",
+        "Qual a definição legal de animal comunitário no PL 255/2026 e quais são as disposições de proteção previstas?",
+        "O que é considerado animal comunitário de acordo com o PL 255/2026 e que garantias de proteção lhe são conferidas?",
+        "Animal comunitário - definição e proteção conforme PL 255/2026"
+      ],
+      "documents": [
+        "PL_255_2026.pdf",
+        "PL_257_2025.pdf",
+        "PL_561_2026.pdf",
+        "PL_770_2026.pdf"
+      ],
+      "expected": [
+        "PL_255_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_255_2026::0000",
+          "rank": 1,
+          "filename": "PL_255_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_255_2026::0001",
+          "rank": 2,
+          "filename": "PL_255_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_257_2025::0000",
+          "rank": 3,
+          "filename": "PL_257_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_257_2025::0001",
+          "rank": 4,
+          "filename": "PL_257_2025.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0308,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_561_2026::0000",
+          "rank": 5,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0308,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q012",
+      "question": "Que alteração o PL 255/2026 promove na Lei nº 9.605/1998 e qual a justificativa apresentada para essa mudança?",
+      "type": "multi_chunk",
+      "filename": "PL_255_2026.pdf",
+      "rewrites": [
+        "Quais são as modificações introduzidas pelo PL 255/2026 à Lei nº 9.605/1998 e qual o fundamento legal para tais alterações?",
+        "De que forma o PL 255/2026 altera a Lei nº 9.605/1998 e quais razões justificam essa mudança legislativa?",
+        "Qual emenda o PL 255/2026 efetua especificamente nos artigos da Lei nº 9.605/1998 e qual motivação consta no texto do projeto?",
+        "O que muda na Lei nº 9.605/1998 com a aprovação do PL 255/2026?",
+        "PL 255/2026 Lei nº 9.605/1998 mudanças justificativa"
+      ],
+      "documents": [
+        "PL_255_2026.pdf",
+        "PL_359_2025.pdf",
+        "PL_68_2025.pdf",
+        "PL_70_2025.pdf"
+      ],
+      "expected": [
+        "PL_255_2026::0000",
+        "PL_255_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_359_2025::0000",
+          "rank": 1,
+          "filename": "PL_359_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_255_2026::0000",
+          "rank": 2,
+          "filename": "PL_255_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_255_2026::0001",
+          "rank": 3,
+          "filename": "PL_255_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_359_2025::0001",
+          "rank": 4,
+          "filename": "PL_359_2025.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0303,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_171_2026::0000",
+          "rank": 5,
+          "filename": "PL_171_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0301,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 0.5,
+      "ndcg": 0.6934264036172708,
+      "dcg": 1.1309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q013",
+      "question": "Qual a diferença entre desinformação climática e desinformação socioambiental no PL 2586/2026?",
+      "type": "single_chunk",
+      "filename": "PL_2586_2026.pdf",
+      "rewrites": [
+        "Qual a distinção entre desinformação climática e desinformação socioambiental conforme o PL 2586/2026?",
+        "Como o PL 2586/2026 diferencia notícias falsas sobre clima e falsas informações sobre questões socioambientais?",
+        "Quais são as definições de desinformação climática versus desinformação socioambiental estabelecidas no PL 2586/2026?",
+        "De que forma o PL 2586/2026 caracteriza e distingue a disseminação de informações inverídicas em matéria climática daquelas relativas ao meio ambiente e sociedade?",
+        "Que definições o PL 2586/2026 apresenta para desinformação climática e para desinformação de caráter socioambiental?"
+      ],
+      "documents": [
+        "PL_2586_2026.pdf",
+        "PL_1502_2026.pdf",
+        "PL_993_2026.pdf",
+        "PL_41_2026.pdf"
+      ],
+      "expected": [
+        "PL_2586_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_2586_2026::0000",
+          "rank": 1,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_2586_2026::0004",
+          "rank": 2,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_2586_2026::0006",
+          "rank": 3,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 6,
+          "similarity": 0.0318,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_2586_2026::0003",
+          "rank": 4,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_2586_2026::0002",
+          "rank": 5,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0305,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q014",
+      "question": "Quais são as modalidades de transparência pública ambiental e climática definidas no PL 2586/2026 e como elas se relacionam com o entendimento do STJ sobre o dever estatal de transparência ambiental?",
+      "type": "multi_chunk",
+      "filename": "PL_2586_2026.pdf",
+      "rewrites": [
+        "Modalidades de transparência ambiental e climática no PL 2586/2026 e jurisprudência do STJ",
+        "Quais são as formas de divulgação de informações ambientais e climáticas previstas no PL 2586/2026 e sua compatibilidade com precedentes do STJ",
+        "Transparência pública ambiental e climática: disposições do PL 2586/2026 em conformidade com orientações do STJ",
+        "PL 2586/2026: tipos de transparência ambiental e climática em relação à obrigação estatal de publicidade segundo STJ",
+        "Como o PL 2586/2026 regulamenta a divulgação de dados ambientais e climáticos conforme entendimento jurisprudencial do STJ sobre deveres de publicidade estatal"
+      ],
+      "documents": [
+        "PL_2586_2026.pdf",
+        "PL_1502_2026.pdf",
+        "PL_276_2025.pdf",
+        "PL_993_2026.pdf"
+      ],
+      "expected": [
+        "PL_2586_2026::0001",
+        "PL_2586_2026::0002",
+        "PL_2586_2026::0005",
+        "PL_2586_2026::0007"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_2586_2026::0005",
+          "rank": 1,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 5,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_2586_2026::0001",
+          "rank": 2,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_2586_2026::0002",
+          "rank": 3,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.032,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_2586_2026::0007",
+          "rank": 4,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 7,
+          "similarity": 0.031,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_2586_2026::0004",
+          "rank": 5,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0306,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 4,
+      "total": 4,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.8,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 2.5616063116448506,
+      "idcg": 2.5616063116448506,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q015",
+      "question": "Qual é a área da RDS Córregos dos Vales do Norte de Minas e qual objetivo o ICMBio atribui a ela?",
+      "type": "single_chunk",
+      "filename": "PL_261_2026.pdf",
+      "rewrites": [
+        "Qual é a extensão territorial da RDS Córregos dos Vales do Norte de Minas e qual missão o ICMBio designa para essa unidade de conservação?",
+        "Qual é a superfície em hectares da RDS Córregos dos Vales do Norte de Minas e quais são os fins institucionais que o ICMBio estabelece para ela?",
+        "Quais as dimensões e limites geográficos da RDS Córregos dos Vales do Norte de Minas conforme definido pelo ICMBio?",
+        "Qual a metragem territorial da Reserva de Desenvolvimento Sustentável Córregos dos Vales do Norte de Minas e sua finalidade perante o Instituto Chico Mendes de Conservação da Biodiversidade?",
+        "RDS Córregos dos Vales do Norte de Minas: qual é sua área e objetivos segundo o ICMBio?"
+      ],
+      "documents": [
+        "PL_261_2026.pdf",
+        "PL_253_2026.pdf",
+        "PL_1001_2026.pdf",
+        "PL_50_2025.pdf"
+      ],
+      "expected": [
+        "PL_261_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_261_2026::0000",
+          "rank": 1,
+          "filename": "PL_261_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_261_2026::0001",
+          "rank": 2,
+          "filename": "PL_261_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_253_2026::0000",
+          "rank": 3,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_253_2026::0001",
+          "rank": 4,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0312,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1001_2026::0001",
+          "rank": 5,
+          "filename": "PL_1001_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0299,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q016",
+      "question": "Com quais argumentos e dados o PL 261/2026 sustenta que houve desvio de finalidade na criação da RDS Córregos dos Vales do Norte de Minas?",
+      "type": "multi_chunk",
+      "filename": "PL_261_2026.pdf",
+      "rewrites": [
+        "Qual é a fundamentação e as evidências apresentadas no PL 261/2026 sobre o desvio de finalidade na constituição da RDS Córregos dos Vales do Norte de Minas?",
+        "PL 261/2026 abuso ou excesso de poder na criação da RDS Córregos dos Vales do Norte de Minas",
+        "Desvio de finalidade RDS Córregos dos Vales do Norte de Minas argumentação PL 261/2026",
+        "PL 261/2026 ilegalidade RDS Córregos dos Vales do Norte de Minas",
+        "Que argumentos o PL 261/2026 utiliza para questionar a legalidade ou propriedade da instituição da RDS Córregos dos Vales do Norte de Minas?"
+      ],
+      "documents": [
+        "PL_261_2026.pdf",
+        "PL_253_2026.pdf",
+        "PL_182_2026.pdf",
+        "PL_684_2026.pdf"
+      ],
+      "expected": [
+        "PL_261_2026::0000",
+        "PL_261_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_261_2026::0000",
+          "rank": 1,
+          "filename": "PL_261_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_261_2026::0001",
+          "rank": 2,
+          "filename": "PL_261_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_253_2026::0000",
+          "rank": 3,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_253_2026::0001",
+          "rank": 4,
+          "filename": "PL_253_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0312,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_182_2026::0001",
+          "rank": 5,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0294,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q017",
+      "question": "Como a Lei nº 9.985/2000 (SNUC) define corredor ecológico, segundo o PL 263/2026?",
+      "type": "single_chunk",
+      "filename": "PL_263_2026.pdf",
+      "rewrites": [
+        "Como o PL 263/2026 altera a definição de corredor ecológico na Lei nº 9.985/2000 (SNUC)?",
+        "Qual é a conceituação de corredor ecológico conforme a Lei nº 9.985/2000 (SNUC) e suas modificações propostas pelo PL 263/2026?",
+        "De que forma o PL 263/2026 redefine ou modifica o conceito de corredor ecológico estabelecido pela Lei nº 9.985/2000 (SNUC)?",
+        "Lei nº 9.985/2000 (SNUC) - definição, conceito e caracterização de corredor ecológico no PL 263/2026",
+        "Qual a definição de corredor ecológico na legislação ambiental brasileira conforme Lei nº 9.985/2000 (SNUC) e proposições do PL 263/2026?"
+      ],
+      "documents": [
+        "PL_263_2026.pdf",
+        "PL_1001_2026.pdf",
+        "PL_253_2026.pdf",
+        "PL_3192_2026.pdf"
+      ],
+      "expected": [
+        "PL_263_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_263_2026::0000",
+          "rank": 1,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_263_2026::0001",
+          "rank": 2,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_263_2026::0004",
+          "rank": 3,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_263_2026::0002",
+          "rank": 4,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0312,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_263_2026::0003",
+          "rank": 5,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0308,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q018",
+      "question": "Quais vícios o PL 263/2026 identifica na Portaria que reconheceu o Corredor Ecológico Carajás-Bacajá?",
+      "type": "multi_chunk",
+      "filename": "PL_263_2026.pdf",
+      "rewrites": [
+        "Que deficiências e irregularidades o PL 263/2026 aponta na Portaria que institucionalizou o Corredor Ecológico Carajás-Bacajá?",
+        "Quais nulidades e invalidades o PL 263/2026 identifica no ato administrativo que constituiu o Corredor Ecológico Carajás-Bacajá?",
+        "O PL 263/2026 questiona quais problemas jurídicos da Portaria sobre o Corredor Ecológico Carajás-Bacajá?",
+        "Que questões o PL 263/2026 levanta sobre a Portaria do Corredor Ecológico Carajás-Bacajá?",
+        "Quais críticas e argumentos o PL 263/2026 apresenta contra a Portaria que criou o Corredor Ecológico Carajás-Bacajá?"
+      ],
+      "documents": [
+        "PL_263_2026.pdf",
+        "PL_2973_2026.pdf",
+        "PL_68_2025.pdf",
+        "PL_70_2025.pdf"
+      ],
+      "expected": [
+        "PL_263_2026::0000",
+        "PL_263_2026::0001",
+        "PL_263_2026::0002",
+        "PL_263_2026::0003",
+        "PL_263_2026::0004"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_263_2026::0004",
+          "rank": 1,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_263_2026::0000",
+          "rank": 2,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_263_2026::0003",
+          "rank": 3,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.032,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_263_2026::0002",
+          "rank": 4,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0312,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_263_2026::0001",
+          "rank": 5,
+          "filename": "PL_263_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0308,
+          "expected": true
+        }
+      ],
+      "k": 5,
+      "hits": 5,
+      "total": 5,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 1.0,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 2.9484591188793923,
+      "idcg": 2.9484591188793923,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q019",
+      "question": "Qual ato do IBAMA o PL 271/2026 susta e qual o seu conteúdo?",
+      "type": "single_chunk",
+      "filename": "PL_271_2026.pdf",
+      "rewrites": [
+        "Qual ato administrativo do IBAMA é suspenso pelo PL 271/2026 e quais são suas disposições?",
+        "O PL 271/2026 susta qual decisão ou resolução do IBAMA e qual é o seu teor?",
+        "PL 271/2026 revoga ou suspende ato do IBAMA",
+        "Quais são os atos do IBAMA objeto de sustação no PL 271/2026?",
+        "O PL 271/2026 susta ato específico do IBAMA - identificar qual ato e seu conteúdo"
+      ],
+      "documents": [
+        "PL_271_2026.pdf",
+        "PL_684_2026.pdf",
+        "PL_1001_2026.pdf",
+        "PL_182_2026.pdf"
+      ],
+      "expected": [
+        "PL_271_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_271_2026::0000",
+          "rank": 1,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_271_2026::0002",
+          "rank": 2,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0318,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1001_2026::0000",
+          "rank": 3,
+          "filename": "PL_1001_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0313,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_271_2026::0001",
+          "rank": 4,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0306,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1001_2026::0001",
+          "rank": 5,
+          "filename": "PL_1001_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0297,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q020",
+      "question": "Quais temas previstos na Agenda Regulatória do IBAMA são criticados pelo PL 271/2026 e por quais razões?",
+      "type": "multi_chunk",
+      "filename": "PL_271_2026.pdf",
+      "rewrites": [
+        "Qual é a posição do Projeto de Lei 271/2026 em relação aos itens constantes da Agenda Regulatória do IBAMA e quais são os fundamentos dessa crítica?",
+        "PL 271/2026 discorda de quais matérias da Agenda Regulatória do IBAMA e com que argumentação?",
+        "Que dispositivos ou iniciativas regulatórias do IBAMA encontram rejeição ou contestação no PL 271/2026?",
+        "Matérias da Agenda Regulatória do IBAMA que recebem objeções legislativas no Projeto de Lei 271/2026",
+        "Quais pontos da Agenda Regulatória do IBAMA são questionados, impugnados ou combatidos pelo PL 271/2026?"
+      ],
+      "documents": [
+        "PL_271_2026.pdf",
+        "PL_611_2026.pdf",
+        "PL_171_2026.pdf",
+        "PL_1001_2026.pdf"
+      ],
+      "expected": [
+        "PL_271_2026::0000",
+        "PL_271_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_271_2026::0000",
+          "rank": 1,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_271_2026::0001",
+          "rank": 2,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_271_2026::0002",
+          "rank": 3,
+          "filename": "PL_271_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1001_2026::0002",
+          "rank": 4,
+          "filename": "PL_1001_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.031,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_611_2026::0000",
+          "rank": 5,
+          "filename": "PL_611_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0296,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q021",
+      "question": "Quais portarias o PL 352/2026 susta e qual classificação elas atribuem ao tambaqui?",
+      "type": "single_chunk",
+      "filename": "PL_352_2026.pdf",
+      "rewrites": [
+        "Que portarias são suspensas pelo PL 352/2026 e como classificam o tambaqui",
+        "Quais atos administrativos o PL 352/2026 revoga e qual é a categoria do tambaqui neles",
+        "PL 352/2026 suspensão de portarias classificação tambaqui",
+        "Quais portarias estão revogadas ou suspensas no PL 352/2026",
+        "PL 352/2026 portarias susta revoga tambaqui categoria espécie"
+      ],
+      "documents": [
+        "PL_352_2026.pdf",
+        "PL_490_2026.pdf",
+        "PL_999_2026.pdf",
+        "PL_271_2026.pdf"
+      ],
+      "expected": [
+        "PL_352_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_352_2026::0000",
+          "rank": 1,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_352_2026::0001",
+          "rank": 2,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_490_2026::0000",
+          "rank": 3,
+          "filename": "PL_490_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_352_2026::0002",
+          "rank": 4,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0304,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_999_2026::0005",
+          "rank": 5,
+          "filename": "PL_999_2026.pdf",
+          "chunk_index": 5,
+          "similarity": 0.0301,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q022",
+      "question": "Por que o PL 352/2026 considera as exigências das portarias sobre o tambaqui incompatíveis com a realidade das populações amazônicas?",
+      "type": "single_chunk",
+      "filename": "PL_352_2026.pdf",
+      "rewrites": [
+        "PL 352/2026 incompatibilidade portarias tambaqui realidade amazonica",
+        "PL 352/2026 desproporcionalidade requisitos portarias tambaqui comunidades amazonicas",
+        "PL 352/2026 argumentos contra portarias tambaqui populacoes amazonicas",
+        "PL 352/2026 conflito normativo portarias especies nativas amazonia",
+        "PL 352/2026 inviabilidade exigencias portarias piscicultura tambaqui regiao amazonica"
+      ],
+      "documents": [
+        "PL_352_2026.pdf",
+        "PL_490_2026.pdf",
+        "PL_75_2025.pdf",
+        "PL_4290_2026.pdf"
+      ],
+      "expected": [
+        "PL_352_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_352_2026::0000",
+          "rank": 1,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0325,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_352_2026::0001",
+          "rank": 2,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_490_2026::0000",
+          "rank": 3,
+          "filename": "PL_490_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_352_2026::0002",
+          "rank": 4,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0308,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_385_2026::0001",
+          "rank": 5,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0308,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575,
+      "dcg": 0.6309297535714575,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q023",
+      "question": "Quais municípios do Amazonas são citados pelo PL 385/2026 como dependentes da pesca artesanal de peixes ornamentais?",
+      "type": "single_chunk",
+      "filename": "PL_385_2026.pdf",
+      "rewrites": [
+        "Quais cidades do Estado do Amazonas são mencionadas no PL 385/2026 como dependentes da atividade de pesca artesanal de peixes ornamentais?",
+        "Que localidades amazonenses o PL 385/2026 identifica como dependentes da pesca artesanal de espécies ornamentais?",
+        "PL 385/2026 municípios Amazonas pesca artesanal peixes ornamentais dependência econômica",
+        "Quais são os municípios do Amazonas referenciados pelo PL 385/2026?",
+        "O PL 385/2026 cita municípios ou localidades que dependem de pesca artesanal de peixes no Amazonas?"
+      ],
+      "documents": [
+        "PL_385_2026.pdf",
+        "PL_490_2026.pdf",
+        "PL_352_2026.pdf",
+        "PL_568_2026.pdf"
+      ],
+      "expected": [
+        "PL_385_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_385_2026::0000",
+          "rank": 1,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_352_2026::0000",
+          "rank": 2,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_385_2026::0001",
+          "rank": 3,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_352_2026::0001",
+          "rank": 4,
+          "filename": "PL_352_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0308,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_385_2026::0002",
+          "rank": 5,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0308,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q024",
+      "question": "Quais dispositivos constitucionais o PL 385/2026 invoca e qual efeito paradoxal ele atribui à Portaria nº 1.666/2026?",
+      "type": "multi_chunk",
+      "filename": "PL_385_2026.pdf",
+      "rewrites": [
+        "Que artigos da Constituição Federal o PL 385/2026 cita e qual contradição ele aponta na Portaria nº 1.666/2026?",
+        "Que normas constitucionais são fundamentação legal do PL 385/2026 e qual consequência adversa está associada à Portaria nº 1.666/2026?",
+        "PL 385/2026 fundamentação constitucional Portaria nº 1.666/2026",
+        "Disposições constitucionais invocadas pelo PL 385/2026",
+        "PL 385/2026 Portaria nº 1.666/2026 contradição efeito"
+      ],
+      "documents": [
+        "PL_684_2026.pdf",
+        "PL_271_2026.pdf",
+        "PL_567_2026.pdf",
+        "PL_385_2026.pdf"
+      ],
+      "expected": [
+        "PL_385_2026::0000",
+        "PL_385_2026::0001",
+        "PL_385_2026::0002"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_385_2026::0000",
+          "rank": 1,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_385_2026::0002",
+          "rank": 2,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_385_2026::0001",
+          "rank": 3,
+          "filename": "PL_385_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0317,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_568_2026::0000",
+          "rank": 4,
+          "filename": "PL_568_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0306,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_182_2026::0000",
+          "rank": 5,
+          "filename": "PL_182_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0297,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 3,
+      "total": 3,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.6,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 2.1309297535714578,
+      "idcg": 2.1309297535714578,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q025",
+      "question": "Em que condições excepcionais o PL 415/2026 admite a disposição de lodos de ETA e ETE em aterros sanitários?",
+      "type": "single_chunk",
+      "filename": "PL_415_2026.pdf",
+      "rewrites": [
+        "Quais são as situações extraordinárias em que o PL 415/2026 permite a destinação de lodos de ETA e ETE em aterros sanitários?",
+        "De que forma o PL 415/2026 autoriza excepcionalmente o descarte de resíduos de ETA e ETE em aterros sanitários?",
+        "Sob quais circunstâncias o PL 415/2026 faculta a deposição de lodos provenientes de estações de tratamento de água e estações de tratamento de esgoto em aterros sanitários?",
+        "Que requisitos o PL 415/2026 estabelece para a disposição final de lodos de ETA e ETE em aterros sanitários?",
+        "O PL 415/2026 prevê casos especiais para a disposição de lodos de ETA e ETE em aterros sanitários?"
+      ],
+      "documents": [
+        "PL_415_2026.pdf",
+        "PL_742_2026.pdf",
+        "PL_5209_2026.pdf",
+        "PL_3192_2026.pdf"
+      ],
+      "expected": [
+        "PL_415_2026::0002"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_415_2026::0002",
+          "rank": 1,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_415_2026::0000",
+          "rank": 2,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_415_2026::0003",
+          "rank": 3,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_415_2026::0001",
+          "rank": 4,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0312,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_415_2026::0004",
+          "rank": 5,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0308,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q026",
+      "question": "Quais são os prazos de adequação previstos no PL 415/2026 para os empreendimentos que usam ETE para chorume, para os Municípios e para a regulamentação da lei?",
+      "type": "multi_chunk",
+      "filename": "PL_415_2026.pdf",
+      "rewrites": [
+        "Quais são os períodos e timelines de conformidade estabelecidos no PL 415/2026 para as instalações que utilizam ETE para lixiviado, para os Entes Municipais e para a regulamentação normativa?",
+        "Quais são os prazos, condições e procedimentos de transição previstos no PL 415/2026 para os sistemas de tratamento de efluentes de aterros sanitários, para as administrações municipais e para a expedição de regulamentos?",
+        "Qual é o cronograma de implementação e adequação técnica no PL 415/2026 para empreendimentos com estação de tratamento de efluentes de resíduos, para Municípios e para a regulamentação legal?",
+        "Quais são os prazos estabelecidos no PL 415/2026 para adequação de empreendimentos com ETE?",
+        "Qual é o prazo de vigência e adaptação no PL 415/2026 para empreendimentos que processam chorume, autoridades municipais e regulamentação?"
+      ],
+      "documents": [
+        "PL_415_2026.pdf",
+        "PL_4165_2026.pdf",
+        "PL_3522_2026.pdf",
+        "PL_4290_2026.pdf"
+      ],
+      "expected": [
+        "PL_415_2026::0001",
+        "PL_415_2026::0002",
+        "PL_415_2026::0003"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_415_2026::0003",
+          "rank": 1,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_415_2026::0001",
+          "rank": 2,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.032,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_415_2026::0002",
+          "rank": 3,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.032,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_415_2026::0000",
+          "rank": 4,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0318,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_415_2026::0004",
+          "rank": 5,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0308,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 3,
+      "total": 3,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.6,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 2.1309297535714578,
+      "idcg": 2.1309297535714578,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q027",
+      "question": "Quais limites de alíquota o PL 42/2026 fixa para o Imposto Seletivo e o que caracteriza sua finalidade arrecadatória?",
+      "type": "single_chunk",
+      "filename": "PL_42_2026.pdf",
+      "rewrites": [
+        "Qual é a alíquota máxima e mínima estabelecida pelo PL 42/2026 para o Imposto Seletivo e qual sua destinação orçamentária?",
+        "PL 42/2026 - impostos seletivos: limites percentuais e objetivo de arrecadação",
+        "De que forma o PL 42/2026 regulamenta as alíquotas do Imposto Seletivo e define sua função tributária?",
+        "PL 42/2026 Imposto Seletivo: faixa de incidência e propósito arrecadatório",
+        "Quais são as disposições do PL 42/2026 concernentes aos patamares de tributação para o Imposto Seletivo e sua natureza arrecadadora?"
+      ],
+      "documents": [
+        "PL_42_2026.pdf",
+        "PL_31_2025.pdf",
+        "PL_566_2026.pdf",
+        "PL_568_2026.pdf"
+      ],
+      "expected": [
+        "PL_42_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_42_2026::0002",
+          "rank": 1,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0325,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_42_2026::0000",
+          "rank": 2,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_42_2026::0001",
+          "rank": 3,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_31_2025::0000",
+          "rank": 4,
+          "filename": "PL_31_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.031,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_42_2026::0003",
+          "rank": 5,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.031,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575,
+      "dcg": 0.6309297535714575,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q028",
+      "question": "O que a Avaliação de Impacto Regulatório deve demonstrar antes da instituição ou majoração do Imposto Seletivo, e qual a consequência de não haver reavaliação no prazo previsto?",
+      "type": "multi_chunk",
+      "filename": "PL_42_2026.pdf",
+      "rewrites": [
+        "Requisitos da Avaliação de Impacto Regulatório prévia à criação ou aumento do Imposto Seletivo e penalidades pela ausência de reavaliação tempestiva",
+        "Demonstrações obrigatórias da AIR antecedente à instituição ou majoração do IS e efeitos jurídicos da inobservância do prazo de reavaliação",
+        "Quais são os elementos que a Avaliação de Impacto Regulatório deve comprovar para instituir ou majorar o Imposto Seletivo",
+        "Avaliação de Impacto Regulatório - requisitos antes da instituição ou majoração do Imposto Seletivo",
+        "Consequências da não realização da reavaliação da Avaliação de Impacto Regulatório do Imposto Seletivo dentro do prazo estabelecido"
+      ],
+      "documents": [
+        "PL_42_2026.pdf",
+        "PL_31_2025.pdf",
+        "PL_4290_2026.pdf",
+        "PL_611_2026.pdf"
+      ],
+      "expected": [
+        "PL_42_2026::0000",
+        "PL_42_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_42_2026::0001",
+          "rank": 1,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_42_2026::0002",
+          "rank": 2,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_42_2026::0000",
+          "rank": 3,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.032,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_42_2026::0003",
+          "rank": 4,
+          "filename": "PL_42_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0312,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_31_2025::0000",
+          "rank": 5,
+          "filename": "PL_31_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0296,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 0.9197207891481876,
+      "dcg": 1.5,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q029",
+      "question": "Que tipos de denúncia o 'Disque Animal' recebe e a quais órgãos elas são encaminhadas?",
+      "type": "single_chunk",
+      "filename": "PL_561_2026.pdf",
+      "rewrites": [
+        "Categorias de denúncias atendidas pelo Disque Animal e órgãos responsáveis pelo processamento",
+        "Espécies de denúncias recebidas pelo Disque Animal e destinatários administrativos",
+        "Quais são as modalidades de denúncias do Disque Animal e para quais instituições são repassadas",
+        "Denúncias ao Disque Animal",
+        "Disque Animal - tipos de denúncias e encaminhamento a órgãos competentes"
+      ],
+      "documents": [
+        "PL_561_2026.pdf",
+        "PL_255_2026.pdf",
+        "PL_257_2025.pdf",
+        "PL_1001_2026.pdf"
+      ],
+      "expected": [
+        "PL_561_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_561_2026::0000",
+          "rank": 1,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_561_2026::0001",
+          "rank": 2,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_561_2026::0002",
+          "rank": 3,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_2670_2026::0000",
+          "rank": 4,
+          "filename": "PL_2670_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0301,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_257_2025::0000",
+          "rank": 5,
+          "filename": "PL_257_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0296,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q030",
+      "question": "Em quais dispositivos constitucionais e leis o PL 561/2026 fundamenta a criação do Disque Animal?",
+      "type": "multi_chunk",
+      "filename": "PL_561_2026.pdf",
+      "rewrites": [
+        "Quais são os fundamentos constitucionais e legais que embasam a instituição do Disque Animal conforme proposto no PL 561/2026?",
+        "Em que bases normativas e dispositivos da Constituição Federal o PL 561/2026 se apoia para estabelecer o Disque Animal?",
+        "Qual é a fundamentação jurídica do PL 561/2026 para a implementação do serviço de atendimento Disque Animal?",
+        "O PL 561/2026 cita quais artigos constitucionais e normas legais para justificar a criação do Disque Animal?",
+        "Em quais normas constitucionais, leis complementares, leis ordinárias e decretos o PL 561/2026 se baseia para a instituição do Disque Animal?"
+      ],
+      "documents": [
+        "PL_561_2026.pdf",
+        "PL_255_2026.pdf",
+        "PL_257_2025.pdf",
+        "PL_2670_2026.pdf"
+      ],
+      "expected": [
+        "PL_561_2026::0000",
+        "PL_561_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_561_2026::0000",
+          "rank": 1,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_561_2026::0002",
+          "rank": 2,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_561_2026::0001",
+          "rank": 3,
+          "filename": "PL_561_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0318,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_255_2026::0000",
+          "rank": 4,
+          "filename": "PL_255_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0313,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_257_2025::0000",
+          "rank": 5,
+          "filename": "PL_257_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0305,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 0.9197207891481876,
+      "dcg": 1.5,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q031",
+      "question": "Como o PL 742/2026 define 'pulverização aérea' e 'populações expostas'?",
+      "type": "single_chunk",
+      "filename": "PL_742_2026.pdf",
+      "rewrites": [
+        "Qual é a definição de 'pulverização aérea' e 'populações expostas' no PL 742/2026?",
+        "PL 742/2026 - conceituação de aplicação aérea de agroquímicos e grupos populacionais vulneráveis",
+        "De que forma o PL 742/2026 conceitua a dispersão aérea de defensivos agrícolas e os indivíduos em risco de exposição?",
+        "Definições e conceitos previstos no PL 742/2026",
+        "PL 742/2026 - Qual a definição legal de pulverização aérea e populações expostas?"
+      ],
+      "documents": [
+        "PL_742_2026.pdf",
+        "PL_752_2026.pdf",
+        "PL_3002_2026.pdf",
+        "PL_3522_2026.pdf"
+      ],
+      "expected": [
+        "PL_742_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_742_2026::0000",
+          "rank": 1,
+          "filename": "PL_742_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_742_2026::0002",
+          "rank": 2,
+          "filename": "PL_742_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_742_2026::0001",
+          "rank": 3,
+          "filename": "PL_742_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_752_2026::0000",
+          "rank": 4,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0313,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_742_2026::0003",
+          "rank": 5,
+          "filename": "PL_742_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.031,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q032",
+      "question": "Qual lei estadual inspira o PL 742/2026, qual a história por trás dela e como o projeto se harmoniza com a Lei nº 7.802/1989?",
+      "type": "multi_chunk",
+      "filename": "PL_742_2026.pdf",
+      "rewrites": [
+        "Lei estadual que fundamenta o PL 742/2026, origem histórica e compatibilidade com Lei nº 7.802/1989",
+        "Qual a legislação estadual motivadora do PL 742/2026 e sua conformidade com a Lei nº 7.802/1989",
+        "PL 742/2026 fundamentação em lei estadual e harmonização normativa com Lei nº 7.802/1989",
+        "Lei estadual precedente do PL 742/2026 e alinhamento à Lei nº 7.802/1989",
+        "PL 742/2026 bases legislativas estaduais e concordância com Lei nº 7.802/1989"
+      ],
+      "documents": [
+        "PL_742_2026.pdf",
+        "PL_684_2026.pdf",
+        "PL_1502_2026.pdf",
+        "PL_3192_2026.pdf"
+      ],
+      "expected": [
+        "PL_742_2026::0002",
+        "PL_742_2026::0003"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_742_2026::0003",
+          "rank": 1,
+          "filename": "PL_742_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_742_2026::0002",
+          "rank": 2,
+          "filename": "PL_742_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_742_2026::0001",
+          "rank": 3,
+          "filename": "PL_742_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_742_2026::0000",
+          "rank": 4,
+          "filename": "PL_742_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0008",
+          "rank": 5,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 8,
+          "similarity": 0.0301,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q033",
+      "question": "O que caracteriza uma Zona de Vulnerabilidade Climática (ZVC) no PL 752/2026?",
+      "type": "single_chunk",
+      "filename": "PL_752_2026.pdf",
+      "rewrites": [
+        "Como é definida a Zona de Vulnerabilidade Climática (ZVC) conforme o PL 752/2026?",
+        "Quais são os critérios e requisitos para caracterização de uma Zona de Vulnerabilidade Climática (ZVC) no PL 752/2026?",
+        "Qual a conceituação de Zona de Vulnerabilidade Climática (ZVC) estabelecida pelo PL 752/2026?",
+        "O que se entende por área de vulnerabilidade climática no PL 752/2026?",
+        "Regulamentação e elementos definidores da Zona de Vulnerabilidade Climática (ZVC) no PL 752/2026?"
+      ],
+      "documents": [
+        "PL_752_2026.pdf",
+        "PL_1502_2026.pdf",
+        "PL_2586_2026.pdf",
+        "PL_993_2026.pdf"
+      ],
+      "expected": [
+        "PL_752_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_752_2026::0000",
+          "rank": 1,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_752_2026::0001",
+          "rank": 2,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0000",
+          "rank": 3,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.031,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_752_2026::0002",
+          "rank": 4,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.031,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0003",
+          "rank": 5,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0301,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q034",
+      "question": "Que dados e estudos o PL 752/2026 apresenta para demonstrar a vulnerabilidade climática do Brasil?",
+      "type": "multi_chunk",
+      "filename": "PL_752_2026.pdf",
+      "rewrites": [
+        "Quais informações e pesquisas o PL 752/2026 utiliza para comprovar a fragilidade climática do país?",
+        "Que evidências científicas e análises o PL 752/2026 expõe acerca da susceptibilidade do Brasil às mudanças climáticas?",
+        "Fundamentação técnica e argumentação do PL 752/2026 sobre risco climático nacional",
+        "PL 752/2026 vulnerabilidade climática Brasil documentação",
+        "Quais estudos fundamentam o PL 752/2026 em relação aos impactos climáticos no território brasileiro?"
+      ],
+      "documents": [
+        "PL_752_2026.pdf",
+        "PL_1502_2026.pdf",
+        "PL_271_2026.pdf",
+        "PL_993_2026.pdf"
+      ],
+      "expected": [
+        "PL_752_2026::0001",
+        "PL_752_2026::0002"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_752_2026::0002",
+          "rank": 1,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_752_2026::0000",
+          "rank": 2,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_752_2026::0001",
+          "rank": 3,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.032,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_752_2026::0003",
+          "rank": 4,
+          "filename": "PL_752_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0312,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_993_2026::0002",
+          "rank": 5,
+          "filename": "PL_993_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0301,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 0.9197207891481876,
+      "dcg": 1.5,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q035",
+      "question": "Quem são os beneficiários do Programa Nacional de Solidariedade Veterinária?",
+      "type": "multi_chunk",
+      "filename": "PL_770_2026.pdf",
+      "rewrites": [
+        "Quais são os beneficiários do Programa Nacional de Solidariedade Veterinária?",
+        "Destinatários do Programa Nacional de Solidariedade Veterinária",
+        "Programa Nacional de Solidariedade Veterinária beneficiários pessoas físicas pessoas jurídicas",
+        "Quem pode se beneficiar do Programa Nacional de Solidariedade Veterinária?",
+        "Beneficiários elegíveis do Programa Nacional de Solidariedade Veterinária"
+      ],
+      "documents": [
+        "PL_770_2026.pdf",
+        "PL_257_2025.pdf",
+        "PL_4943_2026.pdf",
+        "PL_2973_2026.pdf"
+      ],
+      "expected": [
+        "PL_770_2026::0002",
+        "PL_770_2026::0003"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_770_2026::0000",
+          "rank": 1,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0325,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_770_2026::0002",
+          "rank": 2,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_770_2026::0007",
+          "rank": 3,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 7,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_770_2026::0005",
+          "rank": 4,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 5,
+          "similarity": 0.0308,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_770_2026::0001",
+          "rank": 5,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0306,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 2,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 0.5,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.38685280723454163,
+      "dcg": 0.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q036",
+      "question": "De quais fontes o Programa pode receber doações de produtos veterinários e que controles de triagem e descarte se aplicam a esses itens?",
+      "type": "multi_chunk",
+      "filename": "PL_770_2026.pdf",
+      "rewrites": [
+        "Quais são as fontes de recebimento de doações de produtos veterinários pelo Programa e quais são os procedimentos de triagem e descarte aplicáveis?",
+        "De que forma o Programa admite aceitar contribuições e insumos veterinários, e quais mecanismos de controle de seleção e eliminação se estabelecem para essas substâncias?",
+        "Origens permitidas para recebimento de medicamentos e insumos veterinários doados ao Programa e protocolos de inspeção e gerenciamento de resíduos veterinários",
+        "Que requisitos e controles regulam as doações recebidas pelo Programa?",
+        "Disposições sobre recebimento, verificação e tratamento de produtos veterinários oferecidos em doação ao Programa, incluindo critérios de descaracterização e descarte de itens inservíveis"
+      ],
+      "documents": [
+        "PL_770_2026.pdf",
+        "PL_1928_2026.pdf",
+        "PL_257_2025.pdf",
+        "PL_561_2026.pdf"
+      ],
+      "expected": [
+        "PL_770_2026::0003",
+        "PL_770_2026::0004"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_770_2026::0004",
+          "rank": 1,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_770_2026::0003",
+          "rank": 2,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.032,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_770_2026::0000",
+          "rank": 3,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_770_2026::0001",
+          "rank": 4,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0312,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_770_2026::0002",
+          "rank": 5,
+          "filename": "PL_770_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.031,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q037",
+      "question": "Como o PL 993/2026 define 'sistema climático' e 'dano ao sistema climático'?",
+      "type": "single_chunk",
+      "filename": "PL_993_2026.pdf",
+      "rewrites": [
+        "Qual é a definição de 'sistema climático' e 'dano ao sistema climático' conforme o PL 993/2026?",
+        "De que forma o PL 993/2026 conceitua 'sistema climático' e estabelece a caracterização de danos ao sistema climático?",
+        "Conceituação e definições de sistema climático e prejuízos ao sistema climático no PL 993/2026",
+        "O PL 993/2026 como aborda os conceitos de sistema climático e lesão ao sistema climático?",
+        "Significado de 'sistema climático' e 'dano ao sistema climático' segundo as disposições do PL 993/2026"
+      ],
+      "documents": [
+        "PL_993_2026.pdf",
+        "PL_752_2026.pdf",
+        "PL_2586_2026.pdf",
+        "PL_1502_2026.pdf"
+      ],
+      "expected": [
+        "PL_993_2026::0000"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_993_2026::0001",
+          "rank": 1,
+          "filename": "PL_993_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0325,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_993_2026::0000",
+          "rank": 2,
+          "filename": "PL_993_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_993_2026::0002",
+          "rank": 3,
+          "filename": "PL_993_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_2586_2026::0001",
+          "rank": 4,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0312,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1502_2026::0000",
+          "rank": 5,
+          "filename": "PL_1502_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0308,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575,
+      "dcg": 0.6309297535714575,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q038",
+      "question": "Que mudança o PL 993/2026 faz no § 1º do art. 14 da Lei nº 6.938/1981, quais critérios passam a caracterizar a responsabilidade por dano climático e como esse dano pode ser reparado?",
+      "type": "multi_chunk",
+      "filename": "PL_993_2026.pdf",
+      "rewrites": [
+        "Qual é a alteração introduzida pelo PL 993/2026 no § 1º do art. 14 da Lei nº 6.938/1981 referente aos requisitos que definem a imputabilidade por prejuízo climático e de que formas se efetua a reparação desse prejuízo?",
+        "PL 993/2026 modifica § 1º art. 14 Lei 6.938/1981 responsabilidade dano ambiental climático reparação",
+        "Como o PL 993/2026 altera o § 1º do art. 14 da Lei nº 6.938/1981 e quais são os novos elementos constitutivos da responsabilidade civil por dano climático?",
+        "Mudanças do PL 993/2026 no parágrafo primeiro do artigo 14 da Lei nº 6.938/1981 sobre responsabilidade por dano ao clima",
+        "PL 993/2026 § 1º art. 14 Lei nº 6.938/1981 requisitos caracterização responsabilidade dano climático formas reparação indenização"
+      ],
+      "documents": [
+        "PL_993_2026.pdf",
+        "PL_171_2026.pdf",
+        "PL_2586_2026.pdf",
+        "PL_4165_2026.pdf"
+      ],
+      "expected": [
+        "PL_993_2026::0000",
+        "PL_993_2026::0001"
+      ],
+      "retrieved": [
+        {
+          "chunk_id": "PL_993_2026::0000",
+          "rank": 1,
+          "filename": "PL_993_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_993_2026::0001",
+          "rank": 2,
+          "filename": "PL_993_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_993_2026::0002",
+          "rank": 3,
+          "filename": "PL_993_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_4165_2026::0000",
+          "rank": 4,
+          "filename": "PL_4165_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0306,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_2586_2026::0004",
+          "rank": 5,
+          "filename": "PL_2586_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.029,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    }
+  ]
+}
