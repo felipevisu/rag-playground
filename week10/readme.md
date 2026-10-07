@@ -89,6 +89,29 @@ docker compose up -d chunks-api         # na raiz: recria a API com a chave
 Sem chave, a busca com voyage dá 400 dizendo isso. Sem cartão cadastrado o limite de requisições
 é baixo: a API espera e tenta de novo (429) até 3 vezes, então a run fica lenta mas não quebra.
 
+## Reranker de decisão: Jev (TypeSafe)
+
+`jev-rerank` (jev-1.13.0) não é cross-encoder: é um modelo de decisão. Para cada chunk ele
+responde uma pergunta tipada sim/não, e a probabilidade calibrada do "sim" vira a nota:
+
+```
+state:    {"query": pergunta, "passage": "PL 182/2026\nheading\ntexto"}
+pergunta: "Does `passage` contain information that answers `query`?"
+critérios: true = responde a pergunta sobre este PL · false = outro PL, ou só mesmas palavras/assunto
+```
+
+Pergunta em inglês (o idioma em que o Jev funciona melhor) sobre texto em português. São 10
+chamadas em paralelo, ~100 ms cada. A nota vota no mesmo RRF dos outros rerankers (`rerank_keep`).
+Feito pra lista curta: no eval, top **10**; na API, `?rerank=jev-rerank&rerank_depth=10`.
+Uma run ≈ 38 × 10 × ~600 tokens ≈ 230k tokens ≈ US$ 0.01.
+
+```bash
+# TYPESAFE_API_KEY em week10/.env (console.typesafe.ai/keys)
+docker compose up -d chunks-api
+```
+
+Sem chave dá 400. 429/529 → espera e tenta de novo até 3 vezes.
+
 ## Embeddings pagos: Voyage
 
 Retrievers `voyage-4-large`, `voyage-4` e os híbridos `hybrid-voyage-4-large`, `hybrid-voyage-4`

@@ -25,6 +25,7 @@ its files, and nothing is reindexed.
 unchanged; without `bucket=` it uses the most recently indexed bucket.
 """
 
+import concurrent.futures
 import functools
 import hashlib
 import io
@@ -95,6 +96,10 @@ RERANKERS = {
     # Key in week10/.env (VOYAGE_API_KEY).
     "voyage-rerank": "voyage:rerank-2.5",
     "voyage-rerank-lite": "voyage:rerank-2.5-lite",
+    # TypeSafe's Jev: a decision model, not a cross-encoder. One call per (query, chunk)
+    # answers a typed yes/no question; its calibrated P(yes) is the score. Key in week10/.env
+    # (TYPESAFE_API_KEY). Meant for a short list: ?rerank_depth=10.
+    "jev-rerank": "typesafe:jev-1.13.0",
 }
 # Qwen3-Reranker is an LLM answering yes/no: query and chunk go inside its chat prompt
 # (query template, chunk template, max_length). Its max_length fits a whole 512-token chunk:
@@ -122,6 +127,16 @@ RERANK_DEPTH = int(os.environ.get("RERANK_DEPTH", "30"))  # candidates the cross
 VOYAGE_API_KEY = os.environ.get("VOYAGE_API_KEY", "")
 # Same API, two hosts: keys made in MongoDB Atlas ("al-…") only work on Atlas's.
 VOYAGE_URL = "https://ai.mongodb.com/v1" if VOYAGE_API_KEY.startswith("al-") else "https://api.voyageai.com/v1"
+TYPESAFE_API_KEY = os.environ.get("TYPESAFE_API_KEY", "")
+TYPESAFE_URL = "https://api.typesafe.ai/v1/systemone"
+# Asked in English (Jev's best language) about Portuguese text. criteria split "answers"
+# from "same subject", the classic first-stage mistake.
+JEV_QUESTIONS = {"answers": {
+    "type": "noul",
+    "instructions": "Does `passage` contain information that answers `query`?",
+    "criteria": {"true": "The passage states facts that directly answer the question about this bill",
+                 "false": "The passage is about another bill, or only shares keywords or the general topic"},
+}}
 RERANK_URL = os.environ.get("RERANK_URL", "").rstrip("/")  # set: rerank-server/serve.py scores on the Mac's GPU
 RERANK_KEEP = float(os.environ.get("RERANK_KEEP", "1.0"))  # first-stage vote vs reranker's 1.0; 0 = reranker alone
 DOC_TOP = int(os.environ.get("DOC_TOP", "5"))             # layer 1: documents whose chunks layer 2 searches
@@ -715,6 +730,8 @@ def rerank_scores(name: str, pairs: list[tuple[str, str]]) -> list[float]:
     that was meant for the GPU should fail, not take 10x longer."""
     if RERANKERS[name].startswith("voyage:"):
         return voyage_scores(RERANKERS[name].removeprefix("voyage:"), pairs)
+    if RERANKERS[name].startswith("typesafe:"):
+        return jev_scores(RERANKERS[name].removeprefix("typesafe:"), pairs)
     if not RERANK_URL:
         return reranker(name).predict(pairs)
     body = json.dumps({"model": RERANKERS[name], "max_length": RERANK_PROMPTS.get(name, PLAIN_PROMPT)[2],
@@ -767,6 +784,35 @@ def voyage_scores(model: str, pairs: list[tuple[str, str]]) -> list[float]:
     for d in data:
         scores[d["index"]] = float(d["relevance_score"])
     return scores
+
+
+def jev_post(payload: dict) -> dict:
+    """POST to TypeSafe. 429 rate limit / 529 overloaded: back off and retry, 3 times."""
+    req = urllib.request.Request(TYPESAFE_URL, json.dumps(payload).encode(), {
+        "Content-Type": "application/json", "Authorization": f"Bearer {TYPESAFE_API_KEY}"})
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 529) and attempt < 3:
+                wait = e.headers.get("Retry-After", "")
+                time.sleep(int(wait) if wait.isdigit() else 2 ** attempt)
+                continue
+            raise HTTPException(502, f"typesafe {e.code}: {e.read().decode(errors='replace')[:300]}")
+        except urllib.error.URLError as e:
+            raise HTTPException(502, f"typesafe unreachable ({e.reason})")
+
+
+def jev_scores(model: str, pairs: list[tuple[str, str]]) -> list[float]:
+    """Jev: one call per pair, all in parallel (~100 ms each). Score = P(passage answers query)."""
+    if not TYPESAFE_API_KEY:
+        raise HTTPException(400, "TYPESAFE_API_KEY is not set: put it in week10/.env and recreate chunks-api")
+    def one(pair):
+        r = jev_post({"model": model, "state": {"query": pair[0], "passage": pair[1]}, "questions": JEV_QUESTIONS})
+        return float(r["answers"]["answers"]["noul"])
+    with concurrent.futures.ThreadPoolExecutor(16) as pool:
+        return list(pool.map(one, pairs))
 
 
 def rerank(cur, bid: str, name: str, q: str, ranked: list[tuple[str, float]]) -> list[tuple[str, float]]:
@@ -983,7 +1029,20 @@ if __name__ == "__main__":  # python main.py: self-check for the fusion, no DB n
     assert sent[-1] == {"input": ["a", "b"], "model": "voyage-4", "input_type": "document"}, sent[-1]
     assert [round(x, 1) for x in embed_query("voyage-4-large", "q?")] == [0.6, 0.8]
     assert sent[-1] == {"input": ["q?"], "model": "voyage-4-large", "input_type": "query"}, sent[-1]
+    # jev: one call per pair, P(yes) back in pair order; 529 retried
+    TYPESAFE_API_KEY = "k"
+    yes = lambda p: {"answers": {"answers": {"type": "noul", "noul": p}}}  # noqa: E731
+    replies[:] = [urllib.error.HTTPError("u", 529, "busy", {}, io.BytesIO(b"")), yes(0.2)]
+    assert rerank_scores("jev-rerank", [("q?", "a")]) == [0.2]
+    assert sent[-1] == {"model": "jev-1.13.0", "state": {"query": "q?", "passage": "a"},
+                        "questions": JEV_QUESTIONS} and len(sent) == 6, sent[-1]
     urllib.request.urlopen, time.sleep, VOYAGE_API_KEY = real_urlopen, real_sleep, ""
+    TYPESAFE_API_KEY = ""
+    try:
+        rerank_scores("jev-rerank", [("q", "a")])
+        raise AssertionError("no key should fail")
+    except HTTPException as e:
+        assert e.status_code == 400 and "TYPESAFE_API_KEY" in e.detail
     # rerank fused with the first stage: KEEP=0 is the reranker alone; equal votes keep a's lead
     first, cross = [("a", 9.0), ("b", 8.0), ("c", 7.0)], [("c", 5.0), ("a", 4.0), ("b", 1.0)]
     assert [c for c, _ in rrf(first, cross, weights=(0.0, 1.0))] == ["c", "a", "b"]

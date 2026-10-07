@@ -1,6 +1,128 @@
 {
   "runs": [
     {
+      "run_id": "2026-10-07T00-57-03",
+      "label": "sentence-512t-multilingual-e5-large · hybrid-voyage-4-large + descrições · hybrid-voyage-4-large top-5 docs + 5 variantes + jev-rerank depth=20 keep=1 · k=5",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "bf0ac21d",
+        "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-voyage-4-large",
+        "retriever": "hybrid-voyage-4-large",
+        "chunker": {
+          "max": 512,
+          "min": 0,
+          "name": "sentence-512t-multilingual-e5-large",
+          "unit": "tokens",
+          "context": false,
+          "overlap": 0,
+          "splitter": "sentence",
+          "tokenizer": "intfloat/multilingual-e5-large",
+          "strip_footer": true,
+          "context_model": "claude-opus-5"
+        },
+        "rerank": "jev-rerank",
+        "rerank_depth": 20,
+        "rerank_keep": 1.0,
+        "variants": 5,
+        "transform_model": "claude-haiku-4-5",
+        "docs": "090cfcec",
+        "docs_name": "descrições · hybrid-voyage-4-large",
+        "docs_retriever": "hybrid-voyage-4-large",
+        "doc_top": 5,
+        "embedding_model": "hybrid-voyage-4-large",
+        "corpus_sha256": "908700b6f856f4e2509dbf00caf61026dc7aca3553040eda035c0680e3271086",
+        "n_queries": 38,
+        "n_chunks": 279,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 1.0,
+        "recall": 0.9781,
+        "precision": 0.3316,
+        "mrr": 0.9342,
+        "ndcg": 0.9287
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.9211,
+          "ndcg": 0.9417
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.9561,
+          "precision": 0.4632,
+          "mrr": 0.9474,
+          "ndcg": 0.9157
+        }
+      },
+      "failures": 0
+    },
+    {
+      "run_id": "2026-10-07T00-52-19",
+      "label": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs + descrições · hybrid-qwen3-0.6b top-5 docs + 5 variantes + jev-rerank depth=20 keep=1 · k=5",
+      "config": {
+        "k": 5,
+        "api": "http://chunks-api:8000",
+        "bucket": "835d6935",
+        "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-qwen3-0.6b · 57pdfs",
+        "retriever": "hybrid-qwen3-0.6b",
+        "chunker": {
+          "max": 512,
+          "min": 0,
+          "name": "sentence-512t-multilingual-e5-large",
+          "unit": "tokens",
+          "context": false,
+          "overlap": 0,
+          "splitter": "sentence",
+          "tokenizer": "intfloat/multilingual-e5-large",
+          "strip_footer": true,
+          "context_model": "claude-opus-5"
+        },
+        "rerank": "jev-rerank",
+        "rerank_depth": 20,
+        "rerank_keep": 1.0,
+        "variants": 5,
+        "transform_model": "claude-haiku-4-5",
+        "docs": "e882648b",
+        "docs_name": "descrições · hybrid-qwen3-0.6b",
+        "docs_retriever": "hybrid-qwen3-0.6b",
+        "doc_top": 5,
+        "embedding_model": "hybrid-qwen3-0.6b",
+        "corpus_sha256": "908700b6f856f4e2509dbf00caf61026dc7aca3553040eda035c0680e3271086",
+        "n_queries": 38,
+        "n_chunks": 279,
+        "n_qrels": 120
+      },
+      "metrics": {
+        "hit_rate": 1.0,
+        "recall": 0.9781,
+        "precision": 0.3316,
+        "mrr": 0.9035,
+        "ndcg": 0.9026
+      },
+      "metrics_by_type": {
+        "single_chunk": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.8596,
+          "ndcg": 0.896
+        },
+        "multi_chunk": {
+          "hit_rate": 1.0,
+          "recall": 0.9561,
+          "precision": 0.4632,
+          "mrr": 0.9474,
+          "ndcg": 0.9092
+        }
+      },
+      "failures": 0
+    },
+    {
       "run_id": "2026-10-06T03-56-02",
       "label": "sentence-512t-multilingual-e5-large · hybrid-voyage-4-large + descrições · hybrid-voyage-4-large top-5 docs + 5 variantes + voyage-rerank depth=30 keep=1 · k=5",
       "config": {
