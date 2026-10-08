@@ -76,7 +76,7 @@ button:disabled { opacity: .55; cursor: progress; }
 .count { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
 .counts { display: flex; gap: 10px; }
 .counts[hidden] { display: none; }
-.stage .count input { width: 50px; padding: 3px 6px; font-family: var(--mono); font-size: 12.5px; text-align: right; }
+.stage .count input, .run-foot .count input { width: 50px; padding: 3px 6px; font-family: var(--mono); font-size: 12.5px; text-align: right; }
 .run-foot { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding-top: 14px;
             border-top: 1px solid var(--border); }
 #go { background: var(--accent); border-color: var(--accent); color: var(--surface); font-weight: 600; padding: 8px 16px; }
@@ -202,6 +202,7 @@ code { font-family: var(--mono); font-size: 12px; background: var(--surface-2);
       </div>
     </div>
     <div class="run-foot">
+      <label class="count" title="porcentagem das perguntas, sorteada a cada execução">perguntas <input id="sample" type="number" min="1" max="100" value="100" aria-label="porcentagem das perguntas" />%</label>
       <button id="go" type="submit">▶ Rodar</button>
       <span id="runmsg" role="status"></span>
     </div>
@@ -325,7 +326,7 @@ function renderSparks(runs) {
 function renderRuns(runs) {
   $('runs').innerHTML = `
     <thead><tr>
-      <th>Execução</th><th>Chunker</th><th>Retriever</th><th>Descrições</th><th>Rerank</th><th class="num">Variantes</th><th class="num">k</th><th class="num">Chunks</th>
+      <th>Execução</th><th>Chunker</th><th>Retriever</th><th>Descrições</th><th>Rerank</th><th class="num">Variantes</th><th class="num">k</th><th class="num">Perguntas</th><th class="num">Chunks</th>
       ${METRICS.map(m => `<th class="num">${LABELS[m]}</th>`).join('')}
     </tr></thead>
     <tbody>${runs.map(r => { const c = r.config || {}; return `
@@ -337,6 +338,7 @@ function renderRuns(runs) {
         <td class="rid">${c.rerank ? esc(c.rerank) + (c.rerank_depth != null ? ` · top-${c.rerank_depth} · keep ${c.rerank_keep}` : '') : '<span class="dim">—</span>'}</td>
         <td class="num">${c.variants || '<span class="dim">—</span>'}</td>
         <td class="num">${c.k ?? ''}</td>
+        <td class="num" title="${c.sample_pct < 100 ? `amostra aleatória de ${c.sample_pct}%` : 'todas'}">${c.n_queries ?? ''}${c.sample_pct < 100 ? ` <span class="dim">${c.sample_pct}%</span>` : ''}</td>
         <td class="num">${c.n_chunks ?? ''}</td>
         ${METRICS.map(m => `<td class="num">${fmt(r.metrics[m])}</td>`).join('')}
       </tr>` }).join('')}
@@ -367,7 +369,7 @@ async function showDetail(runId, scroll = true) {
                       .map(([k, v]) => [k, v]) : []),
     ['chunks', c.n_chunks ?? '?'],
     ['qrels', c.n_qrels ?? (c.dataset ? c.dataset : '?')],
-    ['perguntas', c.n_queries],
+    ['perguntas', c.sample_pct < 100 ? `${c.n_queries} de ${c.n_queries_total} (${c.sample_pct}% sorteadas)` : c.n_queries],
     ['corpus', (c.corpus_sha256 || '').slice(0, 12)],
   ].map(([k, v]) => `<span class="chip">${esc(k)} <b>${esc(v)}</b></span>`).join('')
     + METRICS.map(m => `<span class="chip">${LABELS[m]} single <b>${fmt(run.metrics_by_type.single_chunk[m])}</b> · multi <b>${fmt(run.metrics_by_type.multi_chunk[m])}</b></span>`).join('')
@@ -535,7 +537,7 @@ $('runf').onsubmit = async e => {
     const r = await fetch('api/run', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bucket: $('bucket').value, rerank: $('rerank').value, variants: Number($('variants').value), docs: $('docs').value, doc_top: Number($('doc_top').value), k: Number($('k').value),
+      body: JSON.stringify({ bucket: $('bucket').value, rerank: $('rerank').value, variants: Number($('variants').value), docs: $('docs').value, doc_top: Number($('doc_top').value), k: Number($('k').value), sample: Number($('sample').value),
         ...(!$('rerank-tuning').hidden && $('rerank').value ? { rerank_depth: Number($('rerank_depth').value), rerank_keep: Number($('rerank_keep').value) } : {}) }),
     })
     const d = await r.json()

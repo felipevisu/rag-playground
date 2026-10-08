@@ -7,7 +7,7 @@
 #   UI  http://localhost:3000     API http://localhost:8000/docs
 #
 # Same ports as week01 — bring one stack up at a time.
-name: week05              # same volume as week05/06/07: existing buckets stay
+name: week11              # own volume (week11_pgdata): week11 corpus only, week05 buckets stay in week05_pgdata
 
 services:
 

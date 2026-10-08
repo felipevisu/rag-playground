@@ -1,4 +1,4 @@
-# Runs the eval against a week05 bucket. week05 must already be up.
+# Runs the eval against a week11 bucket (week10 stack, project week11). It must already be up.
 #
 #   docker compose up -d ui                        # painel em :8080, roda pelo botão
 #   docker compose run --rm eval --options         # buckets prontos + datasets
@@ -19,12 +19,12 @@ services:
       DATASET_DIR: /dataset
     volumes:
       - .:/eval
-      - ../week05/out:/dataset:ro
+      - ../week11/out:/dataset:ro
     networks:
-      - week05
+      - week11
 
   # Serve index.html e atende POST /api/run — o mesmo run.py, importado no
-  # processo. Por isso precisa da rede do week05 e do dataset, ao contrário do
+  # processo. Por isso precisa da rede do week11 e do dataset, ao contrário do
   # servidor estático que havia aqui antes, e do volume sem `:ro`: o run grava
   # em runs/.
   ui:
@@ -40,12 +40,12 @@ services:
       - "8080:8080"
     volumes:
       - .:/eval
-      - ../week05/out:/dataset:ro
+      - ../week11/out:/dataset:ro
     networks:
-      - week05
+      - week11
 
-# week05's compose network; the bucket to score is chosen per run, not per stack.
+# week11's compose network (week10 stack); the bucket to score is chosen per run, not per stack.
 networks:
-  week05:
+  week11:
     external: true
-    name: week05_default
+    name: week11_default

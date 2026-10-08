@@ -1,7 +1,7 @@
 """Pre-generate the ?variants= rewrites: every eval question, 5 alternatives each,
 written once by Claude into rewrites.json. The API only reads that file.
 
-    python gen_rewrites.py [queries.parquet]     # default ../../../week05/out/queries.parquet
+    python gen_rewrites.py [queries.parquet]     # default ../../../week11/out/queries.parquet
 
 Questions already in rewrites.json are kept; only new ones are sent to Claude.
 Needs ANTHROPIC_API_KEY (read from week09/.env).
@@ -70,4 +70,4 @@ def main(src: Path) -> None:
 
 
 if __name__ == "__main__":
-    main(Path(sys.argv[1]) if len(sys.argv) > 1 else HERE.parents[2] / "week05/out/queries.parquet")
+    main(Path(sys.argv[1]) if len(sys.argv) > 1 else HERE.parents[2] / "week11/out/queries.parquet")

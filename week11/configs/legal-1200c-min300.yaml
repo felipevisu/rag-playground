@@ -1,0 +1,10 @@
+name: legal-1200c-min300
+splitter: legal
+unit: chars
+max: 1200
+min: 300
+overlap: 0
+tokenizer: ''
+strip_footer: true
+context: false
+context_model: claude-opus-5

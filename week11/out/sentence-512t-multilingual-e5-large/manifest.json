@@ -1,0 +1,31 @@
+{
+  "built_at": "2026-10-08T15:04:41+00:00",
+  "config": {
+    "name": "sentence-512t-multilingual-e5-large",
+    "splitter": "sentence",
+    "unit": "tokens",
+    "max": 512,
+    "min": 0,
+    "overlap": 0,
+    "tokenizer": "intfloat/multilingual-e5-large",
+    "strip_footer": true,
+    "context": false,
+    "context_model": "claude-opus-5"
+  },
+  "versions": {
+    "pypdf": "6.16.2",
+    "transformers": "5.8.1",
+    "pyarrow": "25.0.1",
+    "anthropic": "1.8.0"
+  },
+  "counts": {
+    "documents": 331,
+    "chunks": 2559,
+    "size_min": 11,
+    "size_median": 477,
+    "size_max": 512,
+    "queries": 688,
+    "qrels": 1588
+  },
+  "pdfs_sha256": "027abe17e0bdf2d8866845c669fb2ff6507730a694a8551da88fb79f7450f10f"
+}

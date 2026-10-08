@@ -8,7 +8,7 @@ endpoint:
     GET  /api/options                          ->  {"buckets": [...], "descriptions": [...], "rerankers": {...}, "transform": {...}}
     GET  /api/progress                         ->  {"running", "done", "total", "query_id", "started"}
     POST /api/cancel                           ->  stops the run before its next question
-    POST /api/run  {"bucket", "k", "rerank", "variants", "docs", "doc_top", "rerank_depth", "rerank_keep"}  ->  {"run_id": ...}
+    POST /api/run  {"bucket", "k", "rerank", "variants", "docs", "doc_top", "rerank_depth", "rerank_keep", "sample"}  ->  {"run_id": ...}
     DELETE /api/runs/<run_id>                  ->  removes runs/<run_id>.json, regenerates index.json
 
 run.py is imported, not shelled out to: same process, same runs/ directory, and
@@ -81,6 +81,7 @@ class Handler(SimpleHTTPRequestHandler):
                 max(0, min(50, int(body.get("doc_top") or 0))),
                 max(0, min(100, int(body.get("rerank_depth") or 0))),
                 None if body.get("rerank_keep") in (None, "") else max(0.0, min(10.0, float(body["rerank_keep"]))),
+                max(1, min(100, int(body.get("sample") or 100))),
             )
             self.reply(200, {"run_id": payload["run_id"], "metrics": payload["metrics"]})
         except SystemExit as e:  # run.py's sys.exit("chunks-api unreachable…", sha mismatch…)

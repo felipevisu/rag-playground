@@ -18,6 +18,7 @@ readable by index.html without a database.
   python run.py --bucket 59cb0095 --docs 3fa1c2d4          # week09+: layer 1 = a descriptions bucket
   python run.py --bucket 59cb0095 --docs 3fa1c2d4 --doc-top 10 --k 5   # top-5 chunks of the top-10 documents
   python run.py --bucket 59cb0095 --rerank qwen3-rerank --rerank-depth 15 --rerank-keep 0   # week10+
+  python run.py --bucket 59cb0095 --sample 10      # a random 10% of the questions (ids recorded in the run)
   python run.py --options           # ready buckets
   python run.py --list          # history, newest first
   python run.py --reindex       # rebuild index.json after editing run files by hand
@@ -28,6 +29,7 @@ import argparse
 import json
 import math
 import os
+import random
 import sys
 import time
 import urllib.error
@@ -173,9 +175,10 @@ def bucket_info(api: str, bucket: str) -> dict:
 # ── run ────────────────────────────────────────────────────────────────────
 
 def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0, docs: str = "",
-        doc_top: int = 0, rerank_depth: int = 0, rerank_keep: float | None = None) -> dict:
+        doc_top: int = 0, rerank_depth: int = 0, rerank_keep: float | None = None, sample: int = 100) -> dict:
     """doc_top: documents layer 1 keeps (0 = the API's DOC_TOP). k: chunks returned.
-    rerank_depth / rerank_keep: candidates the reranker reads / first stage's vote (0 / None = the API's)."""
+    rerank_depth / rerank_keep: candidates the reranker reads / first stage's vote (0 / None = the API's).
+    sample: percent of the questions, drawn at random per run (100 = all)."""
     api = api.rstrip("/")
     b = bucket_info(api, bucket)
     if rerank and rerank not in (offered := list_rerankers(api)):
@@ -197,13 +200,16 @@ def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0, docs
         rerank_depth = rerank_depth or tuning["depth"]
         rerank_keep = tuning["keep"] if rerank_keep is None else rerank_keep
     queries = load_queries()
+    n_total = len(queries)
+    if sample < 100:  # a fresh draw each run; the ids land in per_query, so it can be reproduced
+        queries = sorted(random.sample(queries, max(1, round(n_total * sample / 100))), key=lambda q: q["query_id"])
     qrels = load_qrels(api, bucket)
     missing = [q["query_id"] for q in queries if q["query_id"] not in qrels]
     if missing:
         print(f"warning: {len(missing)} question(s) have no gabarito in this bucket: {missing[:5]}",
               file=sys.stderr)
 
-    print(f"{len(queries)} queries · k={k} · bucket {bucket} ({b['name']}, {b['retriever']})"
+    print(f"{len(queries)} queries" + (f" ({sample}% de {n_total}, sorteadas)" if sample < 100 else "") + f" · k={k} · bucket {bucket} ({b['name']}, {b['retriever']})"
           + (f" · rerank {rerank}" if rerank else "")
           + (f" depth={rerank_depth} keep={rerank_keep:g}" if tuning else "")
           + (f" · {variants} variantes ({transform['model']})" if variants else "")
@@ -263,7 +269,8 @@ def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0, docs
         "label": b["name"] + (f" + {d['name']} top-{doc_top} docs" if d else "")
                  + (f" + {variants} variantes" if variants else "")
                  + (f" + {rerank}" if rerank else "")
-                 + (f" depth={rerank_depth} keep={rerank_keep:g}" if tuning else "") + f" · k={k}",
+                 + (f" depth={rerank_depth} keep={rerank_keep:g}" if tuning else "") + f" · k={k}"
+                 + (f" · {sample}% ({len(queries)}/{n_total})" if sample < 100 else ""),
         "config": {
             "k": k,
             "api": api,
@@ -283,6 +290,8 @@ def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0, docs
             "embedding_model": b["retriever"],
             "corpus_sha256": b["parquet_sha"],
             "n_queries": len(queries),
+            "n_queries_total": n_total,
+            "sample_pct": sample,
             "n_chunks": b["chunk_count"],
             "n_qrels": b["qrels_count"],
         },
@@ -429,6 +438,7 @@ if __name__ == "__main__":
     ap.add_argument("--doc-top", type=int, default=0, help="documents layer 1 keeps (default: the API's DOC_TOP)")
     ap.add_argument("--rerank-depth", type=int, default=0, help="candidates the reranker reads (default: the API's RERANK_DEPTH), week10+")
     ap.add_argument("--rerank-keep", type=float, default=None, help="first stage's vote vs the reranker's 1.0; 0 = reranker alone (default: the API's RERANK_KEEP), week10+")
+    ap.add_argument("--sample", type=int, default=100, help="percent of the questions, random each run (default 100 = all)")
     ap.add_argument("--options", action="store_true", help="list ready buckets")
     ap.add_argument("--list", action="store_true", help="show run history")
     ap.add_argument("--reindex", action="store_true", help="rebuild index.json from run files")
@@ -445,4 +455,6 @@ if __name__ == "__main__":
         sys.exit(show_options(a.api))
     if not a.bucket:
         ap.error("--bucket is required (see --options)")
-    run(a.k, a.api, a.bucket, a.rerank, a.variants, a.docs, a.doc_top, a.rerank_depth, a.rerank_keep)
+    if not 1 <= a.sample <= 100:
+        ap.error("--sample is a percent: 1..100")
+    run(a.k, a.api, a.bucket, a.rerank, a.variants, a.docs, a.doc_top, a.rerank_depth, a.rerank_keep, a.sample)

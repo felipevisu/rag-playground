@@ -1,0 +1,11 @@
+# Pinned: chunk boundaries depend on these versions. Bump deliberately, rebuild, diff manifest.json.
+pypdf==6.16.2
+pyyaml==6.0.3
+pandas==3.0.5
+pyarrow==25.0.1
+# only for unit=tokens (downloads the tokenizer, not the model)
+transformers==5.8.1
+# only for source/download.py
+requests
+# only for context: true (contextual retrieval)
+anthropic==1.8.0
