@@ -8,12 +8,15 @@ endpoint:
     GET  /api/options                          ->  {"buckets": [...], "descriptions": [...], "rerankers": {...}, "transform": {...}}
     GET  /api/progress                         ->  {"running", "done", "total", "query_id", "started"}
     POST /api/cancel                           ->  stops the run before its next question
-    POST /api/run  {"bucket", "k", "rerank", "variants", "docs", "doc_top", "rerank_depth", "rerank_keep", "sample"}  ->  {"run_id": ...}
+    POST /api/run  {"bucket", "k", "rerank", "variants", "docs", "doc_top", "rerank_depth", "rerank_keep", "sample"}  ->  202, runs in a thread;
+                                               the outcome lands in /api/progress as "run_id" or "error"
     DELETE /api/runs/<run_id>                  ->  removes runs/<run_id>.json, regenerates index.json
 
 run.py is imported, not shelled out to: same process, same runs/ directory, and
 the exit-with-a-message paths (API down, dataset missing) come back as SystemExit
-and turn into the error the browser shows.
+and turn into the error the browser shows. The run doesn't hold the POST open:
+an hour-long idle request died to laptop sleep or a dropped port forward
+("Failed to fetch") while the run went on unseen.
 """
 
 import json
@@ -32,6 +35,17 @@ PORT = int(os.environ.get("PORT", 8080))
 # runs would race for the same filename, and they would race for the API too.
 busy = threading.Lock()
 RUN_ID = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}")  # also keeps the path inside runs/
+
+
+def run_in_background(*args):
+    try:
+        evaluation.PROGRESS["run_id"] = evaluation.run(*args)["run_id"]
+    except SystemExit as e:  # run.py's sys.exit("chunks-api unreachable…", sha mismatch, cancelado…)
+        evaluation.PROGRESS["error"] = str(e.code)
+    except Exception as e:
+        evaluation.PROGRESS["error"] = f"{type(e).__name__}: {e}"
+    finally:
+        busy.release()
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -70,8 +84,9 @@ class Handler(SimpleHTTPRequestHandler):
             n = int(self.headers.get("Content-Length") or 0)
             body = json.loads(self.rfile.read(n) or b"{}")
             if not body.get("bucket"):
+                busy.release()
                 return self.reply(400, {"error": "bucket é obrigatório"})
-            payload = evaluation.run(
+            args = (
                 max(1, min(50, int(body.get("k", 5)))),
                 evaluation.API,
                 str(body["bucket"]),
@@ -83,13 +98,12 @@ class Handler(SimpleHTTPRequestHandler):
                 None if body.get("rerank_keep") in (None, "") else max(0.0, min(10.0, float(body["rerank_keep"]))),
                 max(1, min(100, int(body.get("sample") or 100))),
             )
-            self.reply(200, {"run_id": payload["run_id"], "metrics": payload["metrics"]})
-        except SystemExit as e:  # run.py's sys.exit("chunks-api unreachable…", sha mismatch…)
-            self.reply(502, {"error": str(e.code)})
-        except Exception as e:
-            self.reply(500, {"error": f"{type(e).__name__}: {e}"})
-        finally:
+        except Exception as e:  # bad body: nothing started
             busy.release()
+            return self.reply(400, {"error": f"{type(e).__name__}: {e}"})
+        evaluation.PROGRESS.update(run_id=None, error=None)
+        threading.Thread(target=run_in_background, args=args, daemon=True).start()
+        self.reply(202, {"started": True})
 
     def do_DELETE(self):
         run_id = self.path.rstrip("/").removeprefix("/api/runs/")

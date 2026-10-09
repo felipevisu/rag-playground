@@ -48,7 +48,7 @@ METRICS = ("hit_rate", "recall", "precision", "mrr", "ndcg")
 # Where the current run is. server.py serves it at /api/progress and sets
 # `cancel` from /api/cancel; one run at a time (server.py's lock), so a module
 # global is enough.
-PROGRESS = {"done": 0, "total": 0, "query_id": None, "started": None, "cancel": False}
+PROGRESS = {"done": 0, "total": 0, "query_id": None, "started": None, "cancel": False, "run_id": None, "error": None}
 
 
 # ── metrics ────────────────────────────────────────────────────────────────
@@ -224,9 +224,13 @@ def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0, docs
         try:
             found = search(api, bucket, q["question"], k, rerank, variants, docs, doc_top,
                            rerank_depth if tuning else 0, rerank_keep if tuning else None)
-        except urllib.error.HTTPError as e:  # the API answered and said no: every question would fail the same way
-            sys.exit(f"{q['query_id']}: search -> {e.code}: {e.read().decode(errors='replace')[:300]} — nada gravado")
-        except (urllib.error.URLError, TimeoutError) as e:
+        except urllib.error.HTTPError as e:
+            if e.code < 500:  # the API said no (bad bucket, bad option): every question would fail the same way
+                sys.exit(f"{q['query_id']}: search -> {e.code}: {e.read().decode(errors='replace')[:300]} — nada gravado")
+            failures += 1  # an upstream blip (Voyage, Jev) on one question shouldn't throw away the whole run
+            print(f"  [{i}/{len(queries)}] {q['query_id']} FAILED: {e.code} {e.read().decode(errors='replace')[:200]}")
+            found = {}
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
             failures += 1
             print(f"  [{i}/{len(queries)}] {q['query_id']} FAILED: {e}")
             found = {}
@@ -243,6 +247,7 @@ def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0, docs
             **({"rewrites": found.get("queries", [])[1:]} if variants else {}),
             **({"documents": found.get("documents") or []} if docs else {}),  # layer 1's pick
             "expected": expected,
+            **({"usage": found["usage"]} if "usage" in found else {}),  # week10+: seconds/tokens/USD in Voyage and Jev
             "retrieved": [
                 {"chunk_id": r["id"], "rank": n, "filename": r["filename"],
                  "chunk_index": r["chunk_index"], "similarity": round(r["similarity"], 4),
@@ -301,6 +306,8 @@ def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0, docs
             "multi_chunk": aggregate(multi),
         },
         "failures": failures,
+        "elapsed_s": round(time.time() - PROGRESS["started"], 1),
+        "usage": total_usage(per_query),
         "per_query": per_query,
     }
 
@@ -311,8 +318,19 @@ def run(k: int, api: str, bucket: str, rerank: str = "", variants: int = 0, docs
 
     print(f"\nwrote runs/{path.name}")
     print("  " + "  ".join(f"{m} {payload['metrics'][m]:.3f}" for m in METRICS))
+    if u := payload["usage"]:
+        print(f"  {payload['elapsed_s']:.0f}s total · voyage {u['voyage_s']:.0f}s ${u['voyage_usd']:.4f}"
+              f" · jev {u['jev_s']:.0f}s {u['jev_calls']} calls ${u['jev_usd']:.4f}")
     compare_to_previous(payload)
     return payload
+
+
+def total_usage(per_query: list[dict]) -> dict | None:
+    """Sum of every question's API usage. None before week10 (the API didn't report it)."""
+    rows = [q["usage"] for q in per_query if "usage" in q]
+    if not rows:
+        return None
+    return {key: round(sum(r.get(key, 0) for r in rows), 6) for key in rows[0]}
 
 
 def compare_to_previous(current: dict) -> None:
@@ -422,6 +440,10 @@ def self_check() -> int:
     # empty result set must not divide by zero
     m = score(["a"], [], k=5)
     assert m["ndcg"] == 0.0 and m["precision"] == 0.0
+
+    u = total_usage([{"usage": {"voyage_s": 1.5, "jev_usd": 0.001}}, {"usage": {"voyage_s": 2.0, "jev_usd": 0.002}}, {}])
+    assert u == {"voyage_s": 3.5, "jev_usd": 0.003}, u
+    assert total_usage([{}]) is None
 
     print("self-check ok")
     return 0

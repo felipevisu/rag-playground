@@ -26,6 +26,7 @@ unchanged; without `bucket=` it uses the most recently indexed bucket.
 """
 
 import concurrent.futures
+import contextvars
 import functools
 import hashlib
 import io
@@ -129,6 +130,28 @@ VOYAGE_API_KEY = os.environ.get("VOYAGE_API_KEY", "")
 VOYAGE_URL = "https://ai.mongodb.com/v1" if VOYAGE_API_KEY.startswith("al-") else "https://api.voyageai.com/v1"
 TYPESAFE_API_KEY = os.environ.get("TYPESAFE_API_KEY", "")
 TYPESAFE_URL = "https://api.typesafe.ai/v1/systemone"
+# USD per 1M input tokens, list prices as of 2026-10 (Voyage docs; Jev via third-party write-ups,
+# TypeSafe has no pricing page). Output tokens are free on both.
+PRICE_PER_M = {"voyage-4-large": 0.12, "voyage-4": 0.06, "rerank-2.5": 0.05, "rerank-2.5-lite": 0.02,
+               "jev-1.13.0": 0.042}
+# Per search request: seconds and tokens spent in Voyage and Jev. None outside a search
+# (bucket embedding in the background isn't billed to any query).
+USAGE: contextvars.ContextVar[dict | None] = contextvars.ContextVar("usage", default=None)
+
+
+def new_usage() -> dict:
+    return {"voyage_s": 0.0, "voyage_tokens": 0, "voyage_usd": 0.0,
+            "jev_s": 0.0, "jev_calls": 0, "jev_tokens": 0, "jev_usd": 0.0}
+
+
+def charge(service: str, model: str, seconds: float, tokens: int, calls: int = 0) -> None:
+    if (u := USAGE.get()) is None:
+        return
+    u[f"{service}_s"] += seconds
+    u[f"{service}_tokens"] += tokens
+    u[f"{service}_usd"] += tokens * PRICE_PER_M.get(model, 0.0) / 1e6
+    if service == "jev":
+        u["jev_calls"] += calls
 # Asked in English (Jev's best language) about Portuguese text. criteria split "answers"
 # from "same subject", the classic first-stage mistake.
 JEV_QUESTIONS = {"answers": {
@@ -748,23 +771,29 @@ def rerank_scores(name: str, pairs: list[tuple[str, str]]) -> list[float]:
 
 
 def voyage_post(path: str, payload: dict) -> dict:
-    """POST to Voyage (or Atlas, by key). 429 = rate limit: wait and retry, 3 times."""
+    """POST to Voyage (or Atlas, by key). 429 / 5xx / dropped connection: wait and retry, 3 times."""
     if not VOYAGE_API_KEY:
         raise HTTPException(400, "VOYAGE_API_KEY is not set: put it in week10/.env and recreate chunks-api")
     req = urllib.request.Request(f"{VOYAGE_URL}/{path}", json.dumps(payload).encode(), {
         "Content-Type": "application/json", "Authorization": f"Bearer {VOYAGE_API_KEY}"})
+    t0 = time.perf_counter()  # retries' back-off included: it's time the query waited
     for attempt in range(4):
         try:
             with urllib.request.urlopen(req, timeout=120) as r:
-                return json.loads(r.read())
+                out = json.loads(r.read())
+            charge("voyage", payload["model"], time.perf_counter() - t0, out.get("usage", {}).get("total_tokens", 0))
+            return out
         except urllib.error.HTTPError as e:
-            if e.code == 429 and attempt < 3:
+            if (e.code == 429 or e.code >= 500) and attempt < 3:
                 wait = e.headers.get("Retry-After", "")
-                time.sleep(int(wait) if wait.isdigit() else 20)
+                time.sleep(int(wait) if wait.isdigit() else 20 if e.code == 429 else 2 ** attempt)
                 continue
             raise HTTPException(502, f"voyage {e.code}: {e.read().decode(errors='replace')[:300]}")
-        except urllib.error.URLError as e:
-            raise HTTPException(502, f"voyage {VOYAGE_URL} unreachable ({e.reason})")
+        except (urllib.error.URLError, ConnectionError, TimeoutError) as e:  # RemoteDisconnected is a ConnectionError
+            if attempt < 3:
+                time.sleep(2 ** attempt)
+                continue
+            raise HTTPException(502, f"voyage {VOYAGE_URL} unreachable ({getattr(e, 'reason', e)})")
 
 
 def voyage_embed(model: str, texts: list[str], input_type: str) -> np.ndarray:
@@ -787,7 +816,7 @@ def voyage_scores(model: str, pairs: list[tuple[str, str]]) -> list[float]:
 
 
 def jev_post(payload: dict) -> dict:
-    """POST to TypeSafe. 429 rate limit / 529 overloaded: back off and retry, 3 times."""
+    """POST to TypeSafe. 429 rate limit / 5xx / dropped connection: back off and retry, 3 times."""
     req = urllib.request.Request(TYPESAFE_URL, json.dumps(payload).encode(), {
         "Content-Type": "application/json", "Authorization": f"Bearer {TYPESAFE_API_KEY}"})
     for attempt in range(4):
@@ -795,13 +824,16 @@ def jev_post(payload: dict) -> dict:
             with urllib.request.urlopen(req, timeout=30) as r:
                 return json.loads(r.read())
         except urllib.error.HTTPError as e:
-            if e.code in (429, 529) and attempt < 3:
+            if (e.code == 429 or e.code >= 500) and attempt < 3:
                 wait = e.headers.get("Retry-After", "")
                 time.sleep(int(wait) if wait.isdigit() else 2 ** attempt)
                 continue
             raise HTTPException(502, f"typesafe {e.code}: {e.read().decode(errors='replace')[:300]}")
-        except urllib.error.URLError as e:
-            raise HTTPException(502, f"typesafe unreachable ({e.reason})")
+        except (urllib.error.URLError, ConnectionError, TimeoutError) as e:
+            if attempt < 3:
+                time.sleep(2 ** attempt)
+                continue
+            raise HTTPException(502, f"typesafe unreachable ({getattr(e, 'reason', e)})")
 
 
 def jev_scores(model: str, pairs: list[tuple[str, str]]) -> list[float]:
@@ -810,9 +842,12 @@ def jev_scores(model: str, pairs: list[tuple[str, str]]) -> list[float]:
         raise HTTPException(400, "TYPESAFE_API_KEY is not set: put it in week10/.env and recreate chunks-api")
     def one(pair):
         r = jev_post({"model": model, "state": {"query": pair[0], "passage": pair[1]}, "questions": JEV_QUESTIONS})
-        return float(r["answers"]["answers"]["noul"])
+        return float(r["answers"]["answers"]["noul"]), r.get("usage", {}).get("input_tokens", 0)
+    t0 = time.perf_counter()  # wall time of the whole parallel batch, not the sum of calls
     with concurrent.futures.ThreadPoolExecutor(16) as pool:
-        return list(pool.map(one, pairs))
+        got = list(pool.map(one, pairs))
+    charge("jev", model, time.perf_counter() - t0, sum(t for _, t in got), len(pairs))
+    return [s for s, _ in got]
 
 
 def rerank(cur, bid: str, name: str, q: str, ranked: list[tuple[str, float]]) -> list[tuple[str, float]]:
@@ -912,13 +947,17 @@ def do_search(cur, b: dict, q: str, k: int, rerank_with: str | None = None, vari
         raise HTTPException(400, "a descriptions bucket takes neither rerank nor docs")
     d = descriptions_for(cur, b, docs) if docs else None
     queries = [q, *rewrite(q, variants)] if variants else [q]
+    USAGE.set(usage := new_usage())
+    t0 = time.perf_counter()
     ranked = retrieve(cur, b, queries, k, rerank_with, d, doc_top, rerank_depth, rerank_keep)
+    usage["total_s"] = time.perf_counter() - t0
     out = {"query": q, "k": k, "bucket": b["id"], "retriever": b["retriever"],
            "rerank": rerank_with, "variants": variants, "queries": queries,
            "rerank_depth": rerank_depth if rerank_with else None,
            "rerank_keep": rerank_keep if rerank_with else None,
            "docs": docs, "doc_top": doc_top if d else None,
-           "documents": pick_documents(cur, d, q, doc_top), "results": []}  # layer 1 of the original question
+           "documents": pick_documents(cur, d, q, doc_top),  # layer 1 of the original question
+           "usage": {x: round(v, 8 if x.endswith("usd") else 4) for x, v in usage.items()}, "results": []}
     if ranked and b["kind"] == "descriptions":
         cur.execute("SELECT filename AS id, 0 AS chunk_index, description AS text, '' AS heading, "
                     "'[]'::jsonb AS pages, filename FROM documents WHERE bucket_id = %s AND filename = ANY(%s)",
@@ -1029,13 +1068,23 @@ if __name__ == "__main__":  # python main.py: self-check for the fusion, no DB n
     assert sent[-1] == {"input": ["a", "b"], "model": "voyage-4", "input_type": "document"}, sent[-1]
     assert [round(x, 1) for x in embed_query("voyage-4-large", "q?")] == [0.6, 0.8]
     assert sent[-1] == {"input": ["q?"], "model": "voyage-4-large", "input_type": "query"}, sent[-1]
+    # a connection Voyage drops mid-request (what killed long evals) is retried too
+    import http.client
+    replies[:] = [http.client.RemoteDisconnected("closed"), {"data": [{"index": 0, "embedding": [0.6, 0.8]}]}]
+    assert [round(x, 1) for x in embed_query("voyage-4-large", "q2?")] == [0.6, 0.8] and not replies
     # jev: one call per pair, P(yes) back in pair order; 529 retried
     TYPESAFE_API_KEY = "k"
     yes = lambda p: {"answers": {"answers": {"type": "noul", "noul": p}}}  # noqa: E731
     replies[:] = [urllib.error.HTTPError("u", 529, "busy", {}, io.BytesIO(b"")), yes(0.2)]
+    USAGE.set(u := new_usage())
     assert rerank_scores("jev-rerank", [("q?", "a")]) == [0.2]
+    assert u["jev_calls"] == 1 and u["voyage_tokens"] == 0, u
     assert sent[-1] == {"model": "jev-1.13.0", "state": {"query": "q?", "passage": "a"},
-                        "questions": JEV_QUESTIONS} and len(sent) == 6, sent[-1]
+                        "questions": JEV_QUESTIONS} and len(sent) == 8, sent[-1]
+    replies[:] = [{"data": [{"index": 0, "embedding": [1.0]}], "usage": {"total_tokens": 1_000_000}}]
+    encode("voyage-4-large", ["x"], query=True)
+    assert u["voyage_tokens"] == 1_000_000 and round(u["voyage_usd"], 2) == 0.12, u
+    USAGE.set(None)
     urllib.request.urlopen, time.sleep, VOYAGE_API_KEY = real_urlopen, real_sleep, ""
     TYPESAFE_API_KEY = ""
     try:

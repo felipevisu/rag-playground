@@ -9,6 +9,7 @@ Nasceu no [week02](../week02); cada semana depois só ganhou um seletor novo.
 | week07 | **rerank** |
 | week08 | **variantes** da pergunta |
 | week09 | **descrições** (camada 1) + quais PDFs foram escolhidos por pergunta |
+| week10 | **tempo** da run e **tempo + custo** gastos na Voyage e no Jev (preços em `PRICE_PER_M`, week10 chunks-api) |
 
 ## Rodando
 

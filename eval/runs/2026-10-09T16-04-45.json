@@ -1,0 +1,3049 @@
+{
+  "run_id": "2026-10-09T16-04-45",
+  "label": "sentence-512t-multilingual-e5-large · hybrid-voyage-4-large + descrições · hybrid-voyage-4-large top-5 docs + 5 variantes + jev-rerank depth=30 keep=1 · k=5 · 5% (34/688)",
+  "config": {
+    "k": 5,
+    "api": "http://chunks-api:8000",
+    "bucket": "d2189cd1",
+    "bucket_name": "sentence-512t-multilingual-e5-large · hybrid-voyage-4-large",
+    "retriever": "hybrid-voyage-4-large",
+    "chunker": {
+      "max": 512,
+      "min": 0,
+      "name": "sentence-512t-multilingual-e5-large",
+      "unit": "tokens",
+      "context": false,
+      "overlap": 0,
+      "splitter": "sentence",
+      "tokenizer": "intfloat/multilingual-e5-large",
+      "strip_footer": true,
+      "context_model": "claude-opus-5"
+    },
+    "rerank": "jev-rerank",
+    "rerank_depth": 30,
+    "rerank_keep": 1.0,
+    "variants": 5,
+    "transform_model": "claude-haiku-4-5 (week05 questions); written in-session (week11 questions)",
+    "docs": "f8353858",
+    "docs_name": "descrições · hybrid-voyage-4-large",
+    "docs_retriever": "hybrid-voyage-4-large",
+    "doc_top": 5,
+    "embedding_model": "hybrid-voyage-4-large",
+    "corpus_sha256": "8ea6a3b5cf7db4363eabef8c5d61860ccc8c3e8a4362da30470e91737e7c9d16",
+    "n_queries": 34,
+    "n_queries_total": 688,
+    "sample_pct": 5,
+    "n_chunks": 2559,
+    "n_qrels": 1588
+  },
+  "metrics": {
+    "hit_rate": 1.0,
+    "recall": 0.9902,
+    "precision": 0.2824,
+    "mrr": 0.9338,
+    "ndcg": 0.9338
+  },
+  "metrics_by_type": {
+    "single_chunk": {
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.9405,
+      "ndcg": 0.9553
+    },
+    "multi_chunk": {
+      "hit_rate": 1.0,
+      "recall": 0.9744,
+      "precision": 0.4154,
+      "mrr": 0.9231,
+      "ndcg": 0.899
+    }
+  },
+  "failures": 0,
+  "elapsed_s": 162.0,
+  "usage": {
+    "voyage_s": 100.1024,
+    "voyage_tokens": 5830,
+    "voyage_usd": 0.0007,
+    "jev_s": 51.7404,
+    "jev_calls": 1011,
+    "jev_tokens": 944194,
+    "jev_usd": 0.039656,
+    "total_s": 160.9529
+  },
+  "per_query": [
+    {
+      "query_id": "q004",
+      "question": "No acordo educacional entre Brasil e Filipinas, que tipo de ato futuro ainda vai precisar passar pelo Congresso, e com base em que artigo da Constituição?",
+      "type": "multi_chunk",
+      "filename": "PDL_102_2026.pdf",
+      "rewrites": [
+        "No acordo de educação com as Filipinas, que atos posteriores dependem de aprovação do Congresso e qual dispositivo constitucional fundamenta isso?",
+        "Quais atos que resultem em denúncia, revisão ou ajustes complementares do acordo educacional com as Filipinas ficam sujeitos ao Congresso Nacional?",
+        "Por que ajustes complementares que gerem encargos gravosos ao patrimônio nacional no acordo Brasil–Filipinas precisam passar pelo Congresso?",
+        "Quando um tratado internacional precisa voltar ao Congresso para aprovação?",
+        "acordo Filipinas denúncia revisão ajustes complementares art. 49 Constituição"
+      ],
+      "documents": [
+        "PDL_102_2026.pdf",
+        "PDL_615_2025.pdf",
+        "PDL_757_2025.pdf",
+        "PDL_934_2025.pdf",
+        "PL_127_2026.pdf"
+      ],
+      "expected": [
+        "PDL_102_2026::0000",
+        "PDL_934_2025::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.6081,
+        "voyage_tokens": 171,
+        "voyage_usd": 2.052e-05,
+        "jev_s": 1.4764,
+        "jev_calls": 29,
+        "jev_tokens": 24551,
+        "jev_usd": 0.00103114,
+        "total_s": 4.3855
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PDL_102_2026::0000",
+          "rank": 1,
+          "filename": "PDL_102_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PDL_757_2025::0001",
+          "rank": 2,
+          "filename": "PDL_757_2025.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0318,
+          "expected": false
+        },
+        {
+          "chunk_id": "PDL_934_2025::0001",
+          "rank": 3,
+          "filename": "PDL_934_2025.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0311,
+          "expected": false
+        },
+        {
+          "chunk_id": "PDL_615_2025::0000",
+          "rank": 4,
+          "filename": "PDL_615_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.031,
+          "expected": false
+        },
+        {
+          "chunk_id": "PDL_934_2025::0000",
+          "rank": 5,
+          "filename": "PDL_934_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0306,
+          "expected": true
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 0.8503449055347546,
+      "dcg": 1.3868528072345416,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q034",
+      "question": "Quem não instalar rastreamento em tempo real no transporte escolar sofre quais sanções, e qual o prazo para os veículos se adequarem e para a regulamentação sair?",
+      "type": "single_chunk",
+      "filename": "PL_1240_2026.pdf",
+      "rewrites": [
+        "Que penalidades sofre quem não colocar rastreamento em tempo real no transporte escolar e quais os prazos de adaptação e de regulamentação?",
+        "Quais sanções administrativas se aplicam ao descumprimento da obrigatoriedade de GPS em veículos escolares e quais os prazos para adequação da frota e para o regulamento?",
+        "A van escolar sem rastreador pode ter a autorização suspensa ou cassada?",
+        "O que acontece com transporte escolar irregular?",
+        "transporte escolar GPS sanções advertência multa cassação prazo adequação"
+      ],
+      "documents": [
+        "PL_1240_2026.pdf",
+        "PL_617_2026.pdf",
+        "PL_44_2026.pdf",
+        "PL_415_2026.pdf",
+        "PL_944_2026.pdf"
+      ],
+      "expected": [
+        "PL_1240_2026::0002"
+      ],
+      "usage": {
+        "voyage_s": 2.279,
+        "voyage_tokens": 166,
+        "voyage_usd": 1.992e-05,
+        "jev_s": 1.5431,
+        "jev_calls": 30,
+        "jev_tokens": 28252,
+        "jev_usd": 0.00118658,
+        "total_s": 4.1038
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_1240_2026::0002",
+          "rank": 1,
+          "filename": "PL_1240_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1240_2026::0001",
+          "rank": 2,
+          "filename": "PL_1240_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0318,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1240_2026::0003",
+          "rank": 3,
+          "filename": "PL_1240_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1240_2026::0000",
+          "rank": 4,
+          "filename": "PL_1240_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.031,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_944_2026::0004",
+          "rank": 5,
+          "filename": "PL_944_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0306,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q038",
+      "question": "O Programa AMPARA se inspira em qual programa já existente nas escolas e quais são os quatro profissionais sugeridos para tocar as atividades?",
+      "type": "multi_chunk",
+      "filename": "PL_1271_2026.pdf",
+      "rewrites": [
+        "Em qual programa escolar já existente o AMPARA se baseia e quem seriam os quatro profissionais responsáveis pelas atividades?",
+        "Qual modelo de programa preventivo nas escolas inspira o Programa Nacional AMPARA e qual a composição sugerida da equipe de instrutores?",
+        "O AMPARA seguiria o formato do Proerd com policial militar, policial civil, conselheiro tutelar e educador?",
+        "Como funcionaria um programa de prevenção à violência conduzido por policiais nas escolas?",
+        "AMPARA Proerd quatro profissionais instrutor policial conselho tutelar educador"
+      ],
+      "documents": [
+        "PL_1271_2026.pdf",
+        "PL_1206_2026.pdf",
+        "PL_132_2026.pdf",
+        "PL_574_2026.pdf",
+        "PL_122_2026.pdf"
+      ],
+      "expected": [
+        "PL_1271_2026::0005",
+        "PL_1271_2026::0006"
+      ],
+      "usage": {
+        "voyage_s": 2.1519,
+        "voyage_tokens": 163,
+        "voyage_usd": 1.956e-05,
+        "jev_s": 1.4572,
+        "jev_calls": 30,
+        "jev_tokens": 28175,
+        "jev_usd": 0.00118335,
+        "total_s": 3.8941
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_1271_2026::0006",
+          "rank": 1,
+          "filename": "PL_1271_2026.pdf",
+          "chunk_index": 6,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1271_2026::0005",
+          "rank": 2,
+          "filename": "PL_1271_2026.pdf",
+          "chunk_index": 5,
+          "similarity": 0.032,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1271_2026::0002",
+          "rank": 3,
+          "filename": "PL_1271_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1271_2026::0000",
+          "rank": 4,
+          "filename": "PL_1271_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1271_2026::0001",
+          "rank": 5,
+          "filename": "PL_1271_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0305,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q054",
+      "question": "Quem pagaria a conta da Tarifa Zero Estudantil e que números de tarifa e salário mínimo mostram o peso do transporte no orçamento das famílias?",
+      "type": "multi_chunk",
+      "filename": "PL_131_2026.pdf",
+      "rewrites": [
+        "Quem pagaria a Tarifa Zero Estudantil e quanto a passagem pesa no orçamento de uma família que ganha um salário mínimo?",
+        "Como seria o custeio tripartite da gratuidade estudantil no transporte coletivo e que valores de tarifa e de salário mínimo são usados na justificativa?",
+        "O FNDE pagaria metade do passe livre estudantil? Com passagem acima de R$ 6, quanto um estudante gasta por mês?",
+        "Quanto custa o transporte para estudantes?",
+        "Tarifa Zero Estudantil custeio FNDE 50% tarifa R$ 6 salário mínimo"
+      ],
+      "documents": [
+        "PL_131_2026.pdf",
+        "PL_1347_2026.pdf",
+        "PL_1350_2026.pdf",
+        "PL_173_2026.pdf",
+        "PL_985_2026.pdf"
+      ],
+      "expected": [
+        "PL_131_2026::0000",
+        "PL_131_2026::0001"
+      ],
+      "usage": {
+        "voyage_s": 2.1619,
+        "voyage_tokens": 177,
+        "voyage_usd": 2.124e-05,
+        "jev_s": 1.8351,
+        "jev_calls": 30,
+        "jev_tokens": 27363,
+        "jev_usd": 0.00114925,
+        "total_s": 4.2641
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_131_2026::0000",
+          "rank": 1,
+          "filename": "PL_131_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_131_2026::0001",
+          "rank": 2,
+          "filename": "PL_131_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.032,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_131_2026::0002",
+          "rank": 3,
+          "filename": "PL_131_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1347_2026::0001",
+          "rank": 4,
+          "filename": "PL_1347_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0303,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1350_2026::0002",
+          "rank": 5,
+          "filename": "PL_1350_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0301,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q069",
+      "question": "O que seriam as Instituições Municipais de Educação Superior (IMES) e que prerrogativas a proposta dá a elas?",
+      "type": "multi_chunk",
+      "filename": "PL_1416_2026.pdf",
+      "rewrites": [
+        "Como a proposta define as faculdades e universidades municipais e que direitos lhes garante?",
+        "Instituições Municipais de Educação Superior (IMES): conceito, natureza jurídica de direito público e prerrogativas",
+        "O que caracteriza uma instituição de ensino superior criada e mantida por município e quais prerrogativas ela teria?",
+        "Quais são as regras para instituições de ensino superior municipais?",
+        "IMES instituições municipais educação superior definição prerrogativas"
+      ],
+      "documents": [
+        "PL_1416_2026.pdf",
+        "PL_1517_2026.pdf",
+        "PL_873_2026.pdf",
+        "PL_1347_2026.pdf",
+        "PL_131_2026.pdf"
+      ],
+      "expected": [
+        "PL_1416_2026::0000",
+        "PL_1416_2026::0001"
+      ],
+      "usage": {
+        "voyage_s": 2.4818,
+        "voyage_tokens": 136,
+        "voyage_usd": 1.632e-05,
+        "jev_s": 1.4048,
+        "jev_calls": 30,
+        "jev_tokens": 27783,
+        "jev_usd": 0.00116689,
+        "total_s": 4.1577
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_1416_2026::0000",
+          "rank": 1,
+          "filename": "PL_1416_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1416_2026::0005",
+          "rank": 2,
+          "filename": "PL_1416_2026.pdf",
+          "chunk_index": 5,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1416_2026::0002",
+          "rank": 3,
+          "filename": "PL_1416_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.031,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1416_2026::0001",
+          "rank": 4,
+          "filename": "PL_1416_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.031,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1416_2026::0006",
+          "rank": 5,
+          "filename": "PL_1416_2026.pdf",
+          "chunk_index": 6,
+          "similarity": 0.0306,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 0.8772153153380493,
+      "dcg": 1.4306765580733931,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q076",
+      "question": "Na proposta de substituir plástico descartável nas escolas e no governo, o que muda na Lei de Licitações e que números sobre plástico no Brasil são citados?",
+      "type": "single_chunk",
+      "filename": "PL_1465_2026.pdf",
+      "rewrites": [
+        "Como a proposta de eliminar plásticos descartáveis altera a Lei de Licitações e que dados sobre plástico no Brasil apresenta?",
+        "Alteração no art. 20 da Lei de Licitações para substituição progressiva de plásticos de uso único na Administração Pública e estatísticas de poluição plástica",
+        "Quantos itens plásticos descartáveis o Brasil produz por ano e o que muda nas compras públicas com a proposta de substituição?",
+        "Por que reduzir o plástico descartável no setor público?",
+        "plástico descartável Lei de Licitações compras públicas dados Brasil"
+      ],
+      "documents": [
+        "PL_1465_2026.pdf",
+        "PL_759_2026.pdf",
+        "PL_936_2026.pdf",
+        "PL_689_2026.pdf",
+        "PL_1346_2026.pdf"
+      ],
+      "expected": [
+        "PL_1465_2026::0001"
+      ],
+      "usage": {
+        "voyage_s": 2.4978,
+        "voyage_tokens": 176,
+        "voyage_usd": 2.112e-05,
+        "jev_s": 1.4321,
+        "jev_calls": 30,
+        "jev_tokens": 27926,
+        "jev_usd": 0.00117289,
+        "total_s": 4.1821
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_1465_2026::0001",
+          "rank": 1,
+          "filename": "PL_1465_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1465_2026::0000",
+          "rank": 2,
+          "filename": "PL_1465_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1465_2026::0002",
+          "rank": 3,
+          "filename": "PL_1465_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1465_2026::0003",
+          "rank": 4,
+          "filename": "PL_1465_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.031,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_5407_2025::0002",
+          "rank": 5,
+          "filename": "PL_5407_2025.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0303,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q077",
+      "question": "Filosofia e Sociologia vão voltar a ser obrigatórias no ensino médio? O que muda na LDB e qual a carga horária mínima?",
+      "type": "single_chunk",
+      "filename": "PL_1466_2026.pdf",
+      "rewrites": [
+        "Filosofia e Sociologia voltariam a ser disciplinas obrigatórias no ensino médio? Com quantas aulas?",
+        "Inclusão de Filosofia e Sociologia como componentes curriculares obrigatórios em todas as séries do ensino médio na LDB e carga horária mínima",
+        "Quantas aulas semanais de Filosofia e Sociologia o ensino médio teria de oferecer pela proposta que altera a LDB?",
+        "O ensino médio vai ter mais disciplinas de humanas?",
+        "Filosofia Sociologia obrigatórias ensino médio carga horária"
+      ],
+      "documents": [
+        "PL_1466_2026.pdf",
+        "PL_1531_2026.pdf",
+        "PL_1021_2026.pdf",
+        "PL_1573_2026.pdf",
+        "PL_934_2026.pdf"
+      ],
+      "expected": [
+        "PL_1466_2026::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.5956,
+        "voyage_tokens": 163,
+        "voyage_usd": 1.956e-05,
+        "jev_s": 1.4248,
+        "jev_calls": 30,
+        "jev_tokens": 28347,
+        "jev_usd": 0.00119057,
+        "total_s": 4.2952
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_1466_2026::0000",
+          "rank": 1,
+          "filename": "PL_1466_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1466_2026::0001",
+          "rank": 2,
+          "filename": "PL_1466_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1531_2026::0001",
+          "rank": 3,
+          "filename": "PL_1531_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1466_2026::0002",
+          "rank": 4,
+          "filename": "PL_1466_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.031,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1531_2026::0000",
+          "rank": 5,
+          "filename": "PL_1531_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0305,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q085",
+      "question": "No programa de infraestrutura digital e economia de dados, como funciona o licenciamento acelerado: qual o prazo pro órgão decidir, como fica a diligência e o que acontece se estourar o prazo?",
+      "type": "single_chunk",
+      "filename": "PL_1500_2026.pdf",
+      "rewrites": [
+        "Como funcionaria o licenciamento acelerado para projetos de data centers e infraestrutura digital?",
+        "Regime administrativo de aceleração de licenciamento: prazo de 90 dias, diligência única de 30 dias e submissão ao conselho interministerial em caso de atraso",
+        "Quanto tempo o órgão teria para decidir sobre licenças de projetos estratégicos de infraestrutura digital e o que ocorre se não cumprir o prazo?",
+        "Existe proposta para agilizar licenças de data centers?",
+        "infraestrutura digital licenciamento acelerado prazo diligência data centers"
+      ],
+      "documents": [
+        "PL_1500_2026.pdf",
+        "PL_3056_2025.pdf",
+        "PL_1593_2026.pdf",
+        "PL_463_2026.pdf",
+        "PL_410_2026.pdf"
+      ],
+      "expected": [
+        "PL_1500_2026::0003"
+      ],
+      "usage": {
+        "voyage_s": 2.482,
+        "voyage_tokens": 180,
+        "voyage_usd": 2.16e-05,
+        "jev_s": 1.4424,
+        "jev_calls": 30,
+        "jev_tokens": 28629,
+        "jev_usd": 0.00120242,
+        "total_s": 4.1816
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_1500_2026::0003",
+          "rank": 1,
+          "filename": "PL_1500_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1500_2026::0010",
+          "rank": 2,
+          "filename": "PL_1500_2026.pdf",
+          "chunk_index": 10,
+          "similarity": 0.031,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1500_2026::0011",
+          "rank": 3,
+          "filename": "PL_1500_2026.pdf",
+          "chunk_index": 11,
+          "similarity": 0.031,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1500_2026::0000",
+          "rank": 4,
+          "filename": "PL_1500_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0302,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1500_2026::0002",
+          "rank": 5,
+          "filename": "PL_1500_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0296,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q095",
+      "question": "Querem ensinar combate à violência contra a mulher na escola? Como esse conteúdo entraria no currículo da educação básica e quais temas teria?",
+      "type": "single_chunk",
+      "filename": "PL_1554_2026.pdf",
+      "rewrites": [
+        "Há proposta de ensinar prevenção da violência contra a mulher nas escolas? Que conteúdos teria?",
+        "Inclusão obrigatória e transversal de conteúdos de combate à violência contra mulheres na educação infantil, fundamental e médio",
+        "Quais temas, como igualdade de gênero e canais de denúncia, entrariam no currículo escolar pela proposta contra a violência de gênero?",
+        "As escolas deveriam discutir violência contra mulheres?",
+        "violência contra mulher escola currículo conteúdos"
+      ],
+      "documents": [
+        "PL_759_2026.pdf",
+        "PL_1554_2026.pdf",
+        "PL_1021_2026.pdf",
+        "PL_1555_2026.pdf",
+        "PL_936_2026.pdf"
+      ],
+      "expected": [
+        "PL_1554_2026::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.3813,
+        "voyage_tokens": 149,
+        "voyage_usd": 1.788e-05,
+        "jev_s": 1.4341,
+        "jev_calls": 30,
+        "jev_tokens": 27630,
+        "jev_usd": 0.00116046,
+        "total_s": 4.0629
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_1554_2026::0000",
+          "rank": 1,
+          "filename": "PL_1554_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1021_2026::0002",
+          "rank": 2,
+          "filename": "PL_1021_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0318,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1021_2026::0000",
+          "rank": 3,
+          "filename": "PL_1021_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0318,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1021_2026::0001",
+          "rank": 4,
+          "filename": "PL_1021_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0302,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_759_2026::0000",
+          "rank": 5,
+          "filename": "PL_759_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0301,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q136",
+      "question": "Quem pagaria a conta da isenção de IPI de veículos para os profissionais de segurança pública, e por que isso seria fiscalmente responsável?",
+      "type": "multi_chunk",
+      "filename": "PL_426_2026.pdf",
+      "rewrites": [
+        "Como seria compensada a perda de arrecadação com a isenção de IPI de carros para profissionais de segurança, e por que isso seria responsável do ponto de vista fiscal?",
+        "custeio da renúncia fiscal da isenção de IPI para profissionais de segurança pública pelo Fundo Nacional de Segurança e Educação de Trânsito (FUNSET)",
+        "O FUNSET passaria a pagar a renúncia do IPI de veículos de policiais e agentes de segurança? Quem administraria esse dinheiro?",
+        "Como financiar benefícios fiscais sem prejudicar as contas públicas?",
+        "FUNSET renúncia fiscal isenção IPI segurança pública responsabilidade fiscal"
+      ],
+      "documents": [
+        "PL_426_2026.pdf",
+        "PL_900_2026.pdf",
+        "PL_685_2026.pdf",
+        "PL_1370_2026.pdf",
+        "PL_416_2026.pdf"
+      ],
+      "expected": [
+        "PL_426_2026::0000",
+        "PL_426_2026::0001",
+        "PL_426_2026::0002"
+      ],
+      "usage": {
+        "voyage_s": 2.447,
+        "voyage_tokens": 174,
+        "voyage_usd": 2.088e-05,
+        "jev_s": 1.793,
+        "jev_calls": 30,
+        "jev_tokens": 27558,
+        "jev_usd": 0.00115744,
+        "total_s": 4.5161
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_426_2026::0001",
+          "rank": 1,
+          "filename": "PL_426_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_426_2026::0002",
+          "rank": 2,
+          "filename": "PL_426_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_426_2026::0000",
+          "rank": 3,
+          "filename": "PL_426_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0315,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_685_2026::0005",
+          "rank": 4,
+          "filename": "PL_685_2026.pdf",
+          "chunk_index": 5,
+          "similarity": 0.0313,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_685_2026::0002",
+          "rank": 5,
+          "filename": "PL_685_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.031,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 3,
+      "total": 3,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.6,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 2.1309297535714578,
+      "idcg": 2.1309297535714578,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q143",
+      "question": "Quais temas entrariam na disciplina obrigatória de Educação Financeira em todos os anos da educação básica?",
+      "type": "single_chunk",
+      "filename": "PL_471_2026.pdf",
+      "rewrites": [
+        "Que conteúdos teria a disciplina obrigatória de Educação Financeira ensinada em todos os anos da educação básica?",
+        "matriz curricular da disciplina obrigatória de Educação Financeira: finanças pessoais, orçamento, consumo consciente, crédito, investimentos e prevenção a fraudes",
+        "A matéria obrigatória de educação financeira ensinaria uso de cartão de crédito, juros, inflação, direitos do consumidor financeiro e prevenção a golpes?",
+        "O que os alunos aprenderiam numa aula de finanças?",
+        "disciplina educação financeira obrigatória temas cartão crédito juros golpes"
+      ],
+      "documents": [
+        "PL_471_2026.pdf",
+        "PL_759_2026.pdf",
+        "PL_35_2026.pdf",
+        "PL_348_2026.pdf",
+        "PL_577_2026.pdf"
+      ],
+      "expected": [
+        "PL_471_2026::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.8313,
+        "voyage_tokens": 154,
+        "voyage_usd": 1.848e-05,
+        "jev_s": 1.3979,
+        "jev_calls": 30,
+        "jev_tokens": 27849,
+        "jev_usd": 0.00116966,
+        "total_s": 4.4766
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_471_2026::0000",
+          "rank": 1,
+          "filename": "PL_471_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_348_2026::0000",
+          "rank": 2,
+          "filename": "PL_348_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_471_2026::0001",
+          "rank": 3,
+          "filename": "PL_471_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0318,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_348_2026::0001",
+          "rank": 4,
+          "filename": "PL_348_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_348_2026::0002",
+          "rank": 5,
+          "filename": "PL_348_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0308,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q148",
+      "question": "Para o programa de tutoria intensiva receber dinheiro federal, que condições precisa cumprir, e o que o MEC terá que mostrar no relatório anual?",
+      "type": "single_chunk",
+      "filename": "PL_496_2026.pdf",
+      "rewrites": [
+        "Que exigências o programa de tutoria intensiva precisa cumprir para ter dinheiro da União, e o que o relatório anual do MEC deve conter?",
+        "condições para o financiamento federal do Programa Nacional de Tutoria Intensiva e Recomposição de Aprendizagens e conteúdo do relatório anual de monitoramento",
+        "Para receber recursos federais da tutoria intensiva, a rede precisa de adesão, plano e metas? O relatório do MEC traria número de atendidos e análise de custo-efetividade?",
+        "Como o governo federal acompanha programas de recuperação de aprendizagem?",
+        "tutoria intensiva financiamento federal condições relatório anual MEC custo-efetividade"
+      ],
+      "documents": [
+        "PL_496_2026.pdf",
+        "PL_1517_2026.pdf",
+        "PL_701_2026.pdf",
+        "PL_348_2026.pdf",
+        "PL_277_2026.pdf"
+      ],
+      "expected": [
+        "PL_496_2026::0001"
+      ],
+      "usage": {
+        "voyage_s": 0.0,
+        "voyage_tokens": 0,
+        "voyage_usd": 0.0,
+        "jev_s": 1.4035,
+        "jev_calls": 30,
+        "jev_tokens": 28466,
+        "jev_usd": 0.00119557,
+        "total_s": 1.4907
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_496_2026::0001",
+          "rank": 1,
+          "filename": "PL_496_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_496_2026::0000",
+          "rank": 2,
+          "filename": "PL_496_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0304,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1505_2026::0004",
+          "rank": 3,
+          "filename": "PL_1505_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0297,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1505_2026::0009",
+          "rank": 4,
+          "filename": "PL_1505_2026.pdf",
+          "chunk_index": 9,
+          "similarity": 0.0296,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_496_2026::0002",
+          "rank": 5,
+          "filename": "PL_496_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0287,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q223",
+      "question": "Como ficaria a medida socioeducativa de adolescentes que cometem violência ou grave ameaça contra animais, segundo a proposta que altera o ECA?",
+      "type": "single_chunk",
+      "filename": "PL_958_2026.pdf",
+      "rewrites": [
+        "Como ficaria a prestação de serviços comunitários de adolescentes que agredirem animais, segundo a mudança no ECA?",
+        "Cumprimento preferencial da medida socioeducativa de prestação de serviços à comunidade em entidades de proteção animal por ato infracional contra animal",
+        "Adolescente que maltratar animal teria que prestar serviço em ONG ou órgão de proteção animal?",
+        "Que medidas se aplicam a jovens que cometem crueldade contra animais?",
+        "ECA adolescente violência contra animal serviços comunitários proteção animal"
+      ],
+      "documents": [
+        "PL_958_2026.pdf",
+        "PL_1568_2026.pdf",
+        "PL_289_2026.pdf",
+        "PL_1435_2026.pdf",
+        "PL_286_2026.pdf"
+      ],
+      "expected": [
+        "PL_958_2026::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.3264,
+        "voyage_tokens": 146,
+        "voyage_usd": 1.752e-05,
+        "jev_s": 1.4421,
+        "jev_calls": 30,
+        "jev_tokens": 27870,
+        "jev_usd": 0.00117054,
+        "total_s": 4.0111
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_958_2026::0000",
+          "rank": 1,
+          "filename": "PL_958_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_958_2026::0002",
+          "rank": 2,
+          "filename": "PL_958_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1568_2026::0000",
+          "rank": 3,
+          "filename": "PL_1568_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0313,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1568_2026::0001",
+          "rank": 4,
+          "filename": "PL_1568_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0308,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1568_2026::0002",
+          "rank": 5,
+          "filename": "PL_1568_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0305,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q302",
+      "question": "Que ilegalidades materiais são apontadas na portaria de florestas públicas não destinadas em relação ao conceito de comunidades locais e à exigência de licenciamento ambiental?",
+      "type": "multi_chunk",
+      "filename": "PDL_75_2025.pdf",
+      "rewrites": [
+        "Que ilegalidades materiais a portaria sobre florestas públicas não destinadas teria quanto às comunidades locais e ao licenciamento ambiental?",
+        "Restrição indevida do conceito legal de comunidades locais e ausência de exigência de licenciamento ambiental no SISNAMA na portaria interministerial",
+        "Por que equiparar comunidades locais a povos e comunidades tradicionais excluiria outros grupos protegidos pela Lei de Gestão de Florestas Públicas, e qual a crítica sobre a falta de licenciamento?",
+        "Quais problemas jurídicos tem a regulamentação de territórios tradicionais em florestas públicas?",
+        "comunidades locais povos tradicionais equiparação licenciamento ambiental portaria florestas públicas ilegalidade"
+      ],
+      "documents": [
+        "PDL_75_2025.pdf",
+        "PDL_68_2025.pdf",
+        "PDL_70_2025.pdf",
+        "PDL_263_2026.pdf",
+        "PDL_342_2025.pdf"
+      ],
+      "expected": [
+        "PDL_75_2025::0001",
+        "PDL_75_2025::0003"
+      ],
+      "usage": {
+        "voyage_s": 2.2717,
+        "voyage_tokens": 212,
+        "voyage_usd": 2.544e-05,
+        "jev_s": 1.4647,
+        "jev_calls": 30,
+        "jev_tokens": 29167,
+        "jev_usd": 0.00122501,
+        "total_s": 4.0202
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PDL_75_2025::0002",
+          "rank": 1,
+          "filename": "PDL_75_2025.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0325,
+          "expected": false
+        },
+        {
+          "chunk_id": "PDL_75_2025::0001",
+          "rank": 2,
+          "filename": "PDL_75_2025.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PDL_68_2025::0001",
+          "rank": 3,
+          "filename": "PDL_68_2025.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0308,
+          "expected": false
+        },
+        {
+          "chunk_id": "PDL_68_2025::0015",
+          "rank": 4,
+          "filename": "PDL_68_2025.pdf",
+          "chunk_index": 15,
+          "similarity": 0.0308,
+          "expected": false
+        },
+        {
+          "chunk_id": "PDL_75_2025::0003",
+          "rank": 5,
+          "filename": "PDL_75_2025.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0308,
+          "expected": true
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 0.5,
+      "ndcg": 0.6240505200038379,
+      "dcg": 1.0177825608059992,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q312",
+      "question": "Como funcionaria a cobrança gradual das alíquotas do Imposto Seletivo entre 2027 e 2033, e o que acontece se as metas programáticas não forem atingidas, inclusive quem faz a reavaliação?",
+      "type": "multi_chunk",
+      "filename": "PLP_29_2024.pdf",
+      "rewrites": [
+        "Como seria a implantação gradual do Imposto Seletivo de 2027 a 2033 e o que ocorre se as metas não forem cumpridas?",
+        "Cobrança faseada das alíquotas do Imposto Seletivo e revisão anual com suspensão da incidência quando as metas programáticas não forem alcançadas",
+        "Se as metas de redução de danos não forem atingidas, o Imposto Seletivo pode ser suspenso? Quem reavalia, uma comissão especial do Senado?",
+        "Como o Imposto Seletivo seria monitorado depois de criado?",
+        "Imposto Seletivo alíquota gradual 2027 2033 metas programáticas suspensão Senado reavaliação"
+      ],
+      "documents": [
+        "PLP_29_2024.pdf",
+        "PLP_42_2026.pdf",
+        "PLP_31_2025.pdf",
+        "PL_3424_2026.pdf",
+        "PL_900_2026.pdf"
+      ],
+      "expected": [
+        "PLP_29_2024::0001",
+        "PLP_29_2024::0004",
+        "PLP_29_2024::0005"
+      ],
+      "usage": {
+        "voyage_s": 2.2798,
+        "voyage_tokens": 224,
+        "voyage_usd": 2.688e-05,
+        "jev_s": 1.3947,
+        "jev_calls": 30,
+        "jev_tokens": 29232,
+        "jev_usd": 0.00122774,
+        "total_s": 3.9672
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PLP_29_2024::0004",
+          "rank": 1,
+          "filename": "PLP_29_2024.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PLP_29_2024::0001",
+          "rank": 2,
+          "filename": "PLP_29_2024.pdf",
+          "chunk_index": 1,
+          "similarity": 0.032,
+          "expected": true
+        },
+        {
+          "chunk_id": "PLP_29_2024::0006",
+          "rank": 3,
+          "filename": "PLP_29_2024.pdf",
+          "chunk_index": 6,
+          "similarity": 0.0318,
+          "expected": false
+        },
+        {
+          "chunk_id": "PLP_42_2026::0001",
+          "rank": 4,
+          "filename": "PLP_42_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PLP_42_2026::0002",
+          "rank": 5,
+          "filename": "PLP_42_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0299,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 3,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 0.6666666666666666,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 0.7653606369886217,
+      "dcg": 1.6309297535714575,
+      "idcg": 2.1309297535714578,
+      "verdict": "partial"
+    },
+    {
+      "query_id": "q321",
+      "question": "Na Política Nacional de Conservação do Solo, como o serviço voluntário ambiental seria incentivado e que capacitações estão previstas?",
+      "type": "single_chunk",
+      "filename": "PL_1257_2024.pdf",
+      "rewrites": [
+        "Como a política nacional de conservação do solo incentivaria o voluntariado ambiental e que treinamentos ela prevê?",
+        "Incentivos ao serviço voluntário ambiental e programas de capacitação em conservação do solo e práticas agrícolas sustentáveis",
+        "Voluntários na conservação do solo receberiam certificados e reconhecimento público? Que capacitação o Ministério do Meio Ambiente ofereceria?",
+        "Existe política pública para proteger o solo agrícola?",
+        "política nacional conservação solo serviço voluntário ambiental capacitação certificados"
+      ],
+      "documents": [
+        "PL_1257_2024.pdf",
+        "PL_1573_2026.pdf",
+        "PL_2634_2025.pdf",
+        "PL_276_2025.pdf",
+        "PL_6888_2025.pdf"
+      ],
+      "expected": [
+        "PL_1257_2024::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.5211,
+        "voyage_tokens": 139,
+        "voyage_usd": 1.668e-05,
+        "jev_s": 1.4445,
+        "jev_calls": 30,
+        "jev_tokens": 27892,
+        "jev_usd": 0.00117146,
+        "total_s": 4.2434
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_1257_2024::0000",
+          "rank": 1,
+          "filename": "PL_1257_2024.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1257_2024::0001",
+          "rank": 2,
+          "filename": "PL_1257_2024.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1257_2024::0002",
+          "rank": 3,
+          "filename": "PL_1257_2024.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0313,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_276_2025::0002",
+          "rank": 4,
+          "filename": "PL_276_2025.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0299,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_2634_2025::0000",
+          "rank": 5,
+          "filename": "PL_2634_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0294,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q328",
+      "question": "Quais números sobre a agricultura familiar no Brasil são usados para defender uma linha de crédito do BNDES para energia renovável no campo?",
+      "type": "single_chunk",
+      "filename": "PL_1286_2025.pdf",
+      "rewrites": [
+        "Que dados da agricultura familiar sustentam a criação de crédito do BNDES para energia renovável no campo?",
+        "Indicadores do Censo Agropecuário sobre estabelecimentos, área ocupada e empregos da agricultura familiar usados para justificar crédito de energia renovável",
+        "Quantos estabelecimentos de agricultura familiar existem, que parte do território ocupam e quantos empregos no campo geram, segundo o IBGE citado na proposta?",
+        "Qual a importância da agricultura familiar no Brasil?",
+        "agricultura familiar estabelecimentos 351 milhões hectares 41% empregos Censo Agropecuário"
+      ],
+      "documents": [
+        "PL_1286_2025.pdf",
+        "PL_4187_2025.pdf",
+        "PL_1257_2024.pdf",
+        "MPV_1209_2024.pdf",
+        "MPV_1330_2025.pdf"
+      ],
+      "expected": [
+        "PL_1286_2025::0001"
+      ],
+      "usage": {
+        "voyage_s": 2.2369,
+        "voyage_tokens": 164,
+        "voyage_usd": 1.968e-05,
+        "jev_s": 1.4531,
+        "jev_calls": 30,
+        "jev_tokens": 29936,
+        "jev_usd": 0.00125731,
+        "total_s": 3.9824
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_1286_2025::0001",
+          "rank": 1,
+          "filename": "PL_1286_2025.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1286_2025::0000",
+          "rank": 2,
+          "filename": "PL_1286_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1286_2025::0002",
+          "rank": 3,
+          "filename": "PL_1286_2025.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "MPV_1209_2024::0006",
+          "rank": 4,
+          "filename": "MPV_1209_2024.pdf",
+          "chunk_index": 6,
+          "similarity": 0.0308,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_4187_2025::0003",
+          "rank": 5,
+          "filename": "PL_4187_2025.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0297,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q330",
+      "question": "Para justificar o dia nacional do reflorestamento e dos 'corações unidos pela cura da Terra', que dados são citados sobre desmatamento e sobre o papel dos territórios indígenas?",
+      "type": "multi_chunk",
+      "filename": "PL_1377_2024.pdf",
+      "rewrites": [
+        "Que dados de desmatamento e sobre terras indígenas justificam o dia nacional do reflorestamento?",
+        "Estatísticas de desmatamento por bioma e evidências sobre redução do desmatamento em territórios indígenas reconhecidos",
+        "Que números da Global Forest Watch, do MapBiomas e do estudo de Boulder sobre aumento de 0,77% ao ano da cobertura florestal em terras indígenas são citados?",
+        "Terras indígenas ajudam a conter o desmatamento?",
+        "desmatamento Brasil MapBiomas Amazônia Cerrado 90,1% territórios indígenas cobertura florestal"
+      ],
+      "documents": [
+        "PL_1377_2024.pdf",
+        "PL_4108_2025.pdf",
+        "PL_4943_2026.pdf",
+        "PL_4310_2025.pdf",
+        "MPV_1209_2024.pdf"
+      ],
+      "expected": [
+        "PL_1377_2024::0000",
+        "PL_1377_2024::0001"
+      ],
+      "usage": {
+        "voyage_s": 2.2999,
+        "voyage_tokens": 193,
+        "voyage_usd": 2.316e-05,
+        "jev_s": 1.4424,
+        "jev_calls": 30,
+        "jev_tokens": 28280,
+        "jev_usd": 0.00118776,
+        "total_s": 3.9942
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_1377_2024::0001",
+          "rank": 1,
+          "filename": "PL_1377_2024.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1377_2024::0000",
+          "rank": 2,
+          "filename": "PL_1377_2024.pdf",
+          "chunk_index": 0,
+          "similarity": 0.032,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_1377_2024::0002",
+          "rank": 3,
+          "filename": "PL_1377_2024.pdf",
+          "chunk_index": 2,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_4108_2025::0002",
+          "rank": 4,
+          "filename": "PL_4108_2025.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0312,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_4108_2025::0001",
+          "rank": 5,
+          "filename": "PL_4108_2025.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0303,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q390",
+      "question": "Quais tipos de lodo ficariam proibidos de ir para aterro sanitário sem tratamento, e em que condições excepcionais poderiam ser aterrados?",
+      "type": "single_chunk",
+      "filename": "PL_415_2026.pdf",
+      "rewrites": [
+        "Que tipos de lodo não poderiam mais ir para aterro sem tratamento, e em que casos excepcionais poderiam ser aterrados?",
+        "Proibição de disposição em aterros sanitários de lodos de ETA, ETE e de tratamento de efluentes sem tratamento prévio e requisitos de umidade, lixiviação e certificação",
+        "O lodo só poderia ir ao aterro com umidade abaixo de 40%, dentro dos parâmetros da ABNT NBR 10.004 e com certificação do órgão ambiental?",
+        "Como deve ser descartado o lodo das estações de tratamento?",
+        "lodo ETA ETE aterro sanitário proibição umidade 40% NBR 10.004 certificação"
+      ],
+      "documents": [
+        "PL_415_2026.pdf",
+        "PL_3313_2025.pdf",
+        "PL_376_2026.pdf",
+        "PL_517_2026.pdf",
+        "PL_1928_2026.pdf"
+      ],
+      "expected": [
+        "PL_415_2026::0002"
+      ],
+      "usage": {
+        "voyage_s": 2.2286,
+        "voyage_tokens": 203,
+        "voyage_usd": 2.436e-05,
+        "jev_s": 1.4194,
+        "jev_calls": 30,
+        "jev_tokens": 28903,
+        "jev_usd": 0.00121393,
+        "total_s": 3.9072
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_415_2026::0000",
+          "rank": 1,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0325,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_415_2026::0002",
+          "rank": 2,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_415_2026::0003",
+          "rank": 3,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_415_2026::0001",
+          "rank": 4,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.031,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_415_2026::0004",
+          "rank": 5,
+          "filename": "PL_415_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0305,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575,
+      "dcg": 0.6309297535714575,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q399",
+      "question": "Tem proposta de destinar parte da arrecadação das bets, as apostas de quota fixa, ao meio ambiente? Qual o percentual e como ele é dividido?",
+      "type": "single_chunk",
+      "filename": "PL_4371_2025.pdf",
+      "rewrites": [
+        "Tem proposta para mandar parte do dinheiro das bets para o meio ambiente? Qual o percentual e como seria dividido?",
+        "Destinação de 10% da arrecadação das apostas de quota fixa à proteção ambiental, repartidos entre pagamento por serviços ambientais, recuperação de áreas degradadas e combate a incêndios e desmatamento",
+        "Seriam 2,5% para serviços ambientais, 2,5% para recuperar áreas degradadas e 5% para incêndios florestais e desmatamento ilegal na Amazônia Legal?",
+        "Apostas esportivas podem financiar a proteção ambiental?",
+        "bets apostas quota fixa 10% meio ambiente serviços ambientais incêndios desmatamento"
+      ],
+      "documents": [
+        "PL_4371_2025.pdf",
+        "PL_773_2026.pdf",
+        "PL_627_2025.pdf",
+        "PL_624_2026.pdf",
+        "PL_1277_2024.pdf"
+      ],
+      "expected": [
+        "PL_4371_2025::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.5047,
+        "voyage_tokens": 199,
+        "voyage_usd": 2.388e-05,
+        "jev_s": 1.4115,
+        "jev_calls": 30,
+        "jev_tokens": 28341,
+        "jev_usd": 0.00119032,
+        "total_s": 4.2037
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_4371_2025::0000",
+          "rank": 1,
+          "filename": "PL_4371_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_4371_2025::0001",
+          "rank": 2,
+          "filename": "PL_4371_2025.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_773_2026::0000",
+          "rank": 3,
+          "filename": "PL_773_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_366_2025::0003",
+          "rank": 4,
+          "filename": "PL_366_2025.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0308,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_773_2026::0001",
+          "rank": 5,
+          "filename": "PL_773_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0306,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q429",
+      "question": "Para que serve a plataforma Guardiões da Floresta e do que ela é composta?",
+      "type": "multi_chunk",
+      "filename": "PL_6303_2025.pdf",
+      "rewrites": [
+        "Para que serviria a plataforma Guardiões da Floresta e quais partes ela teria?",
+        "Quais os objetivos e componentes da plataforma nacional de monitoramento ambiental comunitário Guardiões da Floresta?",
+        "A Guardiões da Floresta teria aplicativo de denúncias com fotos e localização, painel de dados integrado e módulo de capacitação de agentes comunitários?",
+        "Existe ferramenta digital para a população denunciar desmatamento e queimadas?",
+        "Guardiões da Floresta aplicativo denúncia painel integração capacitação agentes comunitários"
+      ],
+      "documents": [
+        "PL_6303_2025.pdf",
+        "PL_4371_2025.pdf",
+        "PDL_68_2025.pdf",
+        "PDL_75_2025.pdf",
+        "PL_4108_2025.pdf"
+      ],
+      "expected": [
+        "PL_6303_2025::0000",
+        "PL_6303_2025::0001"
+      ],
+      "usage": {
+        "voyage_s": 2.3751,
+        "voyage_tokens": 151,
+        "voyage_usd": 1.812e-05,
+        "jev_s": 1.4877,
+        "jev_calls": 30,
+        "jev_tokens": 28149,
+        "jev_usd": 0.00118226,
+        "total_s": 4.1335
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_6303_2025::0003",
+          "rank": 1,
+          "filename": "PL_6303_2025.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_6303_2025::0001",
+          "rank": 2,
+          "filename": "PL_6303_2025.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_6303_2025::0000",
+          "rank": 3,
+          "filename": "PL_6303_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.032,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_6303_2025::0002",
+          "rank": 4,
+          "filename": "PL_6303_2025.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0313,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_6303_2025::0004",
+          "rank": 5,
+          "filename": "PL_6303_2025.pdf",
+          "chunk_index": 4,
+          "similarity": 0.031,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 2,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 0.5,
+      "ndcg": 0.6934264036172708,
+      "dcg": 1.1309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q431",
+      "question": "Como o escotismo poderia ser levado às escolas públicas e que princípios essas atividades teriam que seguir?",
+      "type": "single_chunk",
+      "filename": "PL_6888_2025.pdf",
+      "rewrites": [
+        "Como o escotismo poderia ser oferecido nas escolas públicas e que princípios deveria seguir?",
+        "De que formas a atividade escoteira seria desenvolvida na educação básica pública e quais princípios orientariam essas atividades?",
+        "O escotismo nas escolas seria extracurricular, no contraturno, em parceria com organizações escoteiras, com foco em ética, liderança e educação ambiental?",
+        "Que atividades extracurriculares as escolas públicas podem oferecer?",
+        "escotismo escolas públicas extracurricular contraturno princípios"
+      ],
+      "documents": [
+        "PL_6888_2025.pdf",
+        "PL_1556_2026.pdf",
+        "PL_209_2026.pdf",
+        "PL_714_2026.pdf",
+        "PL_1196_2026.pdf"
+      ],
+      "expected": [
+        "PL_6888_2025::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.2309,
+        "voyage_tokens": 156,
+        "voyage_usd": 1.872e-05,
+        "jev_s": 1.5002,
+        "jev_calls": 30,
+        "jev_tokens": 27438,
+        "jev_usd": 0.0011524,
+        "total_s": 4.0015
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_6888_2025::0000",
+          "rank": 1,
+          "filename": "PL_6888_2025.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_6888_2025::0001",
+          "rank": 2,
+          "filename": "PL_6888_2025.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1556_2026::0002",
+          "rank": 3,
+          "filename": "PL_1556_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0293,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_276_2025::0001",
+          "rank": 4,
+          "filename": "PL_276_2025.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0289,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1196_2026::0002",
+          "rank": 5,
+          "filename": "PL_1196_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0287,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q462",
+      "question": "Existe proposta para tirar as comunidades terapêuticas da rede de atenção psicossocial? Que trecho da portaria seria sustado e com base em qual lei se diz que a portaria foi além do poder regulamentar?",
+      "type": "single_chunk",
+      "filename": "PDL_14_2026.pdf",
+      "rewrites": [
+        "Tem proposta para retirar as comunidades terapêuticas da rede de atenção psicossocial? Que parte da portaria seria derrubada e com base em qual lei se diz que ela extrapolou?",
+        "Qual dispositivo da portaria do Ministério da Saúde que inclui comunidades terapêuticas na RAPS se pretende sustar e qual lei teria sido contrariada pelo poder regulamentar?",
+        "A inclusão das comunidades terapêuticas nos serviços residenciais da RAPS violaria a Lei da Reforma Psiquiátrica, que proíbe instituições asilares?",
+        "Comunidades terapêuticas fazem parte do SUS?",
+        "sustar comunidades terapêuticas RAPS portaria Ministério da Saúde Lei da Reforma Psiquiátrica"
+      ],
+      "documents": [
+        "PDL_14_2026.pdf",
+        "PDL_68_2025.pdf",
+        "PDL_70_2025.pdf",
+        "PDL_182_2026.pdf",
+        "PDL_263_2026.pdf"
+      ],
+      "expected": [
+        "PDL_14_2026::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.8776,
+        "voyage_tokens": 219,
+        "voyage_usd": 2.628e-05,
+        "jev_s": 1.5045,
+        "jev_calls": 30,
+        "jev_tokens": 29932,
+        "jev_usd": 0.00125714,
+        "total_s": 4.673
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PDL_14_2026::0000",
+          "rank": 1,
+          "filename": "PDL_14_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PDL_14_2026::0001",
+          "rank": 2,
+          "filename": "PDL_14_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PDL_68_2025::0015",
+          "rank": 3,
+          "filename": "PDL_68_2025.pdf",
+          "chunk_index": 15,
+          "similarity": 0.0296,
+          "expected": false
+        },
+        {
+          "chunk_id": "PDL_68_2025::0016",
+          "rank": 4,
+          "filename": "PDL_68_2025.pdf",
+          "chunk_index": 16,
+          "similarity": 0.029,
+          "expected": false
+        },
+        {
+          "chunk_id": "PDL_68_2025::0003",
+          "rank": 5,
+          "filename": "PDL_68_2025.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0289,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q515",
+      "question": "O gestor que usar o procedimento simplificado de TED para saúde indígena fica protegido de responsabilização? Em que condições isso não é considerado irregularidade?",
+      "type": "multi_chunk",
+      "filename": "PL_306_2026.pdf",
+      "rewrites": [
+        "O gestor que adotar o TED simplificado para saúde indígena fica livre de responsabilização? Em que condições isso não configura irregularidade?",
+        "Afastamento da responsabilização pessoal do gestor público por impropriedades formais no procedimento simplificado de TED e condições de regularidade",
+        "Pela proposta, usar o procedimento simplificado não seria irregular se o recurso for aplicado só na finalidade, com rastreabilidade dos gastos e controle posterior garantido?",
+        "Gestor público pode ser punido por simplificar a prestação de contas?",
+        "TED saúde indígena gestor responsabilização irregularidade rastreabilidade controle posterior"
+      ],
+      "documents": [
+        "PL_306_2026.pdf",
+        "PL_384_2026.pdf",
+        "PL_366_2025.pdf",
+        "PDL_342_2025.pdf",
+        "MPV_1209_2024.pdf"
+      ],
+      "expected": [
+        "PL_306_2026::0000",
+        "PL_306_2026::0001"
+      ],
+      "usage": {
+        "voyage_s": 2.5246,
+        "voyage_tokens": 174,
+        "voyage_usd": 2.088e-05,
+        "jev_s": 1.422,
+        "jev_calls": 30,
+        "jev_tokens": 29403,
+        "jev_usd": 0.00123493,
+        "total_s": 4.1865
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_306_2026::0001",
+          "rank": 1,
+          "filename": "PL_306_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_306_2026::0000",
+          "rank": 2,
+          "filename": "PL_306_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_306_2026::0002",
+          "rank": 3,
+          "filename": "PL_306_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1513_2026::0012",
+          "rank": 4,
+          "filename": "PL_1513_2026.pdf",
+          "chunk_index": 12,
+          "similarity": 0.0296,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1513_2026::0009",
+          "rank": 5,
+          "filename": "PL_1513_2026.pdf",
+          "chunk_index": 9,
+          "similarity": 0.0291,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q575",
+      "question": "Que controvérsias ainda existem sobre aplicar o CDC aos planos de saúde, segundo quem propõe estender o código a todos os contratos, e com qual medida provisória a proposta se alinha?",
+      "type": "single_chunk",
+      "filename": "PL_545_2026.pdf",
+      "rewrites": [
+        "Que dúvidas jurídicas ainda existem sobre aplicar o Código de Defesa do Consumidor aos planos de saúde, segundo a proposta, e com que medida provisória ela se alinha?",
+        "Controvérsias judiciais e administrativas sobre a incidência do CDC em planos de autogestão e alinhamento com a medida provisória de 2025",
+        "Os tribunais ainda divergem sobre o CDC em planos de autogestão? A proposta repete o texto da medida provisória de 2025 sobre planos de saúde?",
+        "Há insegurança jurídica nos direitos de quem tem plano de saúde?",
+        "CDC autogestão controvérsia judicial insegurança jurídica medida provisória 2025 planos de saúde"
+      ],
+      "documents": [
+        "PL_545_2026.pdf",
+        "PL_549_2026.pdf",
+        "PL_548_2026.pdf",
+        "PL_585_2026.pdf",
+        "PL_601_2026.pdf"
+      ],
+      "expected": [
+        "PL_545_2026::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.757,
+        "voyage_tokens": 218,
+        "voyage_usd": 2.616e-05,
+        "jev_s": 1.5017,
+        "jev_calls": 25,
+        "jev_tokens": 21833,
+        "jev_usd": 0.00091699,
+        "total_s": 4.5483
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_545_2026::0000",
+          "rank": 1,
+          "filename": "PL_545_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_549_2026::0000",
+          "rank": 2,
+          "filename": "PL_549_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_545_2026::0001",
+          "rank": 3,
+          "filename": "PL_545_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0318,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_603_2026::0000",
+          "rank": 4,
+          "filename": "PL_603_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0301,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_548_2026::0000",
+          "rank": 5,
+          "filename": "PL_548_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0299,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q590",
+      "question": "Vai ter um jeito de o paciente do SUS consultar a fila de espera em tempo real? Que informações a plataforma mostraria e como ficam os dados pessoais?",
+      "type": "single_chunk",
+      "filename": "PL_567_2026.pdf",
+      "rewrites": [
+        "Existe proposta para o paciente do SUS acompanhar sua posição na fila de espera em tempo real?",
+        "Plataforma eletrônica de transparência da regulação assistencial com tempo médio de espera e posição do usuário na fila, observada a LGPD",
+        "Que dados a plataforma das filas do SUS mostraria, como número de pacientes por procedimento e por região de saúde, e como protegeria os dados pessoais?",
+        "Transparência das filas de espera do SUS",
+        "fila SUS tempo real posição paciente plataforma"
+      ],
+      "documents": [
+        "PL_567_2026.pdf",
+        "PL_463_2026.pdf",
+        "PL_44_2026.pdf",
+        "PL_612_2026.pdf",
+        "PL_410_2026.pdf"
+      ],
+      "expected": [
+        "PL_567_2026::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.4792,
+        "voyage_tokens": 135,
+        "voyage_usd": 1.62e-05,
+        "jev_s": 1.8044,
+        "jev_calls": 30,
+        "jev_tokens": 26989,
+        "jev_usd": 0.00113354,
+        "total_s": 4.5645
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_567_2026::0000",
+          "rank": 1,
+          "filename": "PL_567_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_44_2026::0001",
+          "rank": 2,
+          "filename": "PL_44_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_567_2026::0002",
+          "rank": 3,
+          "filename": "PL_567_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_567_2026::0001",
+          "rank": 4,
+          "filename": "PL_567_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0313,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_44_2026::0004",
+          "rank": 5,
+          "filename": "PL_44_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0308,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q628",
+      "question": "Como funcionaria a conversão do ressarcimento ao SUS em prestação de serviços pelos planos de saúde, e quais atendimentos não poderiam entrar nessa troca?",
+      "type": "single_chunk",
+      "filename": "PL_609_2026.pdf",
+      "rewrites": [
+        "Como funcionaria pagar o ressarcimento ao SUS com prestação de serviços pelos planos, e quais atendimentos ficam de fora?",
+        "Conversão do ressarcimento em serviços ao SUS por termo de compromisso definido pela AGU e Ministério da Saúde",
+        "Atendimentos no SUS de quem estava vinculado a um plano no momento do uso poderiam entrar na conversão em serviços?",
+        "Ressarcimento ao SUS pago com serviços",
+        "ressarcimento SUS prestação de serviços planos de saúde exclusões"
+      ],
+      "documents": [
+        "PL_604_2026.pdf",
+        "PL_609_2026.pdf",
+        "PL_692_2026.pdf",
+        "PL_602_2026.pdf",
+        "PL_612_2026.pdf"
+      ],
+      "expected": [
+        "PL_609_2026::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.3641,
+        "voyage_tokens": 141,
+        "voyage_usd": 1.692e-05,
+        "jev_s": 1.826,
+        "jev_calls": 30,
+        "jev_tokens": 27962,
+        "jev_usd": 0.0011744,
+        "total_s": 4.4718
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_604_2026::0000",
+          "rank": 1,
+          "filename": "PL_604_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_604_2026::0001",
+          "rank": 2,
+          "filename": "PL_604_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_609_2026::0001",
+          "rank": 3,
+          "filename": "PL_609_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0318,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_609_2026::0000",
+          "rank": 4,
+          "filename": "PL_609_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0315,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_609_2026::0002",
+          "rank": 5,
+          "filename": "PL_609_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0312,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 4,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.25,
+      "ndcg": 0.43067655807339306,
+      "dcg": 0.43067655807339306,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q652",
+      "question": "Como seria a reparação para as jogadoras da seleção feminina que disputaram o torneio experimental da FIFA de 1988? Quanto elas receberiam e qual a natureza jurídica do benefício?",
+      "type": "single_chunk",
+      "filename": "PL_656_2026.pdf",
+      "rewrites": [
+        "Como seria indenizada a seleção brasileira feminina que jogou o torneio experimental da FIFA em 1988? Qual o valor e que natureza jurídica teria o benefício?",
+        "Reparação histórica às atletas da Seleção Feminina no Torneio Experimental da FIFA de 1988: prêmio indenizatório em parcela única, benefício mensal especial e sua natureza indenizatória",
+        "As jogadoras de 1988 receberiam 300 mil reais de uma vez mais um complemento mensal até o teto do INSS? Esse benefício geraria pensão ou seria tributado?",
+        "Existe proposta de reparação para atletas pioneiras do futebol feminino?",
+        "reparação histórica seleção feminina 1988 FIFA prêmio 300 mil benefício mensal indenizatório"
+      ],
+      "documents": [
+        "PL_656_2026.pdf",
+        "PL_530_2026.pdf",
+        "PL_4165_2026.pdf",
+        "PL_650_2026.pdf",
+        "PL_1096_2026.pdf"
+      ],
+      "expected": [
+        "PL_656_2026::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.4288,
+        "voyage_tokens": 241,
+        "voyage_usd": 2.892e-05,
+        "jev_s": 1.4393,
+        "jev_calls": 30,
+        "jev_tokens": 28774,
+        "jev_usd": 0.00120851,
+        "total_s": 4.1571
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_656_2026::0000",
+          "rank": 1,
+          "filename": "PL_656_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_656_2026::0001",
+          "rank": 2,
+          "filename": "PL_656_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0323,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_530_2026::0000",
+          "rank": 3,
+          "filename": "PL_530_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0304,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_530_2026::0001",
+          "rank": 4,
+          "filename": "PL_530_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0299,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_4165_2026::0000",
+          "rank": 5,
+          "filename": "PL_4165_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0295,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q658",
+      "question": "Como seria a auditoria dos algoritmos de recomendação das plataformas para proteger crianças no ECA Digital, e o que do relatório ficaria público?",
+      "type": "single_chunk",
+      "filename": "PL_687_2026.pdf",
+      "rewrites": [
+        "Como seriam auditados os algoritmos que recomendam conteúdo para proteger crianças, segundo a mudança no ECA Digital, e que parte do relatório seria divulgada?",
+        "Avaliação periódica de riscos dos sistemas de recomendação por auditoria técnica independente e publicidade do relatório final",
+        "A auditoria dos algoritmos seria feita por entidades independentes credenciadas, e o relatório publicaria as conclusões gerais sem revelar código-fonte e segredos industriais?",
+        "As plataformas digitais teriam que ser auditadas?",
+        "auditoria independente algoritmos de recomendação plataformas crianças relatório público"
+      ],
+      "documents": [
+        "PL_687_2026.pdf",
+        "PL_1113_2026.pdf",
+        "PL_1225_2026.pdf",
+        "PL_323_2026.pdf",
+        "PL_1240_2026.pdf"
+      ],
+      "expected": [
+        "PL_687_2026::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.3859,
+        "voyage_tokens": 169,
+        "voyage_usd": 2.028e-05,
+        "jev_s": 1.4285,
+        "jev_calls": 30,
+        "jev_tokens": 28437,
+        "jev_usd": 0.00119435,
+        "total_s": 4.0997
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_687_2026::0000",
+          "rank": 1,
+          "filename": "PL_687_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_687_2026::0002",
+          "rank": 2,
+          "filename": "PL_687_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1225_2026::0011",
+          "rank": 3,
+          "filename": "PL_1225_2026.pdf",
+          "chunk_index": 11,
+          "similarity": 0.031,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_687_2026::0001",
+          "rank": 4,
+          "filename": "PL_687_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0305,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_1225_2026::0004",
+          "rank": 5,
+          "filename": "PL_1225_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0304,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q660",
+      "question": "Quanto dos custos das Santas Casas o SUS realmente cobre e por que a revisão anual da tabela SUS seria insuficiente?",
+      "type": "multi_chunk",
+      "filename": "PL_692_2026.pdf",
+      "rewrites": [
+        "Que parte dos custos das Santas Casas o SUS cobre de fato e por que reajustar a tabela só uma vez por ano não bastaria?",
+        "Cobertura dos custos assistenciais das Santas Casas e hospitais filantrópicos pela remuneração do SUS e insuficiência da revisão anual da Tabela de Procedimentos",
+        "O SUS paga só cerca de 60% dos custos das Santas Casas? A revisão anual de dezembro gera nova defasagem por causa da inflação de custos e da incorporação tecnológica?",
+        "Por que os hospitais filantrópicos reclamam do financiamento do SUS?",
+        "Santas Casas custos cobertos SUS 60% defasagem tabela revisão anual"
+      ],
+      "documents": [
+        "PL_692_2026.pdf",
+        "PL_619_2026.pdf",
+        "MPV_1336_2026.pdf",
+        "PL_506_2026.pdf",
+        "PL_463_2026.pdf"
+      ],
+      "expected": [
+        "PL_692_2026::0000",
+        "PL_692_2026::0001"
+      ],
+      "usage": {
+        "voyage_s": 2.4917,
+        "voyage_tokens": 198,
+        "voyage_usd": 2.376e-05,
+        "jev_s": 1.7879,
+        "jev_calls": 27,
+        "jev_tokens": 24669,
+        "jev_usd": 0.0010361,
+        "total_s": 4.5366
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_692_2026::0000",
+          "rank": 1,
+          "filename": "PL_692_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "MPV_1336_2026::0002",
+          "rank": 2,
+          "filename": "MPV_1336_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0318,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_619_2026::0004",
+          "rank": 3,
+          "filename": "PL_619_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0317,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_692_2026::0001",
+          "rank": 4,
+          "filename": "PL_692_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0313,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_619_2026::0000",
+          "rank": 5,
+          "filename": "PL_619_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.031,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 0.8772153153380493,
+      "dcg": 1.4306765580733931,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q670",
+      "question": "Por que se diz que o medo da dor do parto e a falta de peridural contribuem para tantas cesarianas no Brasil?",
+      "type": "multi_chunk",
+      "filename": "PL_745_2026.pdf",
+      "rewrites": [
+        "Por que o medo da dor e a falta de anestesia peridural ajudariam a explicar o excesso de cesáreas no Brasil?",
+        "Relação entre o medo da dor do parto, a baixa oferta de analgesia peridural e a alta taxa de cesarianas no país",
+        "O Brasil tem uma das maiores taxas de cesárea do mundo porque muitas mulheres temem a dor do parto normal e o acesso à peridural é desigual e pouco conhecido?",
+        "Por que tantas mulheres escolhem cesárea no Brasil?",
+        "medo dor parto falta peridural cesarianas Brasil"
+      ],
+      "documents": [
+        "PL_745_2026.pdf",
+        "PL_637_2026.pdf",
+        "PL_181_2026.pdf",
+        "PL_587_2026.pdf",
+        "PL_642_2026.pdf"
+      ],
+      "expected": [
+        "PL_745_2026::0003",
+        "PL_745_2026::0004"
+      ],
+      "usage": {
+        "voyage_s": 2.537,
+        "voyage_tokens": 161,
+        "voyage_usd": 1.932e-05,
+        "jev_s": 1.7799,
+        "jev_calls": 30,
+        "jev_tokens": 27138,
+        "jev_usd": 0.0011398,
+        "total_s": 4.5822
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_745_2026::0003",
+          "rank": 1,
+          "filename": "PL_745_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_745_2026::0004",
+          "rank": 2,
+          "filename": "PL_745_2026.pdf",
+          "chunk_index": 4,
+          "similarity": 0.0325,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_745_2026::0000",
+          "rank": 3,
+          "filename": "PL_745_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0313,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_745_2026::0002",
+          "rank": 4,
+          "filename": "PL_745_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0313,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_745_2026::0001",
+          "rank": 5,
+          "filename": "PL_745_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0312,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q671",
+      "question": "Que informações sobre os remédios aplicados o paciente teria direito de saber, incluindo os chamados '13 certos' da medicação?",
+      "type": "single_chunk",
+      "filename": "PL_74_2026.pdf",
+      "rewrites": [
+        "Que informações sobre os medicamentos aplicados o paciente poderia exigir, incluindo os 13 certos da medicação?",
+        "Direito de acesso do paciente às informações das medicações administradas: denominação, princípio ativo, dose, via, horário, lote, validade e identificação dos profissionais, observados os 13 certos",
+        "O paciente poderia saber o nome genérico, a dose, a via, o lote e quem aplicou cada remédio? O que são os 13 certos, como paciente certo e dose certa?",
+        "Quais são os direitos do paciente sobre os remédios que recebe no hospital?",
+        "direito informação medicação administrada 13 certos lote dose prontuário"
+      ],
+      "documents": [
+        "PL_74_2026.pdf",
+        "PL_780_2026.pdf",
+        "PL_448_2026.pdf",
+        "PL_515_2026.pdf",
+        "PL_745_2026.pdf"
+      ],
+      "expected": [
+        "PL_74_2026::0001"
+      ],
+      "usage": {
+        "voyage_s": 21.9561,
+        "voyage_tokens": 191,
+        "voyage_usd": 2.292e-05,
+        "jev_s": 1.8094,
+        "jev_calls": 30,
+        "jev_tokens": 27573,
+        "jev_usd": 0.00115807,
+        "total_s": 24.0471
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_74_2026::0001",
+          "rank": 1,
+          "filename": "PL_74_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_74_2026::0003",
+          "rank": 2,
+          "filename": "PL_74_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_74_2026::0002",
+          "rank": 3,
+          "filename": "PL_74_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0318,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_74_2026::0000",
+          "rank": 4,
+          "filename": "PL_74_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_780_2026::0003",
+          "rank": 5,
+          "filename": "PL_780_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0303,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q681",
+      "question": "Pessoas com Distrofia Muscular de Duchenne teriam isenção de quais impostos, e em quais equipamentos e veículos?",
+      "type": "single_chunk",
+      "filename": "PL_771_2026.pdf",
+      "rewrites": [
+        "Quem tem distrofia muscular de Duchenne ficaria isento de que impostos, e na compra de quais equipamentos e carros?",
+        "Isenções de IPI, IOF, PIS/Pasep, Cofins, IPVA e Imposto de Importação sobre equipamentos de mobilidade e veículos adaptados para pessoas com Distrofia Muscular de Duchenne",
+        "Cadeira de rodas motorizada, cama hospitalar, guincho, elevador doméstico e carro adaptado para paciente com Duchenne teriam isenção de IPI e IPVA?",
+        "Pessoas com doenças raras têm isenção de impostos em equipamentos?",
+        "Duchenne isenção impostos cadeira de rodas veículo adaptado IPI IPVA"
+      ],
+      "documents": [
+        "PL_771_2026.pdf",
+        "PL_685_2026.pdf",
+        "PL_426_2026.pdf",
+        "PL_416_2026.pdf",
+        "PL_572_2026.pdf"
+      ],
+      "expected": [
+        "PL_771_2026::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.4848,
+        "voyage_tokens": 189,
+        "voyage_usd": 2.268e-05,
+        "jev_s": 1.51,
+        "jev_calls": 30,
+        "jev_tokens": 26207,
+        "jev_usd": 0.00110069,
+        "total_s": 4.2733
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_771_2026::0000",
+          "rank": 1,
+          "filename": "PL_771_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_771_2026::0002",
+          "rank": 2,
+          "filename": "PL_771_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.032,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_771_2026::0001",
+          "rank": 3,
+          "filename": "PL_771_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0315,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_771_2026::0003",
+          "rank": 4,
+          "filename": "PL_771_2026.pdf",
+          "chunk_index": 3,
+          "similarity": 0.0303,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_416_2026::0000",
+          "rank": 5,
+          "filename": "PL_416_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0296,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 1,
+      "total": 1,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.0,
+      "idcg": 1.0,
+      "verdict": "pass"
+    },
+    {
+      "query_id": "q686",
+      "question": "Quais genes ligados ao câncer de mama hereditário são citados na defesa da testagem genética no SUS e que cuidados com dados e consentimento a testagem teria que seguir?",
+      "type": "multi_chunk",
+      "filename": "PL_88_2026.pdf",
+      "rewrites": [
+        "Quais genes do câncer de mama hereditário são mencionados para defender o teste genético no SUS, e que regras de proteção de dados e consentimento valeriam?",
+        "Mutações genéticas associadas ao câncer de mama hereditário citadas na justificativa e salvaguardas de proteção de dados genéticos, sigilo e consentimento informado",
+        "A proposta cita os genes BRCA1 e BRCA2 e exige respeito à LGPD, sigilo dos dados genéticos e consentimento informado da paciente?",
+        "Que cuidados existem com os dados de exames genéticos?",
+        "BRCA1 BRCA2 câncer de mama hereditário teste genético LGPD consentimento"
+      ],
+      "documents": [
+        "PL_88_2026.pdf",
+        "PL_708_2026.pdf",
+        "PL_461_2026.pdf",
+        "PL_612_2026.pdf",
+        "PL_386_2026.pdf"
+      ],
+      "expected": [
+        "PL_88_2026::0001",
+        "PL_88_2026::0000"
+      ],
+      "usage": {
+        "voyage_s": 2.6228,
+        "voyage_tokens": 198,
+        "voyage_usd": 2.376e-05,
+        "jev_s": 1.4221,
+        "jev_calls": 30,
+        "jev_tokens": 27540,
+        "jev_usd": 0.00115668,
+        "total_s": 4.338
+      },
+      "retrieved": [
+        {
+          "chunk_id": "PL_88_2026::0001",
+          "rank": 1,
+          "filename": "PL_88_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0328,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_88_2026::0000",
+          "rank": 2,
+          "filename": "PL_88_2026.pdf",
+          "chunk_index": 0,
+          "similarity": 0.0323,
+          "expected": true
+        },
+        {
+          "chunk_id": "PL_88_2026::0002",
+          "rank": 3,
+          "filename": "PL_88_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0304,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_612_2026::0002",
+          "rank": 4,
+          "filename": "PL_612_2026.pdf",
+          "chunk_index": 2,
+          "similarity": 0.0304,
+          "expected": false
+        },
+        {
+          "chunk_id": "PL_708_2026::0001",
+          "rank": 5,
+          "filename": "PL_708_2026.pdf",
+          "chunk_index": 1,
+          "similarity": 0.0299,
+          "expected": false
+        }
+      ],
+      "k": 5,
+      "hits": 2,
+      "total": 2,
+      "best_rank": 1,
+      "hit_rate": 1.0,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "dcg": 1.6309297535714575,
+      "idcg": 1.6309297535714575,
+      "verdict": "pass"
+    }
+  ]
+}

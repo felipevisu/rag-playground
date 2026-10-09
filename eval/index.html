@@ -114,12 +114,32 @@ h2 { font-size: 13px; font-weight: 600; color: var(--text-2); text-transform: up
 .spark-val { margin-left: auto; font-family: var(--mono); font-size: 17px; font-weight: 600; }
 .spark-delta { font-family: var(--mono); font-size: 11.5px; }
 .up { color: var(--ok); } .down { color: var(--err); } .flat { color: var(--muted); }
-.spark svg { display: block; width: 100%; height: 62px; overflow: visible; }
+.plot { position: relative; height: 76px; margin: 8px 0 4px 22px; cursor: crosshair; }
+.plot svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ytick { position: absolute; left: -22px; transform: translateY(-50%); font-family: var(--mono);
+         font-size: 9.5px; color: var(--faint); }
+/* dots in HTML, not SVG: the svg stretches (preserveAspectRatio=none) and would make them ovals */
+.dot { position: absolute; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%;
+       background: var(--series); box-shadow: 0 0 0 2px var(--surface); pointer-events: none; }
+.dot.last { width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; }
+.dot.sel { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent-2); }
+.cross { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border-strong);
+         pointer-events: none; display: none; }
+.tip { position: absolute; bottom: calc(100% + 6px); transform: translateX(-50%); white-space: nowrap;
+       background: var(--text); color: var(--surface); font-family: var(--mono); font-size: 11px;
+       padding: 4px 7px; border-radius: 6px; pointer-events: none; display: none; z-index: 2; }
+.plot:hover .cross, .plot:hover .tip { display: block; }
 .spark-foot { font-size: 10.5px; color: var(--faint); display: flex; justify-content: space-between; padding-top: 2px; }
 
 /* ── Tabela ──────────────────────────────────────────── */
 .table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--border);
               border-radius: 11px; box-shadow: var(--shadow); }
+.table-wrap.grab { cursor: grab; }
+.table-wrap.dragging { cursor: grabbing; user-select: none; }
+.table-wrap.dragging tr.run-row { cursor: grabbing; }
+.pager { display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+         margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+.pager button { font-size: 12.5px; padding: 4px 10px; }
 table { border-collapse: collapse; width: 100%; font-size: 13px; }
 th { text-align: left; font-weight: 600; font-size: 11px; color: var(--muted);
      text-transform: uppercase; letter-spacing: .05em; padding: 11px 13px;
@@ -222,6 +242,7 @@ code { font-family: var(--mono); font-size: 12px; background: var(--surface-2);
   <section id="runs-sec" hidden>
     <h2>Execuções</h2>
     <div class="table-wrap"><table id="runs"></table></div>
+    <div class="pager" id="runs-pager"></div>
   </section>
 
   <section id="detail-sec" hidden>
@@ -253,6 +274,12 @@ const BLURB = {
 const $ = id => document.getElementById(id)
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 const fmt = n => (n ?? 0).toFixed(3)
+const DASH = '<span class="dim">—</span>'
+const secs = s => s == null ? DASH : s < 90 ? `${s.toFixed(0)}s` : `${Math.floor(s / 60)}m${String(Math.round(s % 60)).padStart(2, '0')}`
+const usd = n => n < 0.01 ? `$${n.toFixed(4)}` : `$${n.toFixed(2)}`
+// Voyage/Jev: seconds the run waited on them + what it cost. Before week10 the API didn't report it.
+const spend = (u, svc) => !u ? DASH : !u[`${svc}_s`] ? DASH
+  : `${secs(u[`${svc}_s`])} <span class="dim">${usd(u[`${svc}_usd`])}</span>`
 
 // ── Tema ───────────────────────────────────────────────
 const stored = (() => { try { return localStorage.getItem('theme') } catch { return null } })()
@@ -268,34 +295,58 @@ $('theme').onclick = () => {
 // Five panels rather than five lines on one axis: the metrics move together,
 // so overlaid they read as noise. One hue, faceted, y pinned to 0..1 so the
 // panels are comparable to each other and a flat run looks flat.
-function sparkline(values) {
+function sparkline(values, ids) {
   const W = 100, H = 40, n = values.length
   if (n === 0) return ''
-  const x = i => n === 1 ? W / 2 : (i / (n - 1)) * W
-  const y = v => H - v * H
-  const pts = values.map((v, i) => [x(i), y(v)])
+  const xp = i => n === 1 ? 50 : (i / (n - 1)) * 100  // % da largura
+  const yp = v => (1 - v) * 100                         // % da altura
+  const line = values.map((v, i) => `${xp(i)},${yp(v) * H / 100}`).join(' L')
 
   const grid = [0, 0.5, 1].map(v =>
-    `<line x1="0" y1="${y(v)}" x2="${W}" y2="${y(v)}" stroke="var(--grid)" stroke-width="1"
-           vector-effect="non-scaling-stroke" />`).join('')
+    `<line x1="0" y1="${yp(v) * H / 100}" x2="${W}" y2="${yp(v) * H / 100}" stroke="var(--grid)"
+           stroke-width="1" vector-effect="non-scaling-stroke" />`).join('')
+  const ticks = [[1, '1'], [0.5, '.5'], [0, '0']].map(([v, t]) =>
+    `<span class="ytick" style="top:${yp(v)}%">${t}</span>`).join('')
 
-  const path = n === 1 ? '' :
-    `<path d="M${pts.map(p => p.join(',')).join('L')}" fill="none" stroke="var(--series)"
-           stroke-width="2" stroke-linejoin="round" stroke-linecap="round"
-           vector-effect="non-scaling-stroke" />`
+  const marks = n === 1 ? '' : `
+    <path d="M0,${H} L${line} L${W},${H} Z" fill="var(--series)" opacity=".1" />
+    <path d="M${line}" fill="none" stroke="var(--series)" stroke-width="2"
+          stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" />`
 
-  const dots = pts.map(([px, py], i) =>
-    `<circle cx="${px}" cy="${py}" r="${i === n - 1 ? 3.6 : 2.2}"
-             fill="var(--series)" stroke="var(--surface)" stroke-width="2"
-             vector-effect="non-scaling-stroke">
-       <title>run ${i + 1}: ${fmt(values[i])}</title>
-     </circle>`).join('')
+  // muitos runs viram um colar de contas: aí só o último ganha ponto
+  const dots = values.map((v, i) => n > 15 && i < n - 1 ? '' :
+    `<span class="dot${i === n - 1 ? ' last' : ''}" data-run="${esc(ids[i])}"
+           style="left:${xp(i)}%;top:${yp(v)}%"></span>`).join('')
 
-  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img"
-               aria-label="tendência, ${n} execuções, último ${fmt(values[n - 1])}">
-            ${grid}${path}${dots}
-          </svg>`
+  return `<div class="plot" data-vals="${values.join(',')}" data-ids="${esc(ids.join(','))}">
+      ${ticks}
+      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img"
+           aria-label="tendência, ${n} execuções, último ${fmt(values[n - 1])}">${grid}${marks}</svg>
+      ${dots}<div class="cross"></div><div class="tip"></div>
+    </div>`
 }
+
+// Hover: snap ao run mais próximo; clique abre o detalhe dele.
+function nearest(plot, e) {
+  const vals = plot.dataset.vals.split(',').map(Number), ids = plot.dataset.ids.split(',')
+  const r = plot.getBoundingClientRect(), n = vals.length
+  const i = n === 1 ? 0 : Math.round(Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)) * (n - 1))
+  return { i, n, v: vals[i], id: ids[i] }
+}
+$('sparks').addEventListener('mousemove', e => {
+  const plot = e.target.closest('.plot')
+  if (!plot) return
+  const { i, n, v, id } = nearest(plot, e)
+  const left = `${n === 1 ? 50 : (i / (n - 1)) * 100}%`
+  plot.querySelector('.cross').style.left = left
+  const tip = plot.querySelector('.tip')
+  tip.style.left = left
+  tip.textContent = `${fmt(v)} · ${id}`
+})
+$('sparks').addEventListener('click', e => {
+  const plot = e.target.closest('.plot')
+  if (plot) showDetail(nearest(plot, e).id, false)
+})
 
 function renderSparks(runs) {
   // index.json is newest-first; a trend reads left to right, oldest to newest.
@@ -316,18 +367,33 @@ function renderSparks(runs) {
         <div class="spark-head">
           <span class="spark-delta ${cls}">${d === null ? 'primeira execução' : `${arrow} ${d >= 0 ? '+' : ''}${d.toFixed(3)}`}</span>
         </div>
-        ${sparkline(vals)}
-        <div class="spark-foot"><span>${BLURB[m]}</span><span>0–1</span></div>
+        ${sparkline(vals, chrono.map(r => r.run_id))}
+        <div class="spark-foot"><span>${BLURB[m]}</span></div>
       </div>`
   }).join('')
 }
 
 // ── Tabela de execuções ────────────────────────────────
-function renderRuns(runs) {
+const PAGE_SIZE = 10
+let allRuns = [], runsPage = 0, selectedRun = null
+
+function renderRuns() {
+  const pages = Math.max(1, Math.ceil(allRuns.length / PAGE_SIZE))
+  runsPage = Math.min(runsPage, pages - 1)
+  const runs = allRuns.slice(runsPage * PAGE_SIZE, (runsPage + 1) * PAGE_SIZE)
+  $('runs-pager').hidden = pages === 1
+  $('runs-pager').innerHTML = `
+    <button type="button" data-p="-1" ${runsPage === 0 ? 'disabled' : ''}>‹ Anterior</button>
+    <span>${runsPage + 1} / ${pages}</span>
+    <button type="button" data-p="1" ${runsPage === pages - 1 ? 'disabled' : ''}>Próxima ›</button>`
+  $('runs-pager').querySelectorAll('button').forEach(b => {
+    b.onclick = () => { runsPage += Number(b.dataset.p); renderRuns() }
+  })
   $('runs').innerHTML = `
     <thead><tr>
       <th>Execução</th><th>Chunker</th><th>Retriever</th><th>Descrições</th><th>Rerank</th><th class="num">Variantes</th><th class="num">k</th><th class="num">Perguntas</th><th class="num">Chunks</th>
       ${METRICS.map(m => `<th class="num">${LABELS[m]}</th>`).join('')}
+      <th class="num">Tempo</th><th class="num" title="tempo esperando a Voyage (embeddings/rerank) · custo">Voyage</th><th class="num" title="tempo esperando o Jev · custo">Jev</th><th class="num">Custo</th>
     </tr></thead>
     <tbody>${runs.map(r => { const c = r.config || {}; return `
       <tr class="run-row" data-run="${esc(r.run_id)}" title="${esc(c.bucket_name)} (${esc(c.bucket)})">
@@ -341,16 +407,46 @@ function renderRuns(runs) {
         <td class="num" title="${c.sample_pct < 100 ? `amostra aleatória de ${c.sample_pct}%` : 'todas'}">${c.n_queries ?? ''}${c.sample_pct < 100 ? ` <span class="dim">${c.sample_pct}%</span>` : ''}</td>
         <td class="num">${c.n_chunks ?? ''}</td>
         ${METRICS.map(m => `<td class="num">${fmt(r.metrics[m])}</td>`).join('')}
+        <td class="num">${secs(r.elapsed_s)}</td>
+        <td class="num">${spend(r.usage, 'voyage')}</td>
+        <td class="num" title="${r.usage?.jev_calls ? `${r.usage.jev_calls} chamadas` : ''}">${spend(r.usage, 'jev')}</td>
+        <td class="num">${r.usage ? usd(r.usage.voyage_usd + r.usage.jev_usd) : DASH}</td>
       </tr>` }).join('')}
     </tbody>`
   $('runs').querySelectorAll('.run-row').forEach(tr => {
     // sem scroll: a tabela é a navegação, pular pro detalhe tira ela da vista
     tr.onclick = () => showDetail(tr.dataset.run, false)
+    tr.classList.toggle('sel', tr.dataset.run === selectedRun)
   })
 }
 
+// ── Arrastar pra rolar tabelas largas (mouse; touch já rola nativo) ──
+document.querySelectorAll('.table-wrap').forEach(wrap => {
+  let startX = 0, startLeft = 0, moved = false, down = false
+  const sync = () => wrap.classList.toggle('grab', wrap.scrollWidth > wrap.clientWidth)
+  new ResizeObserver(sync).observe(wrap)
+  new MutationObserver(sync).observe(wrap, { childList: true, subtree: true })
+  wrap.addEventListener('mousedown', e => {
+    if (e.button !== 0 || !wrap.classList.contains('grab')) return
+    down = true; moved = false; startX = e.clientX; startLeft = wrap.scrollLeft
+  })
+  window.addEventListener('mousemove', e => {
+    if (!down) return
+    const dx = e.clientX - startX
+    if (!moved && Math.abs(dx) < 5) return  // limiar: clique curto continua clique
+    moved = true
+    wrap.classList.add("dragging"); getSelection().removeAllRanges()
+    wrap.scrollLeft = startLeft - dx
+  })
+  window.addEventListener('mouseup', () => { down = false; wrap.classList.remove('dragging') })
+  // engole o click que fecha um arrasto, senão seleciona a linha
+  wrap.addEventListener('click', e => { if (moved) { e.stopPropagation(); moved = false } }, true)
+})
+
 // ── Detalhe de uma execução ────────────────────────────
 async function showDetail(runId, scroll = true) {
+  selectedRun = runId
+  document.querySelectorAll('.dot').forEach(d => d.classList.toggle('sel', d.dataset.run === runId))
   $('runs').querySelectorAll('.run-row').forEach(tr =>
     tr.classList.toggle('sel', tr.dataset.run === runId))
 
@@ -423,7 +519,9 @@ async function load(select) {
   $('empty').hidden = true
   $('sub').textContent = `${runs.length} execução(ões) · ${runs[0].config.n_queries} perguntas`
   renderSparks(runs)
-  renderRuns(runs)
+  allRuns = runs
+  if (select) runsPage = 0  // run recém-criado é o primeiro da lista
+  renderRuns()
   $('trend-sec').hidden = false
   $('runs-sec').hidden = false
   // pré-seleciona sem roubar o scroll, exceto quando é o run recém-criado
@@ -484,9 +582,9 @@ async function loadOptions() {
   }
 }
 loadOptions()
-// Progress comes from the server (GET api/progress), so a reload or a second
-// tab picks up a run already in flight. ownRun: this tab's POST is still open.
-let poll = null, ownRun = false
+// Progress and the outcome come from the server (GET api/progress), so a reload,
+// a second tab or a laptop that slept mid-run all pick it up where it is.
+let poll = null
 function watch() {
   $('go').disabled = true
   $('go').textContent = '⏳ rodando…'
@@ -508,7 +606,7 @@ async function tick() {
   let p
   try { p = await (await fetch('api/progress', { cache: 'no-store' })).json() } catch { return }
   if (!p.running) {
-    if (!ownRun) { unwatch(); load() }  // someone else's run ended
+    if (poll) finished(p)
     return
   }
   if (!poll) watch()
@@ -519,6 +617,13 @@ async function tick() {
   const eta = p.done ? Math.round(s / p.done * (p.total - p.done)) : null
   $('progmsg').textContent = p.cancel ? `cancelando… termina a pergunta ${p.query_id}`
     : `${p.done}/${p.total} · ${p.query_id ?? ''} · ${s}s${eta !== null ? ` · faltam ~${eta}s` : ''}`
+}
+function finished(p) {
+  unwatch()
+  const msg = $('runmsg'), cancelled = (p.error || '').startsWith('cancelado')
+  msg.className = p.error && !cancelled ? 'err' : ''
+  msg.textContent = p.error ? (cancelled ? p.error : `falhou: ${p.error}`) : `ok · ${p.run_id}`
+  load(p.run_id || undefined)
 }
 tick()  // a run already going when the page opens
 
@@ -531,8 +636,6 @@ $('cancel').onclick = async () => {
 $('runf').onsubmit = async e => {
   e.preventDefault()
   const msg = $('runmsg')
-  ownRun = true
-  watch()
   try {
     const r = await fetch('api/run', {
       method: 'POST',
@@ -540,17 +643,11 @@ $('runf').onsubmit = async e => {
       body: JSON.stringify({ bucket: $('bucket').value, rerank: $('rerank').value, variants: Number($('variants').value), docs: $('docs').value, doc_top: Number($('doc_top').value), k: Number($('k').value), sample: Number($('sample').value),
         ...(!$('rerank-tuning').hidden && $('rerank').value ? { rerank_depth: Number($('rerank_depth').value), rerank_keep: Number($('rerank_keep').value) } : {}) }),
     })
-    const d = await r.json()
-    if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`)
-    msg.textContent = `ok · ${d.run_id}`
-    await load(d.run_id)
+    if (!r.ok) throw new Error((await r.json()).error || `HTTP ${r.status}`)
+    watch()  // tick() reports how it ends
   } catch (err) {
-    const cancelled = err.message.startsWith('cancelado')
-    msg.className = cancelled ? '' : 'err'
-    msg.textContent = cancelled ? err.message : `falhou: ${err.message}`
-  } finally {
-    ownRun = false
-    unwatch()
+    msg.className = 'err'
+    msg.textContent = `falhou: ${err.message}`
   }
 }
 </script>
